@@ -1,0 +1,253 @@
+[
+  {
+    "slug": "cathie-wood",
+    "source": "keep"
+  },
+  {
+    "slug": "philippe-laffont",
+    "source": "miss"
+  },
+  {
+    "slug": "chase-coleman",
+    "source": "wikipedia",
+    "url": "https://upload.wikimedia.org/wikipedia/en/7/79/Chase_Red_Carpet.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled"
+  },
+  {
+    "slug": "ron-baron",
+    "source": "miss"
+  },
+  {
+    "slug": "t-rowe-price",
+    "source": "wikipedia",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/d/d4/Thomas_Rowe.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled"
+  },
+  {
+    "slug": "ken-fisher",
+    "source": "miss"
+  },
+  {
+    "slug": "mark-mobius",
+    "source": "keep"
+  },
+  {
+    "slug": "ray-dalio",
+    "source": "keep"
+  },
+  {
+    "slug": "howard-marks",
+    "source": "keep"
+  },
+  {
+    "slug": "john-templeton",
+    "source": "miss"
+  },
+  {
+    "slug": "george-soros",
+    "source": "keep"
+  },
+  {
+    "slug": "john-maynard-keynes",
+    "source": "keep"
+  },
+  {
+    "slug": "alan-howard",
+    "source": "miss"
+  },
+  {
+    "slug": "bill-gross",
+    "source": "miss"
+  },
+  {
+    "slug": "john-paulson",
+    "source": "miss"
+  },
+  {
+    "slug": "paul-tudor-jones",
+    "source": "keep"
+  },
+  {
+    "slug": "benjamin-graham",
+    "source": "keep"
+  },
+  {
+    "slug": "warren-buffett",
+    "source": "keep"
+  },
+  {
+    "slug": "walter-schloss",
+    "source": "keep"
+  },
+  {
+    "slug": "john-neff",
+    "source": "keep"
+  },
+  {
+    "slug": "seth-klarman",
+    "source": "keep"
+  },
+  {
+    "slug": "chuck-akre",
+    "source": "miss"
+  },
+  {
+    "slug": "terry-smith",
+    "source": "miss"
+  },
+  {
+    "slug": "hetty-green",
+    "source": "keep"
+  },
+  {
+    "slug": "duan-yongping",
+    "source": "miss"
+  },
+  {
+    "slug": "li-lu",
+    "source": "miss"
+  },
+  {
+    "slug": "peter-lynch",
+    "source": "miss"
+  },
+  {
+    "slug": "bill-miller",
+    "source": "miss"
+  },
+  {
+    "slug": "julian-robertson",
+    "source": "miss"
+  },
+  {
+    "slug": "andreas-halvorsen",
+    "source": "miss"
+  },
+  {
+    "slug": "stephen-mandel",
+    "source": "wikipedia",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/2013-05-21_Stephen_Mandel_%28cropped%29.jpg/500px-2013-05-21_Stephen_Mandel_%28cropped%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
+  },
+  {
+    "slug": "lee-ainslie",
+    "source": "miss"
+  },
+  {
+    "slug": "bill-ackman",
+    "source": "keep"
+  },
+  {
+    "slug": "david-tepper",
+    "source": "keep"
+  },
+  {
+    "slug": "mohnish-pabrai",
+    "source": "wikidata",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Mohnish_Pabrai.jpg?width=400"
+  },
+  {
+    "slug": "joel-greenblatt",
+    "source": "miss"
+  },
+  {
+    "slug": "david-einhorn",
+    "source": "miss"
+  },
+  {
+    "slug": "michael-burry",
+    "source": "miss"
+  },
+  {
+    "slug": "carl-icahn",
+    "source": "keep"
+  },
+  {
+    "slug": "dan-loeb",
+    "source": "miss"
+  },
+  {
+    "slug": "paul-singer",
+    "source": "keep"
+  },
+  {
+    "slug": "michael-steinhardt",
+    "source": "commons",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/5/5c/Rembrandt_van_Rijn_%22Petrus_in_de_gevangenis%22_%28St._Peter_in_prison%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled"
+  },
+  {
+    "slug": "stanley-druckenmiller",
+    "source": "miss"
+  },
+  {
+    "slug": "charlie-munger",
+    "source": "keep"
+  },
+  {
+    "slug": "william-oneil",
+    "source": "keep"
+  },
+  {
+    "slug": "mark-minervini",
+    "source": "miss"
+  },
+  {
+    "slug": "richard-dennis",
+    "source": "miss"
+  },
+  {
+    "slug": "ed-seykota",
+    "source": "miss"
+  },
+  {
+    "slug": "steve-cohen",
+    "source": "keep"
+  },
+  {
+    "slug": "jesse-livermore",
+    "source": "keep"
+  },
+  {
+    "slug": "bernard-baruch",
+    "source": "keep"
+  },
+  {
+    "slug": "nicolas-darvas",
+    "source": "miss"
+  },
+  {
+    "slug": "philip-fisher",
+    "source": "keep"
+  },
+  {
+    "slug": "john-bogle",
+    "source": "keep"
+  },
+  {
+    "slug": "ed-thorp",
+    "source": "wikidata",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas_Edward_Thorpe.jpg?width=400"
+  },
+  {
+    "slug": "jim-simons",
+    "source": "keep"
+  },
+  {
+    "slug": "ken-griffin",
+    "source": "keep"
+  },
+  {
+    "slug": "david-shaw",
+    "source": "commons",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/a/ac/David_Hepburn.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled"
+  },
+  {
+    "slug": "cliff-asness",
+    "source": "keep"
+  },
+  {
+    "slug": "two-sigma",
+    "source": "miss"
+  },
+  {
+    "slug": "israel-englander",
+    "source": "keep"
+  }
+]

@@ -1,0 +1,8 @@
+# Agents61
+
+> Agents61 is a 61-seat AI investment research committee. Isolated master briefs, clerk stack, no buy button.
+
+Canonical brief: https://agents61.com/llms.txt
+Extended brief: https://agents61.com/llms-full.txt
+Human GEO page: https://agents61.com/for-llms
+Site: https://agents61.com

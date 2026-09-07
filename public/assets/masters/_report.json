@@ -1,0 +1,307 @@
+[
+  {
+    "slug": "cathie-wood",
+    "source": "wikipedia",
+    "title": "Cathie Wood"
+  },
+  {
+    "slug": "philippe-laffont",
+    "source": "wikipedia",
+    "title": "Coatue Management"
+  },
+  {
+    "slug": "chase-coleman",
+    "source": "wikipedia",
+    "title": "Tiger Global Management"
+  },
+  {
+    "slug": "ron-baron",
+    "source": "fallback:no thumbnail",
+    "title": "Ronald S. Baron"
+  },
+  {
+    "slug": "t-rowe-price",
+    "source": "fallback:no thumbnail",
+    "title": "Thomas Rowe Price Jr."
+  },
+  {
+    "slug": "ken-fisher",
+    "source": "fallback:no thumbnail",
+    "title": "Kenneth Fisher"
+  },
+  {
+    "slug": "mark-mobius",
+    "source": "wikipedia",
+    "title": "Mark Mobius"
+  },
+  {
+    "slug": "ray-dalio",
+    "source": "wikipedia",
+    "title": "Ray Dalio"
+  },
+  {
+    "slug": "howard-marks",
+    "source": "wikipedia",
+    "title": "Howard Marks (investor)"
+  },
+  {
+    "slug": "john-templeton",
+    "source": "fallback:no thumbnail",
+    "title": "John Templeton"
+  },
+  {
+    "slug": "george-soros",
+    "source": "wikipedia",
+    "title": "George Soros"
+  },
+  {
+    "slug": "john-maynard-keynes",
+    "source": "wikipedia",
+    "title": "John Maynard Keynes"
+  },
+  {
+    "slug": "alan-howard",
+    "source": "wikipedia",
+    "title": "Alan Howard (actor)"
+  },
+  {
+    "slug": "bill-gross",
+    "source": "fallback:no thumbnail",
+    "title": "Bill H. Gross"
+  },
+  {
+    "slug": "john-paulson",
+    "source": "fallback:no thumbnail",
+    "title": "John Paulson"
+  },
+  {
+    "slug": "paul-tudor-jones",
+    "source": "wikipedia",
+    "title": "Paul Tudor Jones"
+  },
+  {
+    "slug": "benjamin-graham",
+    "source": "wikipedia",
+    "title": "Benjamin Graham"
+  },
+  {
+    "slug": "warren-buffett",
+    "source": "wikipedia",
+    "title": "Warren Buffett"
+  },
+  {
+    "slug": "walter-schloss",
+    "source": "wikipedia",
+    "title": "Walter Schloss"
+  },
+  {
+    "slug": "john-neff",
+    "source": "wikipedia",
+    "title": "John Neff (investor)"
+  },
+  {
+    "slug": "seth-klarman",
+    "source": "wikipedia",
+    "title": "Seth Klarman"
+  },
+  {
+    "slug": "chuck-akre",
+    "source": "fallback:no thumbnail",
+    "title": "Charles T. Akre"
+  },
+  {
+    "slug": "terry-smith",
+    "source": "fallback:no thumbnail",
+    "title": "Fundsmith"
+  },
+  {
+    "slug": "hetty-green",
+    "source": "wikipedia",
+    "title": "Hetty Green"
+  },
+  {
+    "slug": "duan-yongping",
+    "source": "fallback:no thumbnail",
+    "title": "\u6bb5\u6c38\u5e73"
+  },
+  {
+    "slug": "li-lu",
+    "source": "fallback:no thumbnail",
+    "title": "\u674e\u9304"
+  },
+  {
+    "slug": "peter-lynch",
+    "source": "fallback:no thumbnail",
+    "title": "\u5f7c\u5f97\u00b7\u6797\u5947"
+  },
+  {
+    "slug": "bill-miller",
+    "source": "fallback:no thumbnail",
+    "title": "Bill Miller (investor)"
+  },
+  {
+    "slug": "julian-robertson",
+    "source": "fallback:no thumbnail",
+    "title": "Julian Robertson"
+  },
+  {
+    "slug": "andreas-halvorsen",
+    "source": "fallback:no thumbnail",
+    "title": "Ole Andreas Halvorsen"
+  },
+  {
+    "slug": "stephen-mandel",
+    "source": "wikipedia",
+    "title": "Stephen Mandel"
+  },
+  {
+    "slug": "lee-ainslie",
+    "source": "fallback:no thumbnail",
+    "title": "Lee Ainslie"
+  },
+  {
+    "slug": "bill-ackman",
+    "source": "wikipedia",
+    "title": "Bill Ackman"
+  },
+  {
+    "slug": "david-tepper",
+    "source": "wikipedia",
+    "title": "David Tepper"
+  },
+  {
+    "slug": "mohnish-pabrai",
+    "source": "fallback:no thumbnail",
+    "title": "Mohnish Pabrai"
+  },
+  {
+    "slug": "joel-greenblatt",
+    "source": "fallback:no thumbnail",
+    "title": "Joel Greenblatt"
+  },
+  {
+    "slug": "david-einhorn",
+    "source": "fallback:no thumbnail",
+    "title": "David Einhorn (hedge fund manager)"
+  },
+  {
+    "slug": "michael-burry",
+    "source": "fallback:no thumbnail",
+    "title": "Michael Burry"
+  },
+  {
+    "slug": "carl-icahn",
+    "source": "wikipedia",
+    "title": "Carl Icahn"
+  },
+  {
+    "slug": "dan-loeb",
+    "source": "fallback:no thumbnail",
+    "title": "Daniel S. Loeb"
+  },
+  {
+    "slug": "paul-singer",
+    "source": "wikipedia",
+    "title": "Paul Singer"
+  },
+  {
+    "slug": "michael-steinhardt",
+    "source": "fallback:no thumbnail",
+    "title": "Michael Steinhardt"
+  },
+  {
+    "slug": "stanley-druckenmiller",
+    "source": "fallback:no thumbnail",
+    "title": "Stanley Druckenmiller"
+  },
+  {
+    "slug": "charlie-munger",
+    "source": "wikipedia",
+    "title": "Charlie Munger"
+  },
+  {
+    "slug": "william-oneil",
+    "source": "wikipedia",
+    "title": "William O'Neil"
+  },
+  {
+    "slug": "mark-minervini",
+    "source": "fallback:no thumbnail",
+    "title": "Angela Minervini"
+  },
+  {
+    "slug": "richard-dennis",
+    "source": "fallback:no thumbnail",
+    "title": "Richard Dennis"
+  },
+  {
+    "slug": "ed-seykota",
+    "source": "fallback:no thumbnail",
+    "title": "Ed Seykota"
+  },
+  {
+    "slug": "steve-cohen",
+    "source": "wikipedia",
+    "title": "Steve Cohen (businessman)"
+  },
+  {
+    "slug": "jesse-livermore",
+    "source": "wikipedia",
+    "title": "Jesse Livermore"
+  },
+  {
+    "slug": "bernard-baruch",
+    "source": "wikipedia",
+    "title": "Bernard Baruch"
+  },
+  {
+    "slug": "nicolas-darvas",
+    "source": "fallback:no thumbnail",
+    "title": "Nicolas Darvas"
+  },
+  {
+    "slug": "philip-fisher",
+    "source": "wikipedia",
+    "title": "Philip Arthur Fisher"
+  },
+  {
+    "slug": "john-bogle",
+    "source": "wikipedia",
+    "title": "John C. Bogle"
+  },
+  {
+    "slug": "ed-thorp",
+    "source": "fallback:no thumbnail",
+    "title": "Edward O. Thorp"
+  },
+  {
+    "slug": "jim-simons",
+    "source": "wikipedia",
+    "title": "Jim Simons"
+  },
+  {
+    "slug": "ken-griffin",
+    "source": "wikipedia",
+    "title": "Ken Griffin (businessman)"
+  },
+  {
+    "slug": "david-shaw",
+    "source": "fallback:no thumbnail",
+    "title": "David E. Shaw"
+  },
+  {
+    "slug": "cliff-asness",
+    "source": "wikipedia",
+    "title": "Cliff Asness"
+  },
+  {
+    "slug": "two-sigma",
+    "source": "wikipedia",
+    "title": "Two Sigma"
+  },
+  {
+    "slug": "israel-englander",
+    "source": "wikipedia",
+    "title": "Israel Englander"
+  }
+]

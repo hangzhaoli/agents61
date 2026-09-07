@@ -1,72 +1,36 @@
-# Agents61
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-**61 masters help you research and make better investment decisions.**
+## Getting Started
 
-Live desk: [agents61.com](https://agents61.com)
+First, run the development server:
 
-This repository is a **public product brief**. The application source is proprietary and is **not** published here.
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
----
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## What it is
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-Agents61 is a 61-seat investment research committee. Each seat is a dedicated agent with a specific job in a six-step pipeline — from era trend and cycle, through dual-track selection, red-team debate, timing, and exit, with quant risk control always on.
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-You staff a desk. Unlocked seats write. Locked seats stay empty. A clerk stacks agreements and splits. There is **no buy button**. Reports are a research simulation, not advice.
+## Learn More
 
----
+To learn more about Next.js, take a look at the following resources:
 
-## Two ways the committee writes
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-Pick the method on the desk before a run.
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-### Isolated
-Every unlocked master researches the same question **alone**. Nobody reads a peer. The clerk only stacks after the briefs exist. This is the default — inversion stays honest.
+## Deploy on Vercel
 
-### Division of labor
-Seats still keep their own tests, but they write in **pipeline order**. Trend hands a map to cycle. Cycle hands a regime note to selection. Selection hands a pool to debate. Later groups may **reference** earlier notes. Peers in the **same** group still cannot see each other. It is a handoff, not a 61×61 group chat.
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Switch Isolated ↔ Division of labor in the dashboard sidebar. Same seating. Same clerk. Different information flow.
-
----
-
-## Why it feels like a real committee
-
-- **61 named seats** — Graham through Wood, Livermore through Simons. Each seat has a role, a kill-shot, and a source line (books, letters, talks — not gossip personas).
-- **Six-step pipeline** — Trend → Cycle → Selection → Debate → Timing → Exit, plus always-on quant.
-- **Red team vs blue team** — Isolated briefs first. Then the short side tries to kill the idea. Then inversion. Then a ten-year hold test.
-- **Clerk, not an average** — Overlap is counted. Splits survive. The product will not invent a fake consensus.
-- **Empty seats stay empty** — Analyst 16 · Associate 29 · Principal 48 · Committee / Partners 61. Upgrading lights seats. It does not fill them in silently.
-- **Lineup & screen** — Pick masters, pick a market (US listed, crypto/on-chain, emerging ADRs), run Isolated or Division of labor against the board.
-- **On-chain board** — BTC, ETH, SOL and the rest of the crypto desk. Settlement, usage, and policy — not a cash-flow multiple unless a business sits underneath.
-- **Long briefs** — Stance, why, risks, “what would change my mind,” tables and charts. Download Markdown or PDF. Never “you should buy.”
-
----
-
-## Markets
-
-| Board | What the desk will underwrite |
-| --- | --- |
-| US listed | Equities first, ETFs adjacent |
-| Crypto / on-chain | Tokens as maps, not forced P/E |
-| Emerging | US-listed ADR window — policy, FX, structure |
-
-A-shares later.
-
----
-
-## What it is not
-
-- Not a copilot that agrees with you
-- Not a data terminal
-- Not a signal service
-- Not investment advice
-- Not an order router
-
----
-
-## Try the desk
-
-[agents61.com](https://agents61.com) → Enter Desk.
-
-Staff the committee before you staff the trade.
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
