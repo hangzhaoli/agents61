@@ -55,7 +55,7 @@ function isSearchTarget(el: EventTarget | null): boolean {
 
 /**
  * Observer / unpaid desk: after scroll without searching, within 30s of entry,
- * prompt once to claim a real 15% Waffo priceSnapshot for 30 minutes.
+ * prompt once to claim a real 15% checkout discount for 30 minutes.
  */
 export default function FlashOfferGate({ eligible }: { eligible: boolean }) {
   const router = useRouter();
@@ -191,7 +191,7 @@ export default function FlashOfferGate({ eligible }: { eligible: boolean }) {
         error?: string;
       };
       if (!res.ok || !data.ok || !data.expiresAt) {
-        setClaimError(data.error ?? '无法激活优惠，请稍后再试。');
+        setClaimError(data.error ?? 'Could not activate the offer. Try again shortly.');
         return;
       }
       setModalOpen(false);
@@ -201,7 +201,7 @@ export default function FlashOfferGate({ eligible }: { eligible: boolean }) {
       });
       router.push(flashCheckoutHref('analyst'));
     } catch {
-      setClaimError('网络错误，请重试。');
+      setClaimError('Could not activate the offer. Try again shortly.');
     } finally {
       setClaiming(false);
     }
@@ -217,17 +217,17 @@ export default function FlashOfferGate({ eligible }: { eligible: boolean }) {
             <Zap className="mt-0.5 h-4 w-4 shrink-0 text-[#0052d9]" strokeWidth={2} />
             <div className="min-w-0 flex-1">
               <p className="text-sm font-bold text-slate-900">
-                限时 {FLASH_OFFER_PERCENT}% 优惠进行中
+                {FLASH_OFFER_PERCENT}% flash offer active
               </p>
               <p className="mt-0.5 text-xs text-slate-500">
-                剩余 {formatFlashCountdown(bannerRemaining)} · 错过即恢复原价
+                {formatFlashCountdown(bannerRemaining)} left · list price returns after
               </p>
             </div>
             <Link
               href={flashCheckoutHref('analyst')}
               className="shrink-0 text-xs font-semibold text-[#0052d9] hover:underline"
             >
-              去结账 →
+              Checkout →
             </Link>
           </div>
         </div>
@@ -237,7 +237,7 @@ export default function FlashOfferGate({ eligible }: { eligible: boolean }) {
         <div className="fixed inset-0 z-[80] flex items-end justify-center p-4 sm:items-center">
           <button
             type="button"
-            aria-label="关闭优惠提示"
+            aria-label="Close offer prompt"
             className="absolute inset-0 bg-slate-900/40"
             onClick={() => setModalOpen(false)}
           />
@@ -251,20 +251,21 @@ export default function FlashOfferGate({ eligible }: { eligible: boolean }) {
               type="button"
               onClick={() => setModalOpen(false)}
               className="absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-50 hover:text-slate-700"
-              aria-label="关闭"
+              aria-label="Close"
             >
               <X className="h-5 w-5" strokeWidth={2} />
             </button>
             <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-[#0052d9]">
               <Timer className="h-3.5 w-3.5" strokeWidth={2} />
-              限时 30 分钟 · 真实折扣
+              30 minutes · real discount
             </div>
             <h2 id="flash-offer-title" className="pr-8 text-xl font-extrabold text-slate-900 md:text-2xl">
-              激活购买优惠：全站 {FLASH_OFFER_PERCENT}% off
+              Activate purchase offer: {FLASH_OFFER_PERCENT}% off
             </h2>
             <p className="mt-2 text-sm leading-relaxed text-slate-600">
-              未使用搜索、已向下浏览 — 现在可激活一次真实扣款折扣（Waffo
-              结账价）。优惠仅保留 30 分钟；超时或关闭后恢复原价。研究模拟席位，非买卖建议。
+              You scrolled without searching — claim a one-time real checkout discount. Offer
+              lasts 30 minutes; after it expires or you dismiss, list price returns. Research
+              simulation seats — not investment advice.
             </p>
             {claimError && <p className="mt-3 text-sm text-red-600">{claimError}</p>}
             <button
@@ -273,14 +274,14 @@ export default function FlashOfferGate({ eligible }: { eligible: boolean }) {
               onClick={claim}
               className="btn-primary mt-5 w-full justify-center"
             >
-              {claiming ? '激活中…' : '激活优惠'}
+              {claiming ? 'Activating…' : 'Activate offer'}
             </button>
             <button
               type="button"
               onClick={() => setModalOpen(false)}
               className="mt-2 w-full text-center text-sm font-medium text-slate-500 hover:text-slate-800"
             >
-              稍后再说（按原价）
+              Not now (list price)
             </button>
           </div>
         </div>

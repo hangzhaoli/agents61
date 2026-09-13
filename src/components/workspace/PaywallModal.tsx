@@ -93,7 +93,7 @@ export default function PaywallModal({
         </p>
         {flashActive && (
           <p className="mt-3 rounded-xl border border-[#0052d9]/15 bg-blue-50 px-3 py-2 text-xs font-semibold text-[#0052d9]">
-            限时 15% 优惠已激活 — 结账将按折扣价向 Waffo 扣款。
+            15% flash offer active — checkout charges the discounted price.
           </p>
         )}
         <Link
