@@ -43,7 +43,7 @@ const STEPS = [
   {
     n: '05',
     title: 'Read briefs, then the clerk',
-    body: 'Each master returns stance, why, risks, and what would change their mind. The clerk stacks agreements and splits — never a buy rating.',
+    body: 'Each master returns stance, why, risks, and what would change their mind. Deep seats also show method checks and source notes. The clerk stacks agreements and splits — never a buy rating.',
   },
 ];
 

@@ -24,6 +24,7 @@ import { POSITIONING } from '@/lib/positioning';
 import MasterAvatar from '@/components/masters/MasterAvatar';
 import { MasterSeatLine } from '@/components/masters/MasterChip';
 import PersonaTrustSection from '@/components/landing/PersonaTrustSection';
+import KernelUpgradeSection from '@/components/landing/KernelUpgradeSection';
 import ResearchMethodSection from '@/components/landing/ResearchMethodSection';
 import DeskIntelligence from '@/components/landing/DeskIntelligence';
 import ReportDemo from '@/components/landing/ReportDemo';
@@ -230,6 +231,7 @@ export default async function HomePage() {
       </section>
 
       <PersonaTrustSection />
+      <KernelUpgradeSection />
       <ResearchMethodSection />
 
       {/* ============ SIX-STEP PIPELINE ============ */}
@@ -403,7 +405,7 @@ export default async function HomePage() {
               </div>
               <div className="space-y-3">
                 <MasterSeatLine slug="warren-buffett" caption="10-year hold test" tone="dark" />
-                <MasterSeatLine caption="Committee confidence score" tone="dark" />
+                <MasterSeatLine caption="Clerk publishes the split — not a score" tone="dark" />
                 <MasterSeatLine slug="ed-thorp" caption="Position sizing (Kelly)" tone="dark" />
               </div>
             </div>

@@ -42,7 +42,7 @@ export const PIPELINE_STEPS = [
     label: 'Debate',
     count: 8,
     output: 'Investment Proposal',
-    outputDetail: 'Both sides, risk list, confidence score, and sizing suggestion.',
+    outputDetail: 'Both sides, named kill-shots, and the clerk’s split — not a committee buy score.',
     note: 'The product’s soul. Buffett sits on the value track and runs the 10-year hold test here — not a 9th debate seat.',
   },
   {

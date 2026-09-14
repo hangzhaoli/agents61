@@ -94,13 +94,22 @@ export default function PersonaTrustSection() {
               personas, unaffiliated with the people — but the rules come from public books
               and letters, not random role-play.
             </p>
-            <Link
-              href="/masters"
-              className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-[#0052d9] hover:underline"
-            >
-              Browse all 61 legends
-              <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
-            </Link>
+            <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2">
+              <Link
+                href="/masters"
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#0052d9] hover:underline"
+              >
+                Browse all 61 legends
+                <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
+              </Link>
+              <Link
+                href="#kernel"
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-600 hover:text-[#0052d9] hover:underline"
+              >
+                Desk kernel update
+                <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
+              </Link>
+            </div>
           </div>
         </div>
       </div>
