@@ -142,6 +142,9 @@ export default function HowItWorksPage() {
           <Link href="/features" className="btn-secondary">
             Feature list
           </Link>
+          <Link href="/demo" className="btn-secondary">
+            Kernel sample report
+          </Link>
           <Link href="/methodology" className="btn-secondary">
             How personas are built
           </Link>

@@ -32,6 +32,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/pipeline',
     '/methodology',
     '/cycle',
+    '/demo',
     '/masters',
     '/pricing',
     '/research/crypto',

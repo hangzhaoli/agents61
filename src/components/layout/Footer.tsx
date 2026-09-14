@@ -12,6 +12,7 @@ const FOOTER_SECTIONS = [
       { label: 'Stock analysis AI', href: '/stock-analysis-ai' },
       { label: 'Research simulation', href: '/investment-research-simulation' },
       { label: 'How it works', href: '/how-it-works' },
+      { label: 'Kernel demo', href: '/demo' },
       { label: '61 Masters', href: '/masters' },
       { label: 'Pricing', href: '/pricing' },
     ],

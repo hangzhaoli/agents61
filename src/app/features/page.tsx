@@ -107,6 +107,9 @@ export default function FeaturesPage() {
           <Link href="/how-it-works" className="btn-secondary">
             How it works
           </Link>
+          <Link href="/demo" className="btn-secondary">
+            Kernel sample report
+          </Link>
           <Link href="/compare" className="btn-secondary">
             vs Yahoo, Seeking Alpha, ChatGPT
           </Link>

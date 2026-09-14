@@ -23,8 +23,9 @@ const NAV_ITEMS = [
 ];
 
 const MORE_ITEMS = [
-  { label: 'How it works', href: '/how-it-works' },
-  { label: 'Features', href: '/features' },
+      { label: 'How it works', href: '/how-it-works' },
+      { label: 'Kernel demo', href: '/demo' },
+      { label: 'Features', href: '/features' },
   { label: 'Solutions', href: '/solutions' },
   { label: 'Use cases', href: '/use-cases' },
   { label: 'Learn', href: '/learn' },
