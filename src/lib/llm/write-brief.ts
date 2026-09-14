@@ -169,7 +169,7 @@ function parseFields(text: string): LlmFields {
     looksAt: clip(looksAt, 200),
     thesis: clip(thesis, 560),
     why: clip(why || thesis, 640),
-    finding: clip(finding, 3200),
+    finding: clip(finding, 5200),
     risks: clip(risks || 'Main risk: the file on this desk is incomplete.', 480),
     wouldChangeMind: clip(
       wouldChangeMind || 'This seat flips if the facts that support the method disappear.',
@@ -264,7 +264,7 @@ export async function writeLlmBrief(opts: WriteBriefOpts): Promise<WrittenBrief>
   const thinking = lane !== 'card';
   const effort = thinking ? (plan === 'partners' ? 'max' : 'high') : undefined;
   const timeoutMs = thinking ? 55_000 : 22_000;
-  const maxTokens = thinking ? 2200 : 1400;
+  const maxTokens = thinking ? 2800 : 1800;
 
   const hard = persona?.hardRules?.slice(0, 3).map((r, i) => `${i + 1}. ${r}`).join('\n') ?? '';
   const looks = persona?.looksAt?.slice(0, 4).map((r) => `- ${r}`).join('\n') ?? '';
@@ -287,15 +287,16 @@ export async function writeLlmBrief(opts: WriteBriefOpts): Promise<WrittenBrief>
     'DESK OUTPUT — reply with ONLY this JSON object, no markdown fences:',
     '{',
     '  "stance": "constructive|cautious|skeptical|inconclusive",',
-    '  "looksAt": "the ONE measurement this seat actually ran (name the metric)",',
-    '  "thesis": "2-4 sentences in THIS master\'s spoken voice — opinionated, not brochure copy",',
-    '  "why": "tie stance to method + at least one FACTS number",',
-    '  "finding": "3-5 short paragraphs as ONE string. Dig business, quality, cycle, price vs value, balance sheet, variant view. End with underwrite frame sentence.",',
+    '  "looksAt": "name the metrics you actually used AND the numbers from FACTS (e.g. ROE 18%, P/E 41)",',
+    '  "thesis": "2-4 sentences in THIS master\'s spoken voice — a real judgment, not brochure copy",',
+    '  "why": "tie stance to THIS method + at least two FACTS numbers + what bar they clear or miss (e.g. D/E 0.11 vs distress >2.5)",',
+    '  "finding": "Write like a short IC article (4-7 short paragraphs as ONE string). Structure: (1) method question this seat answers (2) numbers on file with thresholds — why pass/fail (3) what the method demands next (4) kill-shots or pendulum if debate/cycle (5) end with underwrite frame. Cite FACTS. If a SOURCE PACK checklist note is present, explain it in prose. Never invent numbers.",',
     '  "risks": "2-3 concrete risks with numbers or mechanisms — not generic market risk",',
-    '  "wouldChangeMind": "one crisp falsifier",',
+    '  "wouldChangeMind": "one crisp falsifier with a measurable trigger",',
     '  "underwriteFrame": "worth_further_homework|pass_for_now|insufficient_facts"',
     '}',
     'English only. Cite FACTS. If a number is absent, say "not on file." Do not invent news headlines. When a NEWS LAYER block is present you may cite it, attributed as unverified news — never merge it into FACTS numbers.',
+    'Forbidden: "you should buy/sell", target prices as orders, calendar tips ("buy Monday"), averaging other seats. You may state method-implied horizons (e.g. decade hold test) and entry/exit *conditions* as research discipline.',
   ]
     .filter(Boolean)
     .join('\n');
@@ -319,7 +320,7 @@ export async function writeLlmBrief(opts: WriteBriefOpts): Promise<WrittenBrief>
     opts.researchPrepBlock ? `\n${opts.researchPrepBlock}` : '',
     packContext ? `\n${packContext}` : '',
     '',
-    'Write as if the user will use this brief to decide whether to dig deeper or walk away. CONTEXT/SOURCE PACK blocks are aids — not orders and not a composite rating.',
+    'Write like a short investment-committee article for THIS seat only. If SOURCE PACK checklist lines include [PASS]/[FAIL] with numbers, explain those bars in prose (what printed, what bar it clears or misses). CONTEXT/SOURCE PACK blocks are aids — not orders and not a composite rating.',
   ]
     .filter(Boolean)
     .join('\n');

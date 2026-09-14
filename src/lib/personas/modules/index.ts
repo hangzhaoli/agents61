@@ -30,6 +30,8 @@ export type PackEvidence = {
     id: string;
     label: string;
     verdict: ChecklistVerdict;
+    /** Why this verdict — include the number and the seat’s bar when known. */
+    notes?: string;
   }>;
   excerpts: Array<{
     work: string;
@@ -95,6 +97,7 @@ function assemblePackContext(
         id: i.id,
         label: i.label,
         verdict: i.verdict,
+        notes: i.notes,
       })),
     excerpts: excerpts.slice(0, 3).map((e) => ({
       work: e.work,

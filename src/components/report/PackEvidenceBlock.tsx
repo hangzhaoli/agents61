@@ -15,9 +15,8 @@ const VERDICT_LABEL: Record<ChecklistVerdict, string> = {
 };
 
 /**
- * Compact methodology evidence from a deep source pack.
- * Heuristic checklist + short citations — not a buy score.
- * Fail items are listed first (sorted upstream in buildPackContext).
+ * Methodology evidence: verdict + the number/threshold that made it pass or fail.
+ * Heuristic only — not a composite buy rating.
  */
 export default function PackEvidenceBlock({ evidence }: { evidence: PackEvidence }) {
   if (
@@ -30,12 +29,13 @@ export default function PackEvidenceBlock({ evidence }: { evidence: PackEvidence
   }
 
   const failCount = evidence.checklist.filter((c) => c.verdict === 'fail').length;
+  const passCount = evidence.checklist.filter((c) => c.verdict === 'pass').length;
 
   return (
-    <div className="mt-3 rounded-xl border border-slate-100 bg-slate-50/80 px-3 py-2.5 space-y-2">
+    <div className="mt-3 rounded-xl border border-slate-100 bg-slate-50/80 px-3 py-2.5 space-y-2.5">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
-          Method pack
+          Method pack · {passCount} pass · {failCount} fail
         </p>
         <Link
           href={`/masters/${evidence.slug}`}
@@ -47,25 +47,35 @@ export default function PackEvidenceBlock({ evidence }: { evidence: PackEvidence
       {evidence.checklist.length > 0 && (
         <div>
           <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
-            Method checklist
+            Why each check passed or failed
             {failCount > 0 ? (
               <span className="ml-1.5 font-medium normal-case tracking-normal text-red-600/80">
-                · {failCount} fail first
+                · fails listed first
               </span>
             ) : null}
           </p>
-          <div className="flex flex-wrap gap-1.5">
+          <ul className="space-y-2">
             {evidence.checklist.map((item) => (
-              <span
+              <li
                 key={item.id}
-                className={`inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[10px] font-medium ${VERDICT_STYLE[item.verdict]}`}
-                title={item.label}
+                className={`rounded-lg border px-2.5 py-2 ${VERDICT_STYLE[item.verdict]}`}
               >
-                <span className="opacity-70">{VERDICT_LABEL[item.verdict]}</span>
-                <span className="max-w-[10rem] truncate">{item.label}</span>
-              </span>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-[10px] font-bold uppercase tracking-wide">
+                    {VERDICT_LABEL[item.verdict]}
+                  </span>
+                  <span className="text-xs font-semibold">{item.label}</span>
+                </div>
+                {item.notes ? (
+                  <p className="mt-1 text-[11px] leading-snug opacity-90">{item.notes}</p>
+                ) : (
+                  <p className="mt-1 text-[11px] leading-snug opacity-70">
+                    No numeric bar on file for this check — seat must say “not on file.”
+                  </p>
+                )}
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       )}
       {evidence.metricsBound && evidence.metricsBound.length > 0 && (
@@ -104,7 +114,7 @@ export default function PackEvidenceBlock({ evidence }: { evidence: PackEvidence
         </p>
       ) : null}
       <p className="text-[10px] text-slate-400">
-        Pack aids only · heuristic pass/fail/unknown · not a composite buy rating
+        Pack aids only · heuristic bars · not a composite buy rating · research simulation
       </p>
     </div>
   );
