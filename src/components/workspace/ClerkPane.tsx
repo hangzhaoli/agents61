@@ -26,9 +26,9 @@ type ChatRow = {
 };
 
 const CLERK_TIPS = [
+  { label: 'Prep AAPL', prompt: 'prep AAPL' },
   { label: 'Screen like Lynch', prompt: 'Screen like Lynch' },
   { label: 'Invert MSFT', prompt: 'Invert MSFT' },
-  { label: 'Paste a 10-K', prompt: 'Paste a 10-K' },
   { label: 'Staff Burry + Buffett', prompt: 'Staff Burry and Buffett on NVDA' },
 ] as const;
 
@@ -173,7 +173,7 @@ export default function ClerkPane({
           {rows.map((row, i) => (
             <article key={`${row.role}-${i}`} className={row.role === 'user' ? 'text-right' : ''}>
               <p
-                className={`inline-block max-w-[40rem] text-left text-sm leading-relaxed rounded-2xl px-3.5 py-2.5 ${
+                className={`inline-block max-w-[40rem] text-left text-sm leading-relaxed rounded-2xl px-3.5 py-2.5 whitespace-pre-wrap ${
                   row.role === 'user' ? 'bg-[#0052d9] text-white' : 'bg-white border border-slate-200 text-slate-700'
                 }`}
               >

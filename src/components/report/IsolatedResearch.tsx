@@ -6,6 +6,8 @@ import type { Assembly, BriefStance, IndependentBrief } from '@/lib/research';
 import { PLANS, nextPlan, type PlanId } from '@/lib/tiers';
 import ReportDownloadButton from '@/components/report/ReportDownloadButton';
 import ReportAnalytics from '@/components/report/ReportAnalytics';
+import PackEvidenceBlock from '@/components/report/PackEvidenceBlock';
+import SeatContrastPanel from '@/components/report/SeatContrastPanel';
 
 const STANCE_STYLE: Record<BriefStance, string> = {
   constructive: 'bg-emerald-50 text-emerald-700',
@@ -60,6 +62,12 @@ export default function IsolatedResearch({
           </div>
         )}
       </section>
+
+      {briefs.length >= 2 && (
+        <section className="card p-5 md:p-6">
+          <SeatContrastPanel briefs={briefs} />
+        </section>
+      )}
 
       <ReportAnalytics assembly={assembly} />
 
@@ -159,6 +167,7 @@ function FullBrief({ brief }: { brief: IndependentBrief }) {
       )}
       <p className="text-xs font-medium text-slate-500 mb-1">Looks at</p>
       <p className="text-sm text-slate-700 mb-2">{brief.looksAt}</p>
+      {brief.packEvidence && <PackEvidenceBlock evidence={brief.packEvidence} />}
       <p className="text-xs text-slate-400">{brief.sourceLine}</p>
       <p className="text-xs text-slate-500 mt-2">{brief.wouldChangeMind}</p>
     </article>

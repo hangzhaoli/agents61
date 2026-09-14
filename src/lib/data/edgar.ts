@@ -228,6 +228,35 @@ function periodKind(p: FactPoint | null): 'annual' | 'interim' | null {
   return 'interim';
 }
 
+/** Distinct annual FY points (newest first), one per fiscal year. */
+function annualSeries(points: FactPoint[], max = 5): FactPoint[] {
+  const annual = points
+    .filter((p) => typeof p.val === 'number' && isAnnualPoint(p) && p.fy != null)
+    .sort((a, b) => (b.end ?? '').localeCompare(a.end ?? ''));
+  const seen = new Set<number>();
+  const out: FactPoint[] = [];
+  for (const p of annual) {
+    const fy = p.fy!;
+    if (seen.has(fy)) continue;
+    seen.add(fy);
+    out.push(p);
+    if (out.length >= max) break;
+  }
+  return out;
+}
+
+/** Rough CAGR from oldest→newest of up to 4 annual observations (needs ≥3 years span). */
+function approxCagr(seriesNewestFirst: FactPoint[]): number | null {
+  if (seriesNewestFirst.length < 3) return null;
+  const newest = seriesNewestFirst[0]!;
+  const oldest = seriesNewestFirst[Math.min(3, seriesNewestFirst.length - 1)]!;
+  if (typeof newest.val !== 'number' || typeof oldest.val !== 'number') return null;
+  if (oldest.val <= 0 || newest.val <= 0) return null;
+  const years = Math.max(1, (newest.fy ?? 0) - (oldest.fy ?? 0));
+  if (years < 2) return null;
+  return Math.pow(newest.val / oldest.val, 1 / years) - 1;
+}
+
 export async function loadEdgarFacts(ticker: string) {
   const row = await lookupCik(ticker);
   if (!row) {
@@ -285,6 +314,26 @@ export async function loadEdgarFacts(ticker: string) {
   const debt = ltd?.val ?? null;
   const kind = periodKind(revenue ?? netIncome);
 
+  const epsPts = allPoints(gaap.EarningsPerShareDiluted, 'USD/shares');
+  const epsPrev = eps ? priorComparable(epsPts, eps) : null;
+  const epsVal = eps?.val ?? null;
+  const epsPrevVal = epsPrev?.val ?? null;
+  const epsYoY =
+    epsVal != null && epsPrevVal != null && epsPrevVal !== 0
+      ? (epsVal - epsPrevVal) / Math.abs(epsPrevVal)
+      : null;
+
+  const revAnnual = annualSeries(revenuePts, 5);
+  const revenueCagrApprox = approxCagr(revAnnual);
+
+  const ocfPts = [
+    ...allPoints(gaap.NetCashProvidedByUsedInOperatingActivities, 'USD'),
+    ...allPoints(gaap.NetCashProvidedByUsedInOperatingActivitiesContinuingOperations, 'USD'),
+  ];
+  const ocf = alignedDuration(ocfPts, periodEnd);
+  const operatingCashFlow = ocf?.val ?? null;
+  const netMargin = ni != null && rev != null && rev !== 0 ? ni / rev : null;
+
   return {
     ok: true as const,
     ticker: row.ticker,
@@ -297,13 +346,17 @@ export async function loadEdgarFacts(ticker: string) {
     periodKind: kind,
     revenue: rev,
     revenueYoY: rev != null && prev != null && prev !== 0 ? (rev - prev) / Math.abs(prev) : null,
+    revenueCagrApprox,
     netIncome: ni,
-    epsDiluted: eps?.val ?? null,
+    netMargin,
+    epsDiluted: epsVal,
+    epsYoY,
     sharesDiluted: shares?.val ?? null,
     equity: eq,
     assets: assets?.val ?? null,
     liabilities: liabilities?.val ?? null,
     longTermDebt: debt,
+    operatingCashFlow,
     roe: ni != null && eq ? ni / eq : null,
     debtToEquity: debt != null && eq ? debt / eq : null,
   };

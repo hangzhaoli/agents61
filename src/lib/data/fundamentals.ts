@@ -14,13 +14,21 @@ export type Fundamentals = {
   periodKind: 'annual' | 'interim' | null;
   revenue: number | null;
   revenueYoY: number | null;
+  /** Rough multi-year revenue CAGR from annual EDGAR points when available. */
+  revenueCagrApprox: number | null;
   netIncome: number | null;
+  /** NI / revenue for the aligned period when both present. */
+  netMargin: number | null;
   epsDiluted: number | null;
+  /** Diluted EPS YoY when a prior comparable print exists. */
+  epsYoY: number | null;
   sharesDiluted: number | null;
   equity: number | null;
   assets: number | null;
   liabilities: number | null;
   longTermDebt: number | null;
+  /** Operating cash flow (GAAP) when tagged — FCF proxy input only. */
+  operatingCashFlow: number | null;
   roe: number | null;
   debtToEquity: number | null;
   price: number | null;
@@ -117,13 +125,17 @@ async function assemble(ticker: string): Promise<Fundamentals> {
       periodKind: null,
       revenue: null,
       revenueYoY: null,
+      revenueCagrApprox: null,
       netIncome: null,
+      netMargin: null,
       epsDiluted: null,
+      epsYoY: null,
       sharesDiluted: null,
       equity: null,
       assets: null,
       liabilities: null,
       longTermDebt: null,
+      operatingCashFlow: null,
       roe: null,
       debtToEquity: null,
       price: ratios.price,
@@ -160,13 +172,17 @@ async function assemble(ticker: string): Promise<Fundamentals> {
     periodKind: edgar.periodKind,
     revenue: edgar.revenue,
     revenueYoY: edgar.revenueYoY,
+    revenueCagrApprox: edgar.revenueCagrApprox ?? null,
     netIncome: edgar.netIncome,
+    netMargin: edgar.netMargin ?? null,
     epsDiluted: edgar.epsDiluted,
+    epsYoY: edgar.epsYoY ?? null,
     sharesDiluted: edgar.sharesDiluted,
     equity: edgar.equity,
     assets: edgar.assets,
     liabilities: edgar.liabilities,
     longTermDebt: edgar.longTermDebt,
+    operatingCashFlow: edgar.operatingCashFlow ?? null,
     roe: edgar.roe,
     debtToEquity: edgar.debtToEquity,
     price: ratios.price,
@@ -184,7 +200,7 @@ async function assemble(ticker: string): Promise<Fundamentals> {
 
 export const getFundamentals = unstable_cache(
   async (ticker: string) => assemble(ticker),
-  ['fundamentals-v7-ratios'],
+  ['fundamentals-v8-multiyear'],
   { revalidate: 3600, tags: ['fundamentals'] }
 );
 
@@ -201,13 +217,17 @@ export function emptyFundamentals(label = 'QUESTION'): Fundamentals {
     periodKind: null,
     revenue: null,
     revenueYoY: null,
+    revenueCagrApprox: null,
     netIncome: null,
+    netMargin: null,
     epsDiluted: null,
+    epsYoY: null,
     sharesDiluted: null,
     equity: null,
     assets: null,
     liabilities: null,
     longTermDebt: null,
+    operatingCashFlow: null,
     roe: null,
     debtToEquity: null,
     price: null,

@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
   outputFileTracingRoot: path.join(__dirname),
   async redirects() {
     return [
+      // SpaceX graduated to public equity (SPCX) — permanent SEO redirect off private desk.
       {
         source: '/private/spacex',
         destination: '/stocks/spcx',
@@ -22,6 +23,9 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  // Apex host is https://agents61.com. www→apex is in vercel.json (host match).
+  // http→https is automatic on Vercel when the domain has HTTPS enabled.
+  // Also set Primary Domain = agents61.com (not www) in the Vercel project Domains UI.
 };
 
 export default nextConfig;

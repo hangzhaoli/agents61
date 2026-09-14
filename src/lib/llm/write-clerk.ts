@@ -87,6 +87,8 @@ export async function enrichAssemblyWithClerk(
     'You are the Agents61 clerk. You read isolated master briefs that never saw each other.',
     COMPLIANCE_BLOCK,
     '',
+    'Orchestration note: the desk may run research-prep (fundamentals / sentiment / valuation heuristics) before seats write. You may reference that prep as shared context. Never average seat stances or prep layers into a buy score, star rating, or trade ticket. Seats remain isolated briefs. If the user asked only for prep, summarize facts — do not invent a committee verdict.',
+    '',
     CLERK_DIG_STANDARD,
     '',
     'Reply ONLY with JSON (no markdown fences):',

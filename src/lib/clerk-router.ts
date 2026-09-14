@@ -1,14 +1,16 @@
 /**
  * Clerk coordinator: route a chat line into desk tools.
  * Does not write a master brief. Staffs digital identities, then hands off.
+ * Optional research-prep path returns fundamentals/sentiment/valuation blocks — never a buy score.
  */
 
 import { MASTERS, getMasterBySlug } from '@/lib/masters';
 import { WORK_KITS } from '@/lib/work-kits';
 import { parseTokenExtra, type TokenExtraId } from '@/lib/token-extras';
+import type { ResearchPrep } from '@/lib/desk/research-pipeline';
 
 export type ClerkTool = {
-  id: 'convene' | 'screen' | 'kit' | 'extra' | 'cycle' | 'quant';
+  id: 'convene' | 'screen' | 'kit' | 'extra' | 'cycle' | 'quant' | 'prep';
   label: string;
   href: string;
   extra?: TokenExtraId;
@@ -27,6 +29,10 @@ export type ClerkRoute = {
   reply: string;
   tools: ClerkTool[];
   staffed: StaffedIdentity[];
+  /** When set, clerk should run research-prep for this ticker (no averaging). */
+  prepTicker?: string;
+  /** Filled by /api/desk/clerk after runResearchPrep — shared FACTS only. */
+  researchPrep?: ResearchPrep;
 };
 
 const TICKER_RE = /\b([A-Z]{1,5})(?:-(B|USD))?\b/g;
@@ -78,6 +84,55 @@ function mentionedTickers(text: string): string[] {
   return [...new Set(found)];
 }
 
+/** “prep AAPL”, “research prep MSFT”, “screen fundamentals for KO”, etc. */
+export function detectPrepIntent(text: string): string | null {
+  const prepVerb = /\b(prep|prepare|research[\s-]?prep|screen\s+(fundamentals?|facts)|fundamentals?\s+for)\b/i.test(
+    text
+  );
+  if (!prepVerb) return null;
+  const tickers = mentionedTickers(text);
+  if (tickers[0]) return tickers[0];
+  // “prep AAPL” when ticker was lowercase in original — re-scan raw tokens
+  const loose = text.toUpperCase().match(/\b([A-Z]{1,5})\b/g);
+  if (!loose) return null;
+  for (const t of loose) {
+    if (KNOWN.has(t) && t !== 'PREP') return t;
+  }
+  return null;
+}
+
+export function formatPrepClerkReply(
+  ticker: string,
+  prep: ResearchPrep,
+  opts?: { forCommittee?: boolean }
+): string {
+  const conveneHint = opts?.forCommittee
+    ? `Prep for ${ticker} is ready as shared FACTS. Next: convene isolated seats — I will not average them into a committee buy score.`
+    : 'Seats still write isolated briefs. I will not average this into a rating. Pick convene when ready.';
+  const lines = [
+    `Research-prep for ${ticker} (shared FACTS/CONTEXT only — not a committee buy score).`,
+    '',
+    `Fundamentals: ${prep.fundamentals.summary}`,
+    ...prep.fundamentals.highlights.slice(0, 8).map((h) => `· ${h}`),
+    '',
+    `Sentiment: ${prep.sentiment.summary}`,
+    ...prep.sentiment.highlights.slice(0, 4).map((h) => `· ${h}`),
+    '',
+    `Valuation: ${prep.valuation.summary}`,
+    ...prep.valuation.highlights.slice(0, 6).map((h) => `· ${h}`),
+    '',
+    conveneHint,
+  ];
+  return lines.join('\n');
+}
+
+/** True when user wants prep then committee handoff (still no auto-average). */
+export function detectPrepForCommittee(text: string): boolean {
+  return /\b(for\s+(the\s+)?committee|then\s+convene|prep\s+then\s+convene|ready\s+to\s+convene)\b/i.test(
+    text
+  );
+}
+
 export function routeClerkMessage(raw: string, extraHint?: string | null): ClerkRoute {
   const text = raw.trim();
   const extra = parseTokenExtra(extraHint) ?? (/\b(10-?k|10-?q|filing|transcript|年报|财报)\b/i.test(text)
@@ -87,8 +142,25 @@ export function routeClerkMessage(raw: string, extraHint?: string | null): Clerk
       : null);
   const slugs = mentionedMasters(text);
   const tickers = mentionedTickers(text);
+  const prepTicker = detectPrepIntent(text);
   const staffed = staffOf(slugs.slice(0, 6));
   const tools: ClerkTool[] = [];
+
+  if (prepTicker) {
+    const forCommittee = detectPrepForCommittee(text);
+    tools.push({
+      id: 'prep',
+      label: `Research-prep ${prepTicker} (facts only)`,
+      href: `/dashboard?entry=clerk&q=${encodeURIComponent(`prep ${prepTicker}`)}`,
+    });
+    tools.push({
+      id: 'convene',
+      label: forCommittee
+        ? `Next: convene isolated seats on ${prepTicker}`
+        : `Convene isolated seats on ${prepTicker}`,
+      href: `/dashboard?entry=analyze&q=${encodeURIComponent(`Research ${prepTicker}`)}`,
+    });
+  }
 
   if (extra === 'filing_extract') {
     tools.push({
@@ -107,7 +179,7 @@ export function routeClerkMessage(raw: string, extraHint?: string | null): Clerk
     });
   }
 
-  if (tickers[0]) {
+  if (tickers[0] && !prepTicker) {
     const t = tickers[0];
     const staffBit = slugs.length ? ` Staff ${staffed.map((s) => s.nameEn).join(', ')}.` : '';
     tools.push({
@@ -116,6 +188,11 @@ export function routeClerkMessage(raw: string, extraHint?: string | null): Clerk
       href: `/dashboard?entry=analyze&q=${encodeURIComponent(`Research ${t}.${staffBit}`)}${
         slugs.length ? `&masters=${slugs.slice(0, 6).join(',')}` : ''
       }`,
+    });
+    tools.push({
+      id: 'prep',
+      label: `Prep facts for ${t}`,
+      href: `/dashboard?entry=clerk&q=${encodeURIComponent(`prep ${t}`)}`,
     });
   }
 
@@ -126,7 +203,7 @@ export function routeClerkMessage(raw: string, extraHint?: string | null): Clerk
     tools.push({ id: 'kit', label: `Open kit: ${kit.title}`, href: kit.href });
   }
 
-  if (/\b(screen|filter|lineup|过滤|筛选)\b/i.test(text) || (slugs.length && !tickers.length && !extra)) {
+  if (/\b(screen|filter|lineup|过滤|筛选)\b/i.test(text) || (slugs.length && !tickers.length && !extra && !prepTicker)) {
     const masters = (slugs.length ? slugs : ['peter-lynch']).slice(0, 4).join(',');
     tools.push({
       id: 'screen',
@@ -158,7 +235,15 @@ export function routeClerkMessage(raw: string, extraHint?: string | null): Clerk
   const who = staffed.length
     ? `I can staff ${staffed.map((s) => s.nameEn).join(', ')} as unaffiliated digital identities — they still write alone.`
     : 'I coordinate. I do not write a master brief or average a rating.';
-  const tickerLine = tickers[0] ? ` ${tickers[0]} can go to isolated seats next.` : '';
+  const prepLine = prepTicker
+    ? detectPrepForCommittee(text)
+      ? ` Running research-prep on ${prepTicker}, then you can convene isolated seats — shared context only, no averaged buy score.`
+      : ` Running research-prep on ${prepTicker} (fundamentals / sentiment / valuation heuristics) — shared context only, no composite buy score.`
+    : '';
+  const tickerLine =
+    !prepTicker && tickers[0]
+      ? ` ${tickers[0]} can go to research-prep then isolated seat briefs — no composite buy score.`
+      : '';
   const extraLine =
     extra === 'trigger_pack'
       ? ' Trigger / invalidation is a token extra: conditions a seat would watch — not a buy or sell order.'
@@ -167,8 +252,9 @@ export function routeClerkMessage(raw: string, extraHint?: string | null): Clerk
         : '';
 
   return {
-    reply: `${who}${tickerLine}${extraLine} Pick a tool. Empty seats stay empty.`,
+    reply: `${who}${prepLine}${tickerLine}${extraLine} Pick a tool. Empty seats stay empty.`,
     tools: tools.slice(0, 4),
     staffed,
+    ...(prepTicker ? { prepTicker } : {}),
   };
 }

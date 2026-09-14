@@ -19,6 +19,7 @@ import { concurrencyForPlan } from '@/lib/llm/write-brief';
 import { enrichAssemblyWithClerk } from '@/lib/llm/write-clerk';
 import { getNewsDigest, hasTavilyKey } from '@/lib/llm/news-scan';
 import { mapPool } from '@/lib/llm/pool';
+import { runResearchPrep } from '@/lib/desk/research-pipeline';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 300;
@@ -90,6 +91,11 @@ export async function POST(request: Request) {
     hasTavilyKey() && desk.ticker
       ? await getNewsDigest(desk.ticker, facts.entityName ?? privateSnap?.name ?? null)
       : null;
+  // Pre-persona prep (fundamentals / sentiment / valuation) — shared CONTEXT only.
+  const researchPrep =
+    kind === 'ticker' && desk.ticker
+      ? runResearchPrep({ fundamentals: facts, news })
+      : null;
   const banner = deskModelBanner();
   const limit = concurrencyForPlan(plan);
 
@@ -125,6 +131,7 @@ export async function POST(request: Request) {
             plan,
             handoffNotes: mode === 'handoff' ? handoffDigest(upstream) : undefined,
             news,
+            researchPrepBlock: researchPrep?.contextBlock,
           });
           if (mode === 'handoff') {
             brief = attachHandoff(brief, upstream);

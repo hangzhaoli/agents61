@@ -11,6 +11,8 @@ import { draftIndependentBrief, type BriefKind, type BriefDraft, type DraftStanc
 import type { Master } from '@/lib/masters';
 import { getPersona } from '@/lib/personas';
 import { COMPLIANCE_BLOCK } from '@/lib/personas/types';
+import { buildPackContextAsync, type PackEvidence } from '@/lib/personas/modules';
+import { getSourcePack } from '@/lib/personas/source-pack';
 import type { PlanId } from '@/lib/tiers';
 import {
   deepseekChat,
@@ -24,6 +26,7 @@ import { REPORT_DIG_STANDARD } from '@/lib/llm/report-standard';
 export type WrittenBrief = BriefDraft & {
   isolated: true;
   engine: BriefEngine;
+  packEvidence?: PackEvidence;
 };
 
 const BUY_RE = /\byou should (buy|sell)\b/gi;
@@ -183,7 +186,8 @@ function templateBrief(
   question: string,
   kind: BriefKind,
   crypto: CryptoSnapshot | null,
-  note: string
+  note: string,
+  packEvidence?: PackEvidence | null
 ): WrittenBrief {
   const draft = draftIndependentBrief(master, subject, facts, question, kind, crypto);
   return {
@@ -191,6 +195,7 @@ function templateBrief(
     isolated: true,
     engine: 'template',
     sourceLine: `${draft.sourceLine} · ${note}`,
+    ...(packEvidence ? { packEvidence } : {}),
   };
 }
 
@@ -224,6 +229,11 @@ export type WriteBriefOpts = {
   handoffNotes?: string;
   /** Shared news layer — one scan per report, injected into every seat. */
   news?: NewsDigest | null;
+  /**
+   * Optional pre-persona research-prep block (fundamentals/sentiment/valuation).
+   * Injected as CONTEXT only — never averaged into a buy score.
+   */
+  researchPrepBlock?: string;
 };
 
 export async function writeLlmBrief(opts: WriteBriefOpts): Promise<WrittenBrief> {
@@ -232,8 +242,21 @@ export async function writeLlmBrief(opts: WriteBriefOpts): Promise<WrittenBrief>
     ? 'DeepSeek fallback — methodology card'
     : 'DeepSeek not configured — methodology card';
 
+  const pack = getSourcePack(master.slug);
+  const packBuilt =
+    pack &&
+    (await buildPackContextAsync({
+      slug: master.slug,
+      question,
+      subject,
+      fundamentals: kind === 'private' ? null : facts,
+      extraText: [opts.handoffNotes, news?.bullets?.join(' ')].filter(Boolean).join(' '),
+    }));
+  const packContext = packBuilt?.block ?? '';
+  const packEvidence = packBuilt?.evidence ?? null;
+
   if (!hasDeepseekKey()) {
-    return templateBrief(master, subject, facts, question, kind, crypto, fallbackNote);
+    return templateBrief(master, subject, facts, question, kind, crypto, fallbackNote, packEvidence);
   }
 
   const persona = getPersona(master.slug);
@@ -293,8 +316,10 @@ export async function writeLlmBrief(opts: WriteBriefOpts): Promise<WrittenBrief>
       : factsBlock(facts),
     kind === 'crypto' ? `\nCRYPTO SNAPSHOT:\n${cryptoBlock(crypto)}` : '',
     news ? `\n${newsBlock(news)}` : '',
+    opts.researchPrepBlock ? `\n${opts.researchPrepBlock}` : '',
+    packContext ? `\n${packContext}` : '',
     '',
-    'Write as if the user will use this brief to decide whether to dig deeper or walk away.',
+    'Write as if the user will use this brief to decide whether to dig deeper or walk away. CONTEXT/SOURCE PACK blocks are aids — not orders and not a composite rating.',
   ]
     .filter(Boolean)
     .join('\n');
@@ -343,11 +368,12 @@ export async function writeLlmBrief(opts: WriteBriefOpts): Promise<WrittenBrief>
       sourceLine: sourceTag(facts, engine),
       isolated: true,
       engine,
+      ...(packEvidence ? { packEvidence } : {}),
     };
   } catch (err) {
     const reason = err instanceof Error ? err.message : 'DeepSeek call failed';
     console.error(`[write-brief] ${master.slug} fallback: ${reason}`);
-    return templateBrief(master, subject, facts, question, kind, crypto, fallbackNote);
+    return templateBrief(master, subject, facts, question, kind, crypto, fallbackNote, packEvidence);
   }
 }
 

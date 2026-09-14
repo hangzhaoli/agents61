@@ -1,5 +1,12 @@
-import { routeClerkMessage } from '@/lib/clerk-router';
+import {
+  detectPrepForCommittee,
+  formatPrepClerkReply,
+  routeClerkMessage,
+} from '@/lib/clerk-router';
+import { getFundamentals } from '@/lib/data/fundamentals';
+import { runResearchPrep } from '@/lib/desk/research-pipeline';
 import { deepseekChat, hasDeepseekKey } from '@/lib/llm/deepseek';
+import { getNewsDigest, hasTavilyKey } from '@/lib/llm/news-scan';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,8 +24,24 @@ export async function POST(request: Request) {
 
   const routed = routeClerkMessage(message, body.extra);
   let reply = routed.reply;
+  let researchPrep = routed.researchPrep;
 
-  if (hasDeepseekKey()) {
+  // Research-prep path: facts blocks only — never invent a committee buy score.
+  if (routed.prepTicker) {
+    try {
+      const facts = await getFundamentals(routed.prepTicker);
+      const news = hasTavilyKey()
+        ? await getNewsDigest(routed.prepTicker, facts.entityName)
+        : null;
+      researchPrep = runResearchPrep({ fundamentals: facts, news });
+      reply = formatPrepClerkReply(routed.prepTicker, researchPrep, {
+        forCommittee: detectPrepForCommittee(message),
+      });
+    } catch (err) {
+      const reason = err instanceof Error ? err.message : 'prep failed';
+      reply = `Could not finish research-prep for ${routed.prepTicker} (${reason}). You can still convene isolated seats — I will not invent a buy score.`;
+    }
+  } else if (hasDeepseekKey()) {
     try {
       const live = await deepseekChat({
         lane: 'card',
@@ -30,7 +53,7 @@ export async function POST(request: Request) {
           {
             role: 'system',
             content:
-              'You are the Agents61 clerk. You coordinate isolated master seats (unaffiliated digital identities). You never say buy, sell, overweight, or a target price. You never impersonate a master. Two or three short sentences. Hand off to a tool.',
+              'You are the Agents61 clerk. You coordinate isolated master seats (unaffiliated digital identities). You never say buy, sell, overweight, or a target price. You never impersonate a master. You may suggest research-prep then seat briefs — never average ratings into a buy score. Two or three short sentences. Hand off to a tool.',
           },
           { role: 'user', content: message },
         ],
@@ -45,6 +68,12 @@ export async function POST(request: Request) {
     reply,
     tools: routed.tools,
     staffed: routed.staffed,
-    model: hasDeepseekKey() ? 'deepseek-v4-flash' : 'template',
+    researchPrep: researchPrep ?? undefined,
+    prepTicker: routed.prepTicker,
+    model: routed.prepTicker
+      ? 'research-prep'
+      : hasDeepseekKey()
+        ? 'deepseek-v4-flash'
+        : 'template',
   });
 }

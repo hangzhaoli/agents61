@@ -16,6 +16,7 @@ import { GROUP_ORDER, type Master } from '@/lib/masters';
 import { writeLlmBrief, type WriteBriefOpts } from '@/lib/llm/write-brief';
 import type { BriefEngine } from '@/lib/llm/deepseek';
 import type { UnderwriteFrame } from '@/lib/llm/report-standard';
+import type { PackEvidence } from '@/lib/personas/modules';
 
 export type BriefStance = 'constructive' | 'cautious' | 'skeptical' | 'inconclusive';
 
@@ -36,6 +37,8 @@ export type IndependentBrief = {
   engine?: BriefEngine;
   referencedFrom?: string[];
   referenceNote?: string;
+  /** Optional methodology evidence from a deep source pack (UI chips / citations). */
+  packEvidence?: PackEvidence;
 };
 
 export type MetricRow = { label: string; value: string; hint?: string };
@@ -355,13 +358,17 @@ function emptyFacts(ticker: string): Fundamentals {
     periodKind: null,
     revenue: null,
     revenueYoY: null,
+    revenueCagrApprox: null,
     netIncome: null,
+    netMargin: null,
     epsDiluted: null,
+    epsYoY: null,
     sharesDiluted: null,
     equity: null,
     assets: null,
     liabilities: null,
     longTermDebt: null,
+    operatingCashFlow: null,
     roe: null,
     debtToEquity: null,
     price: null,

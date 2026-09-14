@@ -19,6 +19,8 @@ import { PLANS, type PlanId } from '@/lib/tiers';
 import type { DeskMode } from '@/lib/desk-mode';
 import ReportDownloadButton from '@/components/report/ReportDownloadButton';
 import DataWorkbook from '@/components/report/DataWorkbook';
+import PackEvidenceBlock from '@/components/report/PackEvidenceBlock';
+import SeatContrastPanel from '@/components/report/SeatContrastPanel';
 import { PRIVATE_HOOKS } from '@/lib/private-hooks';
 import { privateDeskPrompt } from '@/lib/private-universe';
 
@@ -476,6 +478,11 @@ export default function DeskThread({
                   <li key={line}>{line}</li>
                 ))}
               </ul>
+              {briefs.length >= 2 && (
+                <div className="mb-4">
+                  <SeatContrastPanel briefs={briefs} />
+                </div>
+              )}
               <p className="text-xs font-semibold text-slate-500 mb-1">The split that stays</p>
               <ul className="text-sm text-slate-700 space-y-1 mb-3">
                 {assembly.splits.map((line) => (
@@ -635,6 +642,7 @@ function AgentBubble({ brief }: { brief: IndependentBrief }) {
           </p>
         )}
         <p className="text-[11px] text-slate-400 mt-2">{brief.sourceLine}</p>
+        {brief.packEvidence && <PackEvidenceBlock evidence={brief.packEvidence} />}
         <p className="text-[11px] text-slate-500 mt-1">
           <span className="font-semibold text-slate-600">Would change mind: </span>
           {brief.wouldChangeMind}

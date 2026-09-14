@@ -373,10 +373,10 @@ function WaffoSeatCheckoutForm() {
           <Timer className="mt-0.5 h-4 w-4 shrink-0 text-[#0052d9]" strokeWidth={2} />
           <div className="min-w-0 text-sm">
             <p className="font-bold text-slate-900">
-              限时 {FLASH_OFFER_PERCENT}% 已激活 · 剩余 {formatFlashCountdown(remainingMs)}
+              {FLASH_OFFER_PERCENT}% flash offer active · {formatFlashCountdown(remainingMs)} left
             </p>
             <p className="mt-0.5 text-xs text-slate-600">
-              结账将按折扣价向 Waffo 扣款。超时后恢复列表价。
+              Checkout charges the discounted price. List price returns when the timer ends.
             </p>
           </div>
         </div>
@@ -384,7 +384,8 @@ function WaffoSeatCheckoutForm() {
 
       {promoParam === FLASH_OFFER_ID && !showFlashPrice && (
         <p className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-          优惠窗口已过期或尚未激活 — 当前按原价结账。返回桌子可重新领取（若仍符合条件）。
+          Offer window expired or not activated — checkout uses list price. Return to the desk to
+          claim again if still eligible.
         </p>
       )}
 
@@ -454,7 +455,7 @@ function WaffoSeatCheckoutForm() {
           <p>{title}</p>
           {showFlashPrice && list && flashAmt && (
             <p className="mt-1 text-xs text-slate-400">
-              原价 ${list} → 现价 ${flashAmt}（Waffo priceSnapshot）
+              Was ${list} → Now ${flashAmt}
             </p>
           )}
         </div>

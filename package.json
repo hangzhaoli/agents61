@@ -6,7 +6,8 @@
     "dev": "next dev --webpack",
     "build": "next build --webpack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "smoke:packs": "npx --yes tsx src/lib/personas/source-pack/smoke.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.6",
