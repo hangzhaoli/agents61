@@ -91,8 +91,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const masterPages = MASTERS.map((m) => ({
     url: `${SITE_URL}/masters/${m.slug}`,
     lastModified: new Date(),
-    changeFrequency: 'monthly' as const,
-    priority: 0.6,
+    changeFrequency: 'weekly' as const,
+    priority: 0.75,
   }));
 
   const blogPages = BLOG_POSTS.map((p) => ({

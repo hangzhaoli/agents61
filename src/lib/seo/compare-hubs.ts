@@ -224,7 +224,55 @@ export const COMPARE_HUBS: CompareHub[] = [
           'No. Personas are unaffiliated simulations from public books and letters. A 13F is a filing. A brief is a method.',
       },
     ],
-    related: RELATED_CORE,
+    related: [
+      { label: 'Warren Buffett seat', href: '/masters/warren-buffett' },
+      { label: 'Stanley Druckenmiller seat', href: '/masters/stanley-druckenmiller' },
+      { label: 'David Tepper seat', href: '/masters/david-tepper' },
+      { label: 'vs DeepTicker', href: '/compare/deepticker' },
+      ...RELATED_CORE,
+    ],
+  },
+  {
+    slug: 'deepticker',
+    competitor: 'DeepTicker',
+    keyword: 'DeepTicker vs GuruFocus',
+    title: 'Agents61 vs DeepTicker — Method Simulation vs Guru Tracker (2026)',
+    description:
+      'DeepTicker vs GuruFocus-style tools track disclosed holdings. Agents61 simulates investment methods on a ticker you already picked — isolated briefs, not a 13F copy signal.',
+    h1: 'Agents61 vs DeepTicker: research seats vs guru tracking',
+    eyebrow: 'Compare · Guru trackers',
+    intro:
+      'Searchers comparing DeepTicker and GuruFocus usually want ownership history. Agents61 is a different job: staff named methodology seats on a ticker, keep them isolated, and publish splits. We do not claim a living fund bought the name yesterday.',
+    whenCompetitorWins: 'You want screens of disclosed holdings, ownership changes, and guru-follower tools.',
+    whenA61Wins:
+      'You already have a ticker and want Buffett-, Lynch-, or Druckenmiller-shaped tests written in isolation — without treating a 13F as a tip.',
+    rows: rows({
+      job: 'Guru / holdings tracker',
+      analysis: 'Disclosed ownership history',
+      red: 'Not a multi-method debate desk',
+      rating: 'Follow-the-filer signal risk',
+      crypto: 'Not the core',
+      best: 'Watching what funds reported',
+    }),
+    faqs: [
+      {
+        question: 'Is Agents61 a DeepTicker alternative?',
+        answer:
+          'Only if you wanted method-shaped research instead of ownership tracking. For 13F-style data, keep DeepTicker or GuruFocus. For committee simulation, use Agents61.',
+      },
+      {
+        question: 'DeepTicker vs GuruFocus — where does Agents61 fit?',
+        answer:
+          'Those two compete on tracking. Agents61 sits beside them: after you see a holding, staff the method on the ticker. See also /compare/gurufocus.',
+      },
+    ],
+    related: [
+      { label: 'vs GuruFocus', href: '/compare/gurufocus' },
+      { label: 'Peter Lynch seat', href: '/masters/peter-lynch' },
+      { label: 'Mohnish Pabrai seat', href: '/masters/mohnish-pabrai' },
+      { label: 'Chase Coleman seat', href: '/masters/chase-coleman' },
+      ...RELATED_CORE,
+    ],
   },
   {
     slug: 'morningstar',

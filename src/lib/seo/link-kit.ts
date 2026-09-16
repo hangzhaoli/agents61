@@ -50,7 +50,9 @@ Pricing: Observer is silent and free. Analyst is 16 seats at $19/month. Associat
     { name: 'Perplexity', url: 'https://www.perplexity.ai', altTo: 'https://agents61.com/compare/perplexity' },
     { name: 'TipRanks', url: 'https://www.tipranks.com', altTo: 'https://agents61.com/compare/tipranks' },
     { name: 'GuruFocus', url: 'https://www.gurufocus.com', altTo: 'https://agents61.com/compare/gurufocus' },
+    { name: 'DeepTicker', url: 'https://www.deepticker.com', altTo: 'https://agents61.com/compare/deepticker' },
     { name: 'Morningstar', url: 'https://www.morningstar.com', altTo: 'https://agents61.com/compare/morningstar' },
+    { name: 'Polymarket', url: 'https://polymarket.com', altTo: 'https://agents61.com/compare/polymarket' },
   ],
   preferredAnchors: [
     { text: 'Agents61', href: 'https://agents61.com/' },
@@ -58,6 +60,8 @@ Pricing: Observer is silent and free. Analyst is 16 seats at $19/month. Associat
     { text: 'AI investment committee', href: 'https://agents61.com/ai-investment-committee' },
     { text: 'Seeking Alpha alternative (committee)', href: 'https://agents61.com/compare/seeking-alpha' },
     { text: 'Agents61 vs ChatGPT', href: 'https://agents61.com/compare/chatgpt' },
+    { text: 'DeepTicker vs GuruFocus (committee framing)', href: 'https://agents61.com/compare/deepticker' },
+    { text: '61 Masters', href: 'https://agents61.com/masters' },
     { text: 'For LLMs', href: 'https://agents61.com/for-llms' },
   ],
   neverSay: [

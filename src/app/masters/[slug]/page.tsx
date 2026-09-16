@@ -11,6 +11,9 @@ import StyleCurve from '@/components/masters/StyleCurve';
 import { PLANS, unlocksOn } from '@/lib/tiers';
 import { getPersona } from '@/lib/personas';
 import { getMasterDossier } from '@/lib/master-dossier';
+import { pageMeta } from '@/lib/seo/meta';
+import { masterFaqs } from '@/lib/seo/master-faqs';
+import JsonLd from '@/components/seo/JsonLd';
 import type { Metadata } from 'next';
 
 interface Props {
@@ -26,21 +29,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const master = getMasterBySlug(slug);
   if (!master) return {};
 
-  return {
-    title: `${master.nameEn} AI agent — ${master.role}`,
-    description: `${master.nameEn} investment style, stock-selection strategy, and an illustrative style path on Agents61. ${master.methodology} Simulated persona from public books and letters. Not advice.`,
+  return pageMeta({
+    title: `${master.nameEn} investing method — Agents61 AI seat`,
+    description: `${master.nameEn} stock analysis and investing style as an Agents61 committee seat: ${master.methodology} Simulated from public sources. Not advice. Not a buy button.`,
+    path: `/masters/${master.slug}`,
     keywords: [
-      `${master.nameEn} stock analysis`,
       `${master.nameEn} investing`,
-      `${master.nameEn} AI agent`,
-      'investment research',
+      `${master.nameEn} stock analysis`,
+      `${master.nameEn} investment strategy`,
+      `${master.nameEn} AI`,
       'AI investment committee',
+      'investment research simulation',
     ],
-    openGraph: {
-      title: `${master.nameEn} — Agents61 master seat`,
-      description: master.methodology,
-    },
-  };
+  });
 }
 
 export default async function MasterProfilePage({ params }: Props) {
@@ -53,9 +54,38 @@ export default async function MasterProfilePage({ params }: Props) {
   const persona = getPersona(slug);
   const plan = unlocksOn(master.slug);
   const dossier = getMasterDossier(master);
+  const faqs = masterFaqs(master);
+  const pageUrl = `https://agents61.com/masters/${master.slug}`;
 
   return (
     <>
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'WebPage',
+          name: `${master.nameEn} — Agents61 master seat`,
+          url: pageUrl,
+          description: master.methodology,
+          about: {
+            '@type': 'Person',
+            name: master.nameEn,
+            description: `${master.role}. ${master.methodology}`,
+            url: pageUrl,
+          },
+          isPartOf: { '@type': 'WebSite', name: 'Agents61', url: 'https://agents61.com' },
+        }}
+      />
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          mainEntity: faqs.map((f) => ({
+            '@type': 'Question',
+            name: f.question,
+            acceptedAnswer: { '@type': 'Answer', text: f.answer },
+          })),
+        }}
+      />
       <Navbar />
       <div className="section-container py-12">
         <Link
@@ -67,7 +97,6 @@ export default async function MasterProfilePage({ params }: Props) {
         </Link>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-          {/* Main profile */}
           <div className="lg:col-span-2">
             <div className="card p-8 md:p-10">
               <div className="flex items-start gap-6 mb-8">
@@ -77,6 +106,10 @@ export default async function MasterProfilePage({ params }: Props) {
                   <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900">
                     {master.nameEn}
                   </h1>
+                  <p className="text-base text-slate-600 mt-2 leading-snug">
+                    Investing method as an Agents61 AI committee seat — stock analysis simulation,
+                    not a tip.
+                  </p>
                   <p className="text-sm font-medium text-slate-400 mt-2 uppercase tracking-wider">
                     {master.role}
                   </p>
@@ -240,13 +273,26 @@ export default async function MasterProfilePage({ params }: Props) {
                     their methodology notes — they do not see the other drafts.
                   </p>
                 )}
+
+                <div>
+                  <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">
+                    Questions
+                  </h2>
+                  <dl className="space-y-4">
+                    {faqs.map((f) => (
+                      <div key={f.question}>
+                        <dt className="text-sm font-bold text-slate-900">{f.question}</dt>
+                        <dd className="mt-1 text-sm text-slate-600 leading-relaxed">{f.answer}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </div>
               </div>
 
               <MasterAnalyzeCta name={master.nameEn} plan={plan} />
             </div>
           </div>
 
-          {/* Sidebar */}
           <div className="space-y-6">
             <div className="card-flat p-6">
               <h3 className="text-sm font-semibold text-slate-900 mb-4">
@@ -287,6 +333,37 @@ export default async function MasterProfilePage({ params }: Props) {
                 <p className="text-xs text-slate-600"><span className="font-semibold text-slate-800">Horizon:</span> {dossier.horizon}</p>
                 <p className="text-xs text-slate-600"><span className="font-semibold text-slate-800">Turnover:</span> {dossier.turnover}</p>
               </div>
+            </div>
+
+            <div className="card-flat p-6">
+              <h3 className="text-sm font-semibold text-slate-900 mb-3">Related research</h3>
+              <ul className="space-y-2 text-sm">
+                <li>
+                  <Link href="/compare/gurufocus" className="text-[#0052d9] font-medium hover:underline">
+                    vs GuruFocus (method ≠ 13F)
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/compare/chatgpt" className="text-[#0052d9] font-medium hover:underline">
+                    vs ChatGPT stock analysis
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/compare" className="text-[#0052d9] font-medium hover:underline">
+                    All comparisons
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/predictions" className="text-[#0052d9] font-medium hover:underline">
+                    Prediction Markets odds desk
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/masters" className="text-[#0052d9] font-medium hover:underline">
+                    All 61 masters
+                  </Link>
+                </li>
+              </ul>
             </div>
 
             {colleagues.length > 0 && (
