@@ -4,6 +4,7 @@ import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import AuthGateLink from '@/components/auth/AuthGateLink';
 import JsonLd from '@/components/seo/JsonLd';
+import SeoRegisterCta from '@/components/seo/SeoRegisterCta';
 import type { SeoHub } from '@/lib/seo/hub-types';
 
 export default function SeoHubPage({ hub }: { hub: SeoHub }) {
@@ -68,7 +69,7 @@ export default function SeoHubPage({ hub }: { hub: SeoHub }) {
             ))}
           </div>
         </section>
-        <section>
+        <section className="mb-4">
           <h2 className="text-2xl font-bold text-slate-900 mb-4">Related</h2>
           <div className="grid sm:grid-cols-2 gap-3">
             {hub.related.map((r) => (
@@ -78,6 +79,13 @@ export default function SeoHubPage({ hub }: { hub: SeoHub }) {
             ))}
           </div>
         </section>
+        <SeoRegisterCta
+          title={hub.ctaTitle}
+          body={hub.ctaBody}
+          href={hub.ctaHref}
+          guestHref={hub.ctaGuestHref}
+          label="Create account"
+        />
         <p className="mt-10 text-xs text-slate-400">
           Research simulation. Isolated briefs never say you should buy. No order routing.
         </p>

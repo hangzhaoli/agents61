@@ -5,6 +5,7 @@ import { ArrowRight } from 'lucide-react';
 import AuthGateLink from '@/components/auth/AuthGateLink';
 import { pageMeta, PAGE_DESCRIPTIONS } from '@/lib/seo/meta';
 import JsonLd from '@/components/seo/JsonLd';
+import SeoRegisterCta from '@/components/seo/SeoRegisterCta';
 import { COMPARE_HUBS } from '@/lib/seo/compare-hubs';
 
 export const metadata = pageMeta({
@@ -150,6 +151,14 @@ export default function ComparePage() {
           <Link href="/alternatives" className="btn-secondary">
             Alternatives index
           </Link>
+        </div>
+
+        <div className="max-w-3xl">
+          <SeoRegisterCta
+            title="Pick a comparison, then register"
+            body="Create an account to staff the committee on a ticker you already researched elsewhere. Keep the tape, the articles, or the chatbot for their jobs — Agents61 is the disagreement layer."
+            label="Create account"
+          />
         </div>
       </div>
       <Footer />

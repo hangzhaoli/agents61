@@ -1,4 +1,4 @@
-import type { CompareHub } from '@/lib/seo/hub-types';
+import type { CompareHub, SeoSection } from '@/lib/seo/hub-types';
 
 const RELATED_CORE = [
   { label: 'All comparisons', href: '/compare' },
@@ -7,9 +7,7 @@ const RELATED_CORE = [
   { label: 'Pricing', href: '/pricing' },
 ];
 
-function rows(
-  competitor: Record<string, string>
-): CompareHub['rows'] {
+function rows(competitor: Record<string, string>): CompareHub['rows'] {
   return [
     { feature: 'Job', a61: 'Investment committee simulation', competitor: competitor.job },
     { feature: 'Stock analysis', a61: 'Named masters, isolated or pipeline handoff', competitor: competitor.analysis },
@@ -19,6 +17,16 @@ function rows(
     { feature: 'Best for', a61: 'Intermediate investors who already research', competitor: competitor.best },
   ];
 }
+
+const DESK_FLOW: SeoSection = {
+  heading: 'What you actually get on Agents61',
+  body: 'You bring a ticker (or open Prediction Markets for event odds). Unlocked seats write under their own rules. Isolated mode means seats cannot peek at each other. A clerk then stacks agreements and splits — without a composite buy/hold/sell. Empty seats stay empty; you pay for staffing, not a louder chat.',
+};
+
+const COMPLIANCE: SeoSection = {
+  heading: 'What Agents61 will not do',
+  body: 'No order routing. No wallet. No “you should buy” sentence at the bottom of a brief. Personas are unaffiliated simulations from books and letters — not the living people, not a 13F tip, not a Street poll. Keep your tape and your broker for execution.',
+};
 
 export const COMPARE_HUBS: CompareHub[] = [
   {
@@ -33,9 +41,9 @@ export const COMPARE_HUBS: CompareHub[] = [
     intro:
       'ChatGPT writes a fast AAPL memo. The failure mode is anchoring: the first confident paragraph becomes the room. Agents61 staffs named seats that cannot see each other, then a clerk stacks splits. Same ticker. No averaged rating.',
     whenCompetitorWins:
-      'A first draft, a filing summary, or a question you have not staffed yet. Speed, not inversion.',
+      'A first draft, a filing summary, brainstorming questions, or a topic you have not staffed yet. Speed and breadth beat seating when you still need to find the question.',
     whenA61Wins:
-      'When you already have a name and need Buffett and Wood to disagree in public — without a copilot that agrees with you.',
+      'When you already have a name and need Buffett and Wood to disagree in public — without a copilot that agrees with you and collapses 16 methods into one fluent voice.',
     rows: rows({
       job: 'One-model chat memo',
       analysis: 'Single voice, prompt-dependent',
@@ -44,6 +52,18 @@ export const COMPARE_HUBS: CompareHub[] = [
       crypto: 'Generic writeup',
       best: 'A first draft, not a desk',
     }),
+    sections: [
+      {
+        heading: 'Why one fluent memo fails as a committee',
+        body: 'A single model can role-play “Buffett” and “Wood” in the same thread. The second voice has already read the first. That is theater, not isolation. Agents61 pays for empty chairs so a growth seat cannot sand a value seat mid-paragraph. The clerk records the split instead of negotiating it away.',
+      },
+      DESK_FLOW,
+      {
+        heading: 'A practical stack',
+        body: 'Use ChatGPT (or Perplexity) to gather filings links and a first pass. When the ticker is worth a desk run, register on Agents61, staff unlocked masters, and force a kill-condition before you size. Keep ChatGPT for drafting; keep Agents61 for disagreement on the record.',
+      },
+      COMPLIANCE,
+    ],
     faqs: [
       {
         question: 'Can ChatGPT replace an investment committee?',
@@ -58,6 +78,11 @@ export const COMPARE_HUBS: CompareHub[] = [
       {
         question: 'Will Agents61 tell me what to buy?',
         answer: 'No. Isolated briefs never say you should buy. There is no order routing.',
+      },
+      {
+        question: 'Do I need to abandon ChatGPT?',
+        answer:
+          'No. Use it for speed. Use Agents61 when you need named methods that cannot rewrite each other. That stack is intentional.',
       },
     ],
     related: [
@@ -77,9 +102,9 @@ export const COMPARE_HUBS: CompareHub[] = [
     intro:
       'Seeking Alpha sells human (or hybrid) opinion at a subscription. Quality varies. You still get one narrative at a time, often with a rating that behaves like a buy button. Agents61 does not publish a rating. It publishes splits.',
     whenCompetitorWins:
-      'You want a human author, a ticker recap stream, or a quant rating to skim.',
+      'You want a human author, a ticker recap stream, community comments, or a quant rating to skim before deeper work.',
     whenA61Wins:
-      'You want the same ticker stress-tested by named methods — Graham, Lynch, Burry — without a consensus score.',
+      'You want the same ticker stress-tested by named methods — Graham, Lynch, Burry — without a consensus score that hides the argument.',
     rows: rows({
       job: 'Articles and author ratings',
       analysis: 'One narrative at a time',
@@ -88,6 +113,18 @@ export const COMPARE_HUBS: CompareHub[] = [
       crypto: 'Mixed coverage',
       best: 'Reading one thesis',
     }),
+    sections: [
+      {
+        heading: 'Bylines vs empty chairs',
+        body: 'A good Seeking Alpha piece is still one thesis with one author’s incentives. Agents61 is seating: unlocked masters write alone, then a clerk stacks. If half the room kills the idea, that split stays on the page — it does not get averaged into “Hold.”',
+      },
+      DESK_FLOW,
+      {
+        heading: 'How to use both',
+        body: 'Read SA for coverage and author context. When a piece moves you, staff Agents61 on the ticker and ask what would invalidate the thesis. Keep the article. Add inversion before size.',
+      },
+      COMPLIANCE,
+    ],
     faqs: [
       {
         question: 'Is Agents61 a Seeking Alpha alternative?',
@@ -97,6 +134,11 @@ export const COMPARE_HUBS: CompareHub[] = [
       {
         question: 'Does Agents61 have quant ratings like SA?',
         answer: 'No. A clerk stacks agreements and splits. There is no composite buy/hold/sell.',
+      },
+      {
+        question: 'Can I red-team a Seeking Alpha thesis here?',
+        answer:
+          'Yes — that is a core use case. Paste the ticker, staff debate seats, and keep the bull narrative from editing the bear narrative.',
       },
     ],
     related: [
@@ -116,8 +158,10 @@ export const COMPARE_HUBS: CompareHub[] = [
     eyebrow: 'Compare · Data sites',
     intro:
       'Yahoo Finance is excellent at last price, charts, and a path to filings. It will not invert MSFT or keep a red team alive after a bull paragraph. Agents61 is not a quote product. Keep the tape. Staff the desk.',
-    whenCompetitorWins: 'Checking a last print, a chart, or a filing link in two clicks.',
-    whenA61Wins: 'You already have the quote and need a committee to write without averaging.',
+    whenCompetitorWins:
+      'Checking a last print, a chart, news headlines, or a filing link in two clicks — the daily tape job.',
+    whenA61Wins:
+      'You already have the quote and need a committee to write without averaging. Thesis work after the numbers, not instead of them.',
     rows: rows({
       job: 'Quotes, charts, filings links',
       analysis: 'Data first, thesis optional',
@@ -126,10 +170,33 @@ export const COMPARE_HUBS: CompareHub[] = [
       crypto: 'Prices if listed',
       best: 'Checking a last price',
     }),
+    sections: [
+      {
+        heading: 'Tape first, committee second',
+        body: 'Agents61 assumes you already pulled last price, volume, and a path to the 10-K elsewhere. We will not race Yahoo on charts. We will staff Graham, Lynch, and a debate seat on the name you already verified exists.',
+      },
+      DESK_FLOW,
+      {
+        heading: 'Typical workflow',
+        body: 'Open Yahoo (or your broker) → confirm the ticker and a few multiples → register on Agents61 → run isolated briefs → read clerk splits → write one kill-condition before you size. Two tools, two jobs.',
+      },
+      COMPLIANCE,
+    ],
     faqs: [
       {
         question: 'Does Agents61 replace Yahoo Finance?',
-        answer: 'No. It does not try to be a tape. Use Yahoo for quotes. Use Agents61 for isolated briefs.',
+        answer:
+          'No. It does not try to be a tape. Use Yahoo for quotes, charts, and filings links. Use Agents61 for isolated briefs and inversion.',
+      },
+      {
+        question: 'Will Agents61 show live quotes?',
+        answer:
+          'The product is research writing, not a streaming quote plant. Keep Yahoo or your broker for prints.',
+      },
+      {
+        question: 'What about news headlines on Yahoo?',
+        answer:
+          'Useful context. On Agents61, news-aware seats still write under method rules — and prediction research has its own news layer on paid plans. Neither is a replacement for a wire.',
       },
     ],
     related: RELATED_CORE,
@@ -145,8 +212,8 @@ export const COMPARE_HUBS: CompareHub[] = [
     eyebrow: 'Compare · Terminals',
     intro:
       'Koyfin, TradingView, and Bloomberg-class terminals win at data density. Agents61 will not replace a watchlist of 40 multiples. It will staff named seats to write after you already have the numbers.',
-    whenCompetitorWins: 'Screening, charting, and comparing multiples across a universe.',
-    whenA61Wins: 'A single name that needs inversion, cycle context, and a clerk stack.',
+    whenCompetitorWins: 'Screening, charting, and comparing multiples across a universe — the daily terminal job.',
+    whenA61Wins: 'A single name that needs inversion, cycle context, and a clerk stack after the screen.',
     rows: rows({
       job: 'Retail data terminal',
       analysis: 'Charts, multiples, dashboards',
@@ -155,11 +222,29 @@ export const COMPARE_HUBS: CompareHub[] = [
       crypto: 'If the terminal lists it',
       best: 'Pros and power users who live in data',
     }),
+    sections: [
+      {
+        heading: 'Terminals do not invert for you',
+        body: 'A great Koyfin layout still leaves the thesis in your head. Agents61 externalizes disagreement: unlocked methods write alone, then the clerk shows where they split. That is not a cheaper FactSet — it is a different layer.',
+      },
+      DESK_FLOW,
+      COMPLIANCE,
+    ],
     faqs: [
       {
         question: 'Is Agents61 a Koyfin or Bloomberg alternative?',
         answer:
-          'No. POSITIONING is explicit: professionals who need a terminal should keep it. Agents61 is the committee layer, not FactSet.',
+          'No. Positioning is explicit: professionals who need a terminal should keep it. Agents61 is the committee layer, not FactSet.',
+      },
+      {
+        question: 'Can I screen names on Agents61?',
+        answer:
+          'Opportunity boards and prediction scanners help prioritize, but this is not a multi-factor equity screener. Bring candidates from Koyfin, then staff the desk.',
+      },
+      {
+        question: 'Who is this for?',
+        answer:
+          'Intermediate investors who already research. If you live in charts and multiples all day, keep Koyfin. Add Agents61 when a name needs a committee.',
       },
     ],
     related: [
@@ -178,8 +263,8 @@ export const COMPARE_HUBS: CompareHub[] = [
     eyebrow: 'Compare · Analyst aggregation',
     intro:
       'TipRanks is useful when you want to see what the Street already said. Averaging analysts is the opposite of isolation. Agents61 will not turn 61 seats into a smart score.',
-    whenCompetitorWins: 'You want a heatmap of published analyst ratings and insider prints.',
-    whenA61Wins: 'You want methods that predate this quarter’s consensus to write independently.',
+    whenCompetitorWins: 'You want a heatmap of published analyst ratings, price targets, and insider prints.',
+    whenA61Wins: 'You want methods that predate this quarter’s consensus to write independently — without a composite badge.',
     rows: rows({
       job: 'Aggregate Street ratings',
       analysis: 'Consensus and scorecards',
@@ -188,10 +273,28 @@ export const COMPARE_HUBS: CompareHub[] = [
       crypto: 'Limited',
       best: 'Tracking what analysts already published',
     }),
+    sections: [
+      {
+        heading: 'Consensus is a different claim',
+        body: 'A TipRanks smart score answers “what did published analysts say?” Agents61 answers “what do isolated historical methods write on this ticker today?” Mixing those claims is how investors confuse a poll with a brief.',
+      },
+      DESK_FLOW,
+      COMPLIANCE,
+    ],
     faqs: [
       {
         question: 'Does Agents61 show Wall Street ratings?',
         answer: 'No. It simulates historical master methods. That is not a live analyst poll.',
+      },
+      {
+        question: 'Is Agents61 a TipRanks alternative?',
+        answer:
+          'Only for people who wanted method-shaped research instead of Street aggregation. Keep TipRanks for the poll. Add Agents61 for isolation.',
+      },
+      {
+        question: 'Why refuse a composite score?',
+        answer:
+          'Compression hides the argument. The product is the split — which seats agreed, which killed the idea, and why.',
       },
     ],
     related: RELATED_CORE,
@@ -217,11 +320,33 @@ export const COMPARE_HUBS: CompareHub[] = [
       crypto: 'Not the core',
       best: 'Copying or tracking disclosed holdings',
     }),
+    sections: [
+      {
+        heading: 'A 13F is a filing. A brief is a method.',
+        body: 'Copying a disclosed holding is a different product from stress-testing a ticker under Graham or Lynch rules. Agents61 never claims a living fund bought the name yesterday. Personas are unaffiliated simulations from public books and letters.',
+      },
+      {
+        heading: 'After you see a holding',
+        body: 'Open GuruFocus (or DeepTicker) → note the ticker → register on Agents61 → staff the relevant method seats → read splits and kill-conditions. Ownership history informs curiosity. The desk informs whether the method still likes the story.',
+      },
+      DESK_FLOW,
+      COMPLIANCE,
+    ],
     faqs: [
       {
         question: 'Does Agents61 use real Buffett holdings?',
         answer:
           'No. Personas are unaffiliated simulations from public books and letters. A 13F is a filing. A brief is a method.',
+      },
+      {
+        question: 'Is Agents61 a GuruFocus alternative?',
+        answer:
+          'For ownership tracking, no. For applying a method to a ticker you already care about, yes — that is the adjacent job.',
+      },
+      {
+        question: 'How does this relate to DeepTicker?',
+        answer:
+          'DeepTicker and GuruFocus compete on tracking. Agents61 sits beside both. See /compare/deepticker.',
       },
     ],
     related: [
@@ -243,7 +368,8 @@ export const COMPARE_HUBS: CompareHub[] = [
     eyebrow: 'Compare · Guru trackers',
     intro:
       'Searchers comparing DeepTicker and GuruFocus usually want ownership history. Agents61 is a different job: staff named methodology seats on a ticker, keep them isolated, and publish splits. We do not claim a living fund bought the name yesterday.',
-    whenCompetitorWins: 'You want screens of disclosed holdings, ownership changes, and guru-follower tools.',
+    whenCompetitorWins:
+      'You want screens of disclosed holdings, ownership changes, and guru-follower tools — the tracking job.',
     whenA61Wins:
       'You already have a ticker and want Buffett-, Lynch-, or Druckenmiller-shaped tests written in isolation — without treating a 13F as a tip.',
     rows: rows({
@@ -254,6 +380,22 @@ export const COMPARE_HUBS: CompareHub[] = [
       crypto: 'Not the core',
       best: 'Watching what funds reported',
     }),
+    sections: [
+      {
+        heading: 'DeepTicker vs GuruFocus vs Agents61',
+        body: 'DeepTicker and GuruFocus compete on who filed what and when. Agents61 does not enter that race. After a holding sparks curiosity, staff the method on the ticker: isolated seats, clerk splits, kill-conditions. Tracking answers “who owned it.” The desk answers “would this method still like the story under today’s facts?”',
+      },
+      {
+        heading: 'Why follow-the-filer is not a brief',
+        body: 'A 13F is lagged, incomplete, and silent on thesis. Treating it as a buy signal is a different risk from running a method simulation. Agents61 refuses to imply a live trade from a persona — and refuses a composite score that hides disagreement.',
+      },
+      DESK_FLOW,
+      {
+        heading: 'Suggested workflow',
+        body: 'Screen ownership on DeepTicker or GuruFocus → pick one ticker → open the matching master page on Agents61 (e.g. Buffett, Lynch, Pabrai) → register → run Analyze → read the clerk stack before you size. Keep the tracker. Add the committee.',
+      },
+      COMPLIANCE,
+    ],
     faqs: [
       {
         question: 'Is Agents61 a DeepTicker alternative?',
@@ -265,6 +407,16 @@ export const COMPARE_HUBS: CompareHub[] = [
         answer:
           'Those two compete on tracking. Agents61 sits beside them: after you see a holding, staff the method on the ticker. See also /compare/gurufocus.',
       },
+      {
+        question: 'Will Agents61 show real fund holdings?',
+        answer:
+          'No. We simulate methodologies from public books and letters. We do not scrape or republish living 13F positions as tips.',
+      },
+      {
+        question: 'Which masters pair well after a guru screen?',
+        answer:
+          'Start with the method you were tracking — Buffett, Lynch, Druckenmiller, Tepper, Pabrai, Coleman — then add a debate seat so the bull narrative cannot edit the bear.',
+      },
     ],
     related: [
       { label: 'vs GuruFocus', href: '/compare/gurufocus' },
@@ -273,6 +425,9 @@ export const COMPARE_HUBS: CompareHub[] = [
       { label: 'Chase Coleman seat', href: '/masters/chase-coleman' },
       ...RELATED_CORE,
     ],
+    ctaTitle: 'Done tracking holdings? Staff the method on your desk',
+    ctaBody:
+      'Register to run isolated master briefs on a ticker you found via DeepTicker or GuruFocus. Tracking shows who filed. Agents61 stress-tests the method — research simulation, not a copy-trade tip.',
   },
   {
     slug: 'morningstar',
@@ -285,8 +440,8 @@ export const COMPARE_HUBS: CompareHub[] = [
     eyebrow: 'Compare · Fund research',
     intro:
       'Morningstar is strong on funds, moats, and a rating grammar investors already know. Agents61 is a ticker committee. It will not give you five stars. It will give you seats that disagree.',
-    whenCompetitorWins: 'Fund due diligence, style boxes, and a familiar star rating.',
-    whenA61Wins: 'A single equity or ETF that needs isolated methods, not a star.',
+    whenCompetitorWins: 'Fund due diligence, style boxes, fair-value language, and a familiar star rating.',
+    whenA61Wins: 'A single equity or ETF that needs isolated methods, not a star that compresses the argument.',
     rows: rows({
       job: 'Fund and equity ratings',
       analysis: 'Moat + fair value language',
@@ -295,13 +450,34 @@ export const COMPARE_HUBS: CompareHub[] = [
       crypto: 'Not the core',
       best: 'Fund shoppers and rating readers',
     }),
+    sections: [
+      {
+        heading: 'Stars compress. Splits preserve.',
+        body: 'A Morningstar star is a useful shorthand for fund shoppers. Agents61 treats compression as the failure mode for ticker research: if every seat collapses into one badge, you paid for theater. The clerk keeps the argument visible.',
+      },
+      DESK_FLOW,
+      COMPLIANCE,
+    ],
     faqs: [
       {
         question: 'Is this a cheaper Morningstar?',
         answer: 'No. Different output. Morningstar rates. Agents61 stacks isolated briefs.',
       },
+      {
+        question: 'Can I research ETFs here?',
+        answer:
+          'Yes — as tickers through the equity desk and the ETF use case. You will not get a star substitute. See /use-cases/etf-committee.',
+      },
+      {
+        question: 'Do you cover mutual funds like Morningstar?',
+        answer:
+          'Not as a fund plant. Agents61 is a research committee on names you bring — mainly US equities, ETFs, crypto board, and a private board.',
+      },
     ],
-    related: RELATED_CORE,
+    related: [
+      { label: 'ETF committee use case', href: '/use-cases/etf-committee' },
+      ...RELATED_CORE,
+    ],
   },
   {
     slug: 'perplexity',
@@ -324,10 +500,32 @@ export const COMPARE_HUBS: CompareHub[] = [
       crypto: 'News-shaped',
       best: 'Fast sourced briefing',
     }),
+    sections: [
+      {
+        heading: 'Citations gather. Seats disagree.',
+        body: 'Perplexity earns its place as a research front door. Agents61 starts when gathering is done: unlocked masters write under isolation, then a clerk stacks. Use both — gather, then staff.',
+      },
+      DESK_FLOW,
+      {
+        heading: 'Practical stack',
+        body: 'Perplexity for sources and a first summary → Agents61 for isolated methods and inversion → your broker for execution. Do not ask either tool for a buy button.',
+      },
+      COMPLIANCE,
+    ],
     faqs: [
       {
         question: 'Can I use both?',
         answer: 'Yes. Perplexity to gather. Agents61 to staff and invert. That is the intended stack.',
+      },
+      {
+        question: 'Does Agents61 cite the open web like Perplexity?',
+        answer:
+          'Seats work from method rules and available context on the desk. Prediction research can add a paid news layer. We are not competing as a general answer engine.',
+      },
+      {
+        question: 'Will Perplexity replace a committee?',
+        answer:
+          'A synthesis is still one voice. Isolation exists so methods cannot rewrite each other. That is the product difference.',
       },
     ],
     related: [
@@ -347,7 +545,7 @@ export const COMPARE_HUBS: CompareHub[] = [
     intro:
       'If you need Bloomberg, you need Bloomberg. Agents61 does not pretend to be a data plant. It is a 61-seat writing desk for people who already have quotes somewhere else.',
     whenCompetitorWins: 'Live markets, messaging, and institutional data. Always.',
-    whenA61Wins: 'Retail research simulation after you already pulled the numbers.',
+    whenA61Wins: 'Retail research simulation after you already pulled the numbers elsewhere.',
     rows: rows({
       job: 'Institutional terminal',
       analysis: 'Data, news, analytics',
@@ -356,11 +554,28 @@ export const COMPARE_HUBS: CompareHub[] = [
       crypto: 'If the desk pays for it',
       best: 'Professionals',
     }),
+    sections: [
+      {
+        heading: 'We say this on purpose',
+        body: 'Search demand for a “Bloomberg alternative for retail” is real. Agents61 refuses the bait. Professionals who need the terminal should keep it. Intermediate investors who need a committee should staff Agents61 — after they already have a tape.',
+      },
+      DESK_FLOW,
+      COMPLIANCE,
+    ],
     faqs: [
       {
         question: 'Is Agents61 a Bloomberg alternative for retail?',
         answer:
           'Only in the narrow sense that it is research software. It is not a terminal alternative. We say that on purpose.',
+      },
+      {
+        question: 'Who should use Agents61 instead?',
+        answer:
+          'Investors who already research on Yahoo, Koyfin, a broker, or a chat tool — and need isolated methods plus inversion, not another data plant.',
+      },
+      {
+        question: 'Do you compete on news or messaging?',
+        answer: 'No. Keep Bloomberg (or any wire) for that. Agents61 writes briefs and stacks splits.',
       },
     ],
     related: RELATED_CORE,
@@ -388,6 +603,21 @@ export const COMPARE_HUBS: CompareHub[] = [
       { feature: 'Trade / wallet', a61: 'None — View Market only', competitor: 'Buy YES / NO on venue' },
       { feature: 'Best for', a61: 'Investors researching event odds', competitor: 'Traders who want the contract' },
     ],
+    sections: [
+      {
+        heading: 'Markets price the future. Agents61 researches the odds.',
+        body: 'That line is the product. Polymarket settles contracts. Agents61 answers whether the mid makes sense under independent research: base rates, domain, market structure, Bayesian update, contrarian and red-team seats, resolution wording — then a Prediction Clerk synthesizes range and confidence.',
+      },
+      {
+        heading: 'What a Probability Gap is (and is not)',
+        body: 'Gap = Agents61 estimate − market YES%. It is disagreement under research uncertainty — not a guaranteed edge. Resolution ambiguity can make a “correct” world-event resolve the wrong way for the contract. Free desks get one Analyze; paid desks add news layer and Pro Clerk.',
+      },
+      {
+        heading: 'How to start',
+        body: 'Open /predictions → sort Top Gaps or paste a Polymarket /event/… URL → run Analyze → read why-wrong and why-right before any edge story → Watchlist the mid. Keep Polymarket for trading. Keep Agents61 for research.',
+      },
+      COMPLIANCE,
+    ],
     faqs: [
       {
         question: 'Is Agents61 a Polymarket alternative?',
@@ -404,6 +634,11 @@ export const COMPARE_HUBS: CompareHub[] = [
         answer:
           'Architecture is multi-provider. Polymarket is live first; Kalshi follows after validation.',
       },
+      {
+        question: 'Is there a free analyze?',
+        answer:
+          'Yes — one free Analyze to try the Strategy Report. Paid desks unlock news layer, Pro Clerk, and ongoing use alongside the equity committee.',
+      },
     ],
     related: [
       { label: 'Prediction Markets desk', href: '/predictions' },
@@ -411,6 +646,11 @@ export const COMPARE_HUBS: CompareHub[] = [
       { label: 'How to research a probability gap', href: '/learn/probability-gap-research' },
       { label: 'All comparisons', href: '/compare' },
     ],
+    ctaTitle: 'Research Polymarket odds on your desk',
+    ctaBody:
+      'Register to open Prediction Markets, run Analyze, and keep a watchlist. Polymarket stays the exchange. Agents61 stays the research layer — no wallet, no Buy YES/NO.',
+    ctaHref: '/predictions',
+    ctaGuestHref: '/register?next=%2Fpredictions',
   },
 ];
 

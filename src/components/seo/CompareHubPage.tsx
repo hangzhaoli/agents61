@@ -4,6 +4,7 @@ import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import AuthGateLink from '@/components/auth/AuthGateLink';
 import JsonLd from '@/components/seo/JsonLd';
+import SeoRegisterCta from '@/components/seo/SeoRegisterCta';
 import type { CompareHub } from '@/lib/seo/hub-types';
 
 export default function CompareHubPage({ hub }: { hub: CompareHub }) {
@@ -82,6 +83,17 @@ export default function CompareHubPage({ hub }: { hub: CompareHub }) {
           </table>
         </div>
 
+        {hub.sections && hub.sections.length > 0 ? (
+          <div className="max-w-3xl mb-12 space-y-10">
+            {hub.sections.map((s) => (
+              <section key={s.heading}>
+                <h2 className="text-2xl font-bold text-slate-900 mb-3">{s.heading}</h2>
+                <p className="text-slate-600 leading-relaxed">{s.body}</p>
+              </section>
+            ))}
+          </div>
+        ) : null}
+
         <section className="max-w-3xl mb-12">
           <h2 className="text-2xl font-bold text-slate-900 mb-4">Questions</h2>
           {hub.faqs.map((f) => (
@@ -92,7 +104,7 @@ export default function CompareHubPage({ hub }: { hub: CompareHub }) {
           ))}
         </section>
 
-        <section className="max-w-3xl">
+        <section className="max-w-3xl mb-4">
           <h2 className="text-2xl font-bold text-slate-900 mb-4">Related</h2>
           <div className="grid sm:grid-cols-2 gap-3">
             {hub.related.map((r) => (
@@ -102,6 +114,20 @@ export default function CompareHubPage({ hub }: { hub: CompareHub }) {
             ))}
           </div>
         </section>
+
+        <div className="max-w-3xl">
+          <SeoRegisterCta
+            title={hub.ctaTitle ?? `Done comparing? Staff the desk — not ${hub.competitor}`}
+            body={
+              hub.ctaBody ??
+              `Register to run isolated master briefs on a ticker you already picked. Keep ${hub.competitor} for its job. Agents61 is the committee layer — research simulation, not advice.`
+            }
+            href={hub.ctaHref}
+            guestHref={hub.ctaGuestHref}
+            label="Create account"
+          />
+        </div>
+
         <p className="mt-10 text-xs text-slate-400 max-w-3xl">
           Not a {hub.competitor} replacement for every job. Research simulation — not advice, no buy button.
         </p>

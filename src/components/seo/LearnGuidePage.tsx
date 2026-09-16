@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import JsonLd from '@/components/seo/JsonLd';
+import SeoRegisterCta from '@/components/seo/SeoRegisterCta';
 import type { LearnGuide } from '@/lib/seo/hub-types';
 
 export default function LearnGuidePage({ guide }: { guide: LearnGuide }) {
@@ -25,7 +26,10 @@ export default function LearnGuidePage({ guide }: { guide: LearnGuide }) {
       <Navbar />
       <article className="section-container py-16 max-w-3xl">
         <p className="badge badge-primary mb-4">Learn · {guide.minutes} min</p>
-        <h1 className="text-4xl font-extrabold text-slate-900 mb-8">{guide.h1}</h1>
+        <h1 className="text-4xl font-extrabold text-slate-900 mb-4">{guide.h1}</h1>
+        {guide.intro ? (
+          <p className="text-lg text-slate-600 leading-relaxed mb-8">{guide.intro}</p>
+        ) : null}
         <ol className="space-y-6">
           {guide.steps.map((s, i) => (
             <li key={s.heading} className="card-flat p-5">
@@ -42,6 +46,16 @@ export default function LearnGuidePage({ guide }: { guide: LearnGuide }) {
             </Link>
           ))}
         </div>
+        <SeoRegisterCta
+          title={guide.ctaTitle ?? 'Finished the drill? Register and run it live'}
+          body={
+            guide.ctaBody ??
+            'Create an account to staff the desk on a real ticker or prediction market. Same rules as this guide: research simulation, not a buy ticket.'
+          }
+          href={guide.ctaHref}
+          guestHref={guide.ctaGuestHref}
+          label="Create account"
+        />
         <p className="mt-10 text-xs text-slate-400">Research simulation. Not advice.</p>
       </article>
       <Footer />

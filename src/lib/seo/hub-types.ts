@@ -15,6 +15,10 @@ export type SeoHub = {
   sections: SeoSection[];
   faqs: SeoFaq[];
   related: SeoLink[];
+  ctaTitle?: string;
+  ctaBody?: string;
+  ctaHref?: string;
+  ctaGuestHref?: string;
 };
 
 export type CompareRow = { feature: string; a61: string; competitor: string };
@@ -31,8 +35,15 @@ export type CompareHub = {
   whenCompetitorWins: string;
   whenA61Wins: string;
   rows: CompareRow[];
+  /** Optional narrative sections between the table and FAQs */
+  sections?: SeoSection[];
   faqs: SeoFaq[];
   related: SeoLink[];
+  /** End-of-page register CTA overrides */
+  ctaTitle?: string;
+  ctaBody?: string;
+  ctaHref?: string;
+  ctaGuestHref?: string;
 };
 
 export type LearnGuide = {
@@ -41,6 +52,11 @@ export type LearnGuide = {
   description: string;
   h1: string;
   minutes: number;
+  intro?: string;
   steps: { heading: string; body: string }[];
   next: SeoLink[];
+  ctaTitle?: string;
+  ctaBody?: string;
+  ctaHref?: string;
+  ctaGuestHref?: string;
 };

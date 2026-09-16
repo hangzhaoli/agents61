@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import { BLOG_POSTS, getPost } from '@/lib/blog';
 import JsonLd from '@/components/seo/JsonLd';
+import SeoRegisterCta from '@/components/seo/SeoRegisterCta';
 import type { Metadata } from 'next';
 
 interface Props {
@@ -137,6 +138,11 @@ export default async function BlogPostPage({ params }: Props): Promise<React.Rea
             </ul>
           </div>
         ) : null}
+        <SeoRegisterCta
+          title="Put the note into practice on your desk"
+          body="Register to staff isolated masters on a ticker, or open Prediction Markets for probability-gap research. Same compliance line as this post — simulation, not advice."
+          label="Create account"
+        />
         <p className="mt-10 text-xs text-slate-400">
           Agents61 is a research simulation. Not investment advice.
         </p>
