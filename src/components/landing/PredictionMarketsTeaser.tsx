@@ -61,7 +61,7 @@ export default async function PredictionMarketsTeaser() {
     name: 'Agents61 Prediction Markets',
     applicationCategory: 'FinanceApplication',
     operatingSystem: 'Web',
-    url: 'https://agents61.com/prediction-markets',
+    url: 'https://agents61.com/predictions',
     description:
       'Compare Polymarket YES probability with Agents61 multi-agent prediction market research. Probability gap analysis — not betting or trading.',
     offers: {
@@ -121,11 +121,11 @@ export default async function PredictionMarketsTeaser() {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3 shrink-0">
-            <Link href="/prediction-markets" className="pm-teaser-cta">
+            <Link href="/predictions" className="pm-teaser-cta">
               Find mispriced markets
               <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
             </Link>
-            <Link href="/prediction-markets#gaps" className="pm-teaser-ghost">
+            <Link href="/predictions#gaps" className="pm-teaser-ghost">
               Top probability gaps
             </Link>
           </div>
@@ -137,7 +137,7 @@ export default async function PredictionMarketsTeaser() {
               {[...ticker, ...ticker].map((m, i) => (
                 <Link
                   key={`${m.id}-${i}`}
-                  href={`/prediction-markets/${encodeURIComponent(m.id)}`}
+                  href={`/predictions/${encodeURIComponent(m.id)}`}
                   className="pm-ticker-chip"
                 >
                   <span className="pm-ticker-prob tabular-nums">{m.marketProbability.toFixed(0)}%</span>
@@ -181,7 +181,7 @@ export default async function PredictionMarketsTeaser() {
             investment advice and not a wager.
           </p>
           <Link
-            href="/prediction-markets"
+            href="/predictions"
             className="text-sm font-bold text-cyan-300 hover:text-cyan-200 whitespace-nowrap"
           >
             Open prediction desk →

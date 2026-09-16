@@ -5,6 +5,7 @@
 
 import type { VaultStrategy } from '@/lib/quant-lab/types';
 import type { WatchlistItem } from '@/lib/watchlist';
+import type { PredictionSave } from '@/lib/prediction/types';
 import { EMAIL_COOKIE, readClientCookie } from '@/lib/demo-session';
 
 export type CloudSyncState = 'idle' | 'syncing' | 'synced' | 'local-only' | 'error';
@@ -117,6 +118,51 @@ export async function hydrateVault(
   }
   if (local.length > 0) {
     const ok = await pushVault(local);
+    return ok ? 'synced' : 'error';
+  }
+  return 'synced';
+}
+
+export async function pullPredictionSaves(): Promise<PredictionSave[] | null> {
+  if (!loggedIn()) return null;
+  try {
+    const res = await fetch('/api/sync/prediction', { cache: 'no-store' });
+    if (res.status === 401 || res.status === 503) return null;
+    const data = await parseJson<{ items?: PredictionSave[] }>(res);
+    if (!res.ok || !data?.items) return null;
+    return data.items;
+  } catch {
+    return null;
+  }
+}
+
+export async function pushPredictionSaves(items: PredictionSave[]): Promise<boolean> {
+  if (!loggedIn()) return false;
+  try {
+    const res = await fetch('/api/sync/prediction', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items }),
+    });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
+export async function hydratePredictionSaves(
+  local: PredictionSave[],
+  writeLocal: (items: PredictionSave[]) => void
+): Promise<CloudSyncState> {
+  if (!loggedIn()) return 'local-only';
+  const cloud = await pullPredictionSaves();
+  if (cloud === null) return 'local-only';
+  if (cloud.length > 0) {
+    writeLocal(cloud);
+    return 'synced';
+  }
+  if (local.length > 0) {
+    const ok = await pushPredictionSaves(local);
     return ok ? 'synced' : 'error';
   }
   return 'synced';

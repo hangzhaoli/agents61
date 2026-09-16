@@ -21,6 +21,17 @@ const nextConfig: NextConfig = {
         destination: '/compare/:slug',
         permanent: true,
       },
+      // Prediction Desk canonical URLs
+      {
+        source: '/prediction-markets',
+        destination: '/predictions',
+        permanent: true,
+      },
+      {
+        source: '/prediction-markets/:id',
+        destination: '/predictions/:id',
+        permanent: true,
+      },
     ];
   },
   // Apex host is https://agents61.com. www→apex is in vercel.json (host match).

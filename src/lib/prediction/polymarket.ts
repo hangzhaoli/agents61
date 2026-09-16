@@ -94,6 +94,7 @@ export function normalizeGammaMarket(raw: GammaMarket): PredictionMarket | null 
       ? `https://polymarket.com/event/${eventSlug}`
       : `https://polymarket.com/market/${slug}`,
     source: 'polymarket',
+    provider: 'polymarket',
     category: categoryOf(question),
   };
 }

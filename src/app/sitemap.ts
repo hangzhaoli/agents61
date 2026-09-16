@@ -33,7 +33,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/methodology',
     '/cycle',
     '/demo',
-    '/prediction-markets',
+    '/predictions',
+    '/predictions/scanner',
+    '/predictions/watchlist',
     '/masters',
     '/pricing',
     '/research/crypto',
@@ -47,8 +49,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ].map((path) => ({
     url: `${SITE_URL}${path}`,
     lastModified: new Date(),
-    changeFrequency: path === '/prediction-markets' ? ('daily' as const) : ('weekly' as const),
-    priority: path === '' ? 1 : path === '/prediction-markets' ? 0.9 : 0.8,
+    changeFrequency: path.startsWith('/predictions') ? ('daily' as const) : ('weekly' as const),
+    priority: path === '' ? 1 : path.startsWith('/predictions') ? 0.9 : 0.8,
   }));
 
   const featurePages = FEATURE_HUBS.map((h) => ({

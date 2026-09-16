@@ -2,6 +2,7 @@ import { cookies } from 'next/headers';
 import { isPaidPlan, type PaidPlanId } from '@/lib/tiers';
 import { PLAN_COOKIE, PLAN_COOKIE_MAX_AGE } from '@/lib/demo-session';
 import { TRIAL_COOKIE } from '@/lib/desk-trial';
+import { PRED_TRIAL_COOKIE } from '@/lib/prediction/entitlement';
 
 export async function POST(request: Request) {
   let body: { plan?: string } = {};
@@ -23,6 +24,7 @@ export async function POST(request: Request) {
     sameSite: 'lax',
   });
   jar.set(TRIAL_COOKIE, '', { path: '/', maxAge: 0, sameSite: 'lax' });
+  jar.set(PRED_TRIAL_COOKIE, '', { path: '/', maxAge: 0, sameSite: 'lax' });
 
   return Response.json({ ok: true, plan });
 }

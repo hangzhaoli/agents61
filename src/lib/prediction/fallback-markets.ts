@@ -6,10 +6,15 @@
 import type { PredictionMarket } from './types';
 import { formatEndDate, formatVolume } from './types';
 
-function m(partial: Omit<PredictionMarket, 'volumeLabel' | 'endDateLabel' | 'source' | 'url'> & { url?: string }): PredictionMarket {
+function m(
+  partial: Omit<PredictionMarket, 'volumeLabel' | 'endDateLabel' | 'source' | 'provider' | 'url'> & {
+    url?: string;
+  }
+): PredictionMarket {
   return {
     ...partial,
     source: 'fallback',
+    provider: 'polymarket',
     url: partial.url ?? `https://polymarket.com/event/${partial.slug}`,
     volumeLabel: formatVolume(partial.volumeUsd),
     endDateLabel: formatEndDate(partial.endDate),

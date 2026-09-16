@@ -11,6 +11,7 @@ import {
   readClientCookie,
   writeClientCookie,
 } from '@/lib/demo-session';
+import { clearPredTrialUsed } from '@/lib/prediction/entitlement';
 import { isPaidPlan, parsePlan, type PaidPlanId, type PlanId } from '@/lib/tiers';
 
 export const TRIAL_COOKIE = 'agents61_trial_used';
@@ -87,6 +88,7 @@ export function clearTrialUsed(): void {
 export function unlockPaidDesk(plan: PaidPlanId): void {
   persistPlanCookie(plan);
   clearTrialUsed();
+  clearPredTrialUsed();
 }
 
 export const TRIAL_COOKIE_SET = {

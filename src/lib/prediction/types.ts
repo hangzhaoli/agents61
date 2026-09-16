@@ -6,6 +6,8 @@
 export type Confidence = 'High' | 'Medium' | 'Low';
 export type ResolutionRisk = 'Low' | 'Medium' | 'High';
 
+export type PredictionProvider = 'polymarket' | 'kalshi';
+
 export type PredictionMarket = {
   id: string;
   slug: string;
@@ -18,7 +20,10 @@ export type PredictionMarket = {
   endDateLabel: string;
   description: string;
   url: string;
+  /** Venue / data origin (legacy). Prefer `provider`. */
   source: 'polymarket' | 'fallback';
+  /** Canonical venue for multi-provider routing */
+  provider: PredictionProvider;
   /** Optional category tag for domain expert routing */
   category: string;
 };
@@ -45,6 +50,33 @@ export type PredictionAgentNote = {
   sources: { title: string; url: string }[];
 };
 
+export type ScenarioBranch = {
+  probability: number;
+  reason: string;
+};
+
+export type StrategyScenarios = {
+  yes: ScenarioBranch;
+  base: ScenarioBranch;
+  no: ScenarioBranch;
+};
+
+export type StrategyRisks = {
+  resolution: ResolutionRisk;
+  liquidity: ResolutionRisk;
+  information: ResolutionRisk;
+  event: ResolutionRisk;
+  overall: ResolutionRisk;
+};
+
+export type ResolutionCheck = {
+  source: string;
+  deadline: string;
+  ambiguity: ResolutionRisk;
+  edgeCases: string[];
+  summary: string;
+};
+
 export type StrategyReport = {
   marketId: string;
   marketQuestion: string;
@@ -53,17 +85,72 @@ export type StrategyReport = {
   probabilityGap: number;
   confidence: Confidence;
   probabilityRange: [number, number];
+  /** @deprecated Prefer whyMarketMayBeWrong — kept for backward compat */
   whyDisagree: string[];
+  /** Why the market mid may be miscalibrated vs Agents61 */
+  whyMarketMayBeWrong: string[];
+  /** Why the market mid may still be correct */
+  whyMarketMayBeRight: string[];
   bullEvidence: string[];
   bearEvidence: string[];
   keyCatalysts: string[];
+  /** @deprecated Prefer invalidationConditions */
   whatCouldMakeUsWrong: string[];
+  invalidationConditions: string[];
+  scenarios: StrategyScenarios;
+  risks: StrategyRisks;
+  resolutionCheck?: ResolutionCheck;
+  /** Top-level resolution risk (mirrors risks.overall / risks.resolution) */
   resolutionRisk: ResolutionRisk;
+  executiveSummary: string;
   sources: { title: string; url: string }[];
   agentNotes: PredictionAgentNote[];
   clerkNote: string;
   analyzedAt: string;
   engine: 'deepseek' | 'template';
+  /** Optional news bullets injected for Pro clerk passes */
+  newsBullets?: string[];
+};
+
+/** Client watchlist row (localStorage + optional cloud payload). */
+export type PredictionWatchItem = {
+  id: string;
+  marketId: string;
+  provider: PredictionProvider;
+  question: string;
+  marketProbability: number;
+  agents61Probability: number | null;
+  gap: number | null;
+  marketProbAtAdd: number;
+  agents61AtAdd: number | null;
+  addedAt: string;
+  updatedAt: string;
+  favorited?: boolean;
+};
+
+/** Append-only probability history point for a market. */
+export type ProbabilityHistoryPoint = {
+  at: string;
+  marketProbability: number;
+  agents61Probability: number;
+  gap: number;
+  analysisId?: string;
+};
+
+/** User-saved prediction report (history / favorites). */
+export type PredictionSave = {
+  id: string;
+  marketId: string;
+  marketSlug: string;
+  question: string;
+  marketProbability: number;
+  agents61Probability: number;
+  probabilityGap: number;
+  confidence: Confidence;
+  engine: StrategyReport['engine'];
+  favorited: boolean;
+  savedAt: string;
+  report: StrategyReport;
 };
 
 export function gapOf(agents61: number, market: number): number {
@@ -88,4 +175,9 @@ export function formatEndDate(iso: string | null): string {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return 'Open';
   return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+}
+
+/** Map legacy `source` onto canonical `provider`. */
+export function providerFromSource(source: PredictionMarket['source']): PredictionProvider {
+  return source === 'polymarket' || source === 'fallback' ? 'polymarket' : 'polymarket';
 }

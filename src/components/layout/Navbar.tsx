@@ -15,7 +15,7 @@ import { parsePlan, PLANS } from '@/lib/tiers';
 
 const NAV_ITEMS = [
   { label: 'Desk', href: '/dashboard' },
-  { label: 'Predictions', href: '/prediction-markets' },
+  { label: 'Predictions', href: '/predictions' },
   { label: 'Legends', href: '/masters' },
   { label: 'Markets', href: '/markets' },
   { label: 'Compare', href: '/compare' },

@@ -287,6 +287,16 @@ export function alertLimitForPlan(plan: PlanId): number {
   return 1;
 }
 
+/** Saved prediction reports / favorites per plan. */
+export function predictionSaveLimitForPlan(plan: PlanId): number {
+  if (plan === 'partners') return 100;
+  if (plan === 'committee') return 50;
+  if (plan === 'principal') return 30;
+  if (plan === 'associate') return 20;
+  if (plan === 'analyst') return 10;
+  return 3;
+}
+
 export function nextPlan(plan: PlanId): PlanId | null {
   const i = PLAN_ORDER.indexOf(plan);
   if (i < 0 || i >= PLAN_ORDER.length - 1) return null;

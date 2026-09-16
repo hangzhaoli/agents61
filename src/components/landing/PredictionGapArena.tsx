@@ -46,7 +46,7 @@ export default function PredictionGapArena({ rows }: { rows: GapTeaserRow[] }) {
         </div>
 
         <Link
-          href={`/prediction-markets/${encodeURIComponent(row.id)}`}
+          href={`/predictions/${encodeURIComponent(row.id)}`}
           className="pm-arena-question"
         >
           {row.question}
@@ -86,7 +86,7 @@ export default function PredictionGapArena({ rows }: { rows: GapTeaserRow[] }) {
         </div>
 
         <Link
-          href={`/prediction-markets/${encodeURIComponent(row.id)}`}
+          href={`/predictions/${encodeURIComponent(row.id)}`}
           className="pm-arena-cta"
         >
           Analyze this misprice

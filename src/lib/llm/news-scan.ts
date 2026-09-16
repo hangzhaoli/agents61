@@ -57,6 +57,54 @@ async function tavilySearch(query: string): Promise<TavilyResult[]> {
   }
 }
 
+async function scanEvent(query: string): Promise<NewsDigest | null> {
+  const results = await tavilySearch(query);
+  if (!results.length) return null;
+
+  let bullets: string[];
+  if (hasDeepseekKey()) {
+    try {
+      bullets = await digestWithFlash(query.slice(0, 80), results);
+    } catch {
+      bullets = results.slice(0, 5).map((r) => clip(`${r.published_date ?? 'recent'} — ${r.title}`, 220));
+    }
+  } else {
+    bullets = results.slice(0, 5).map((r) => clip(`${r.published_date ?? 'recent'} — ${r.title}`, 220));
+  }
+  return {
+    subject: query.slice(0, 40).toUpperCase(),
+    bullets,
+    fetchedAt: new Date().toISOString(),
+    source: 'tavily',
+  };
+}
+
+/**
+ * News layer for prediction / event markets (not equity filings query).
+ * Cached 6h per query hash.
+ */
+export async function getEventNewsDigest(query: string): Promise<NewsDigest | null> {
+  if (!hasTavilyKey()) return null;
+  const q = query.replace(/\s+/g, ' ').trim().slice(0, 140);
+  if (q.length < 8) return null;
+  const key = q.toLowerCase();
+
+  const cached = unstable_cache(
+    async () => {
+      const digest = await scanEvent(q);
+      if (!digest) throw new Error(`event news empty for ${key.slice(0, 40)}`);
+      return digest;
+    },
+    ['event-news-v1', key.slice(0, 80)],
+    { revalidate: 21_600, tags: [`event-news-${key.slice(0, 32)}`] }
+  );
+  try {
+    return await cached();
+  } catch {
+    return null;
+  }
+}
+
 function clip(s: string, n: number): string {
   const t = s.replace(/\s+/g, ' ').trim();
   return t.length <= n ? t : `${t.slice(0, n - 1)}…`;
