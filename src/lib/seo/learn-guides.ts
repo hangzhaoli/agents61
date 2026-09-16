@@ -93,6 +93,38 @@ export const LEARN_GUIDES: LearnGuide[] = [
       { label: 'Pricing', href: '/pricing' },
     ],
   },
+  {
+    slug: 'probability-gap-research',
+    title: 'Research a prediction-market probability gap',
+    description:
+      'A short path: import Polymarket odds, run Agents61, read the gap, invert, watchlist. No bet ticket.',
+    h1: 'Research a probability gap in 15 minutes — then stop',
+    minutes: 8,
+    steps: [
+      {
+        heading: 'Get the market mid from Polymarket',
+        body: 'Copy an /event/… or /market/… URL. Agents61 is not the exchange.',
+      },
+      {
+        heading: 'Import and read Market vs Agents61',
+        body: 'Paste on /predictions. Note YES%, Agents61 estimate, and the Gap. Range matters — one number is a lie of precision.',
+      },
+      {
+        heading: 'Read why wrong AND why right',
+        body: 'A one-sided gap report is marketing. Resolution risk and invalidation come before any “edge” story.',
+      },
+      {
+        heading: 'Watchlist, do not wallet',
+        body: 'Track whether the mid moves toward Agents61. Do not treat a gap as a buy YES instruction.',
+      },
+    ],
+    next: [
+      { label: 'Prediction Markets', href: '/predictions' },
+      { label: 'Hunt gaps use case', href: '/use-cases/hunt-probability-gaps' },
+      { label: 'vs Polymarket', href: '/compare/polymarket' },
+      { label: 'Blog: Polymarket odds vs AI', href: '/blog/polymarket-odds-vs-ai-research' },
+    ],
+  },
 ];
 
 export function getLearnGuide(slug: string) {

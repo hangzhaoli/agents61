@@ -206,6 +206,8 @@ export const PRIMARY_KEYWORDS: string[] = [
   'red team stock idea',
   'isolated research briefs',
   'Polymarket research',
+  'Polymarket research tool',
+  'prediction market research',
   'prediction market probability',
   'AI prediction market analysis',
 ];

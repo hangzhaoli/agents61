@@ -199,6 +199,48 @@ export const USE_CASE_HUBS: SeoHub[] = [
       { label: 'Pipeline', href: '/pipeline' },
     ],
   },
+  {
+    slug: 'hunt-probability-gaps',
+    path: '/use-cases/hunt-probability-gaps',
+    keyword: 'mispriced prediction markets',
+    title: 'Use Case: Hunt Prediction Market Probability Gaps',
+    description:
+      'Find where Polymarket YES% and Agents61 multi-agent probability disagree. Research simulation — gaps are disagreement, not guaranteed trades.',
+    h1: 'Use case: hunt probability gaps on prediction markets',
+    eyebrow: 'Use cases · Prediction Markets',
+    intro:
+      'The market says 32%. Agents61 estimates 46%. The product is the gap — plus why, catalysts, and what would invalidate the thesis. Paste a Polymarket URL or open the scanner. No wallet.',
+    bullets: [
+      'Top Probability Gaps ranked by |Agents61 − Market|.',
+      'Full Strategy Report after Analyze (free: 1 run; paid: news + Pro Clerk).',
+      'Watchlist tracks whether the tape moves toward or away from Agents61.',
+    ],
+    sections: [
+      {
+        heading: 'What “mispriced” means here',
+        body: 'We mean probability disagreement under research uncertainty — not a guaranteed edge. Resolution ambiguity can make a “correct” world-event resolve the wrong way for the contract.',
+      },
+      {
+        heading: 'Two-stage cost control',
+        body: 'Scan widely with cheap filters. Run the full committee only on candidates you open. That is how the desk stays affordable.',
+      },
+    ],
+    faqs: [
+      {
+        question: 'Will Agents61 tell me to buy YES?',
+        answer: 'No. View Market / Analyze / Watchlist only. Research simulation.',
+      },
+      {
+        question: 'Where do I start?',
+        answer: 'Open /predictions, sort Top Gaps, or paste a Polymarket URL.',
+      },
+    ],
+    related: [
+      { label: 'Prediction Markets', href: '/predictions' },
+      { label: 'vs Polymarket', href: '/compare/polymarket' },
+      { label: 'Learn: probability gaps', href: '/learn/probability-gap-research' },
+    ],
+  },
 ];
 
 export function getUseCase(slug: string) {

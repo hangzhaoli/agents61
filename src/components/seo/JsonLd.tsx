@@ -20,7 +20,7 @@ export const ORGANIZATION_LD = {
       logo: 'https://agents61.com/brand/mark-61.png',
       sameAs: ['https://github.com/hangzhaoli/agents61'],
       description:
-        '61-master AI investment committee. Isolated or division-of-labor research simulation for US stocks, ETFs, and on-chain names. Not advice.',
+        '61-master AI investment committee and prediction-market odds research. Isolated research simulation for US stocks, ETFs, crypto, and Polymarket probability gaps. Not advice.',
     },
     {
       '@type': 'WebSite',
@@ -49,6 +49,7 @@ export const ORGANIZATION_LD = {
         'Division of labor pipeline handoff',
         'Red-team investment debate',
         'US stocks, ETFs, crypto, emerging ADRs',
+        'Polymarket prediction-market probability research',
       ],
       publisher: { '@id': 'https://agents61.com/#org' },
     },

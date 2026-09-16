@@ -118,6 +118,20 @@ export default async function PredictionMarketsTeaser() {
               Built for Polymarket research, mispriced prediction markets, and AI odds vs crowd
               probability — Fed, crypto, geopolitics, and tech event markets.
             </p>
+            <p className="mt-3 text-xs text-slate-400">
+              SEO paths:{' '}
+              <Link href="/compare/polymarket" className="text-cyan-300/90 hover:underline">
+                vs Polymarket
+              </Link>
+              {' · '}
+              <Link href="/prediction-market-research" className="text-cyan-300/90 hover:underline">
+                research hub
+              </Link>
+              {' · '}
+              <Link href="/learn/probability-gap-research" className="text-cyan-300/90 hover:underline">
+                learn gaps
+              </Link>
+            </p>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3 shrink-0">

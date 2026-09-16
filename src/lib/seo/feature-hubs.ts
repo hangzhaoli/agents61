@@ -144,6 +144,50 @@ export const FEATURE_HUBS: SeoHub[] = [
       { label: 'Methodology', href: '/methodology' },
     ],
   },
+  {
+    slug: 'prediction-market-research',
+    path: '/prediction-market-research',
+    keyword: 'prediction market research',
+    title: 'Prediction Market Research — Polymarket Odds vs Agents61',
+    description:
+      'AI prediction market research: compare Polymarket YES probability with multi-agent Agents61 estimates. Probability gaps, Strategy Reports, resolution checks — not betting.',
+    h1: 'Prediction market research that starts after you have a mid',
+    eyebrow: 'Product · Prediction Markets',
+    intro:
+      'Polymarket and Kalshi answer what price the crowd trades. Agents61 answers whether that probability makes sense under independent research. Specialized agents, a Prediction Clerk, and a Probability Gap — research simulation only.',
+    bullets: [
+      'Live Polymarket Gamma feed on /predictions.',
+      'Top Gaps, Market Scanner, URL import, Watchlist.',
+      'Free: 1 analyze. Paid desk: news layer + Pro Clerk.',
+      'No wallet, no Buy YES/NO, no position-size ticket.',
+    ],
+    sections: [
+      {
+        heading: 'Markets price the future. Agents61 researches the odds.',
+        body: 'That line is the product. We compete as an intelligence layer, not as an exchange. Keep Polymarket for trading. Use Agents61 for disagreement.',
+      },
+      {
+        heading: 'What the committee covers',
+        body: 'Base rates, news, data, domain, market structure, Bayesian update, contrarian, red team, resolution, and risk — then a clerk synthesizes range and confidence.',
+      },
+    ],
+    faqs: [
+      {
+        question: 'Is this a Polymarket trading bot?',
+        answer: 'No. Research and probability intelligence only.',
+      },
+      {
+        question: 'Where is the live desk?',
+        answer: 'Start at /predictions. Compare framing at /compare/polymarket.',
+      },
+    ],
+    related: [
+      { label: 'Open Prediction Markets', href: '/predictions' },
+      { label: 'vs Polymarket', href: '/compare/polymarket' },
+      { label: 'Hunt gaps', href: '/use-cases/hunt-probability-gaps' },
+      { label: 'Learn guide', href: '/learn/probability-gap-research' },
+    ],
+  },
 ];
 
 export function getFeatureHub(slug: string) {

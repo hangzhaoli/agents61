@@ -385,4 +385,60 @@ export const BLOG_PILLARS: BlogPost[] = [
       },
     ],
   },
+  {
+    slug: 'polymarket-odds-vs-ai-research',
+    title: 'Polymarket odds vs AI research: when the crowd mid is not the fair probability',
+    date: 'September 16, 2026',
+    excerpt:
+      'Polymarket gives you a YES%. Agents61 runs a prediction committee and publishes a Probability Gap. Research disagreement — not a betting bot.',
+    tags: [
+      'Polymarket research',
+      'prediction market probability',
+      'AI prediction market analysis',
+      'probability gap',
+      'Polymarket research tool',
+    ],
+    category: 'markets',
+    readingMinutes: 10,
+    keyTakeaway:
+      'Treat Polymarket as the tape and Agents61 as independent probability research. A gap is disagreement under uncertainty — never a guaranteed trade.',
+    relatedSlugs: ['crypto-research-not-pe', 'chatgpt-stock-analysis-limits', 'vs-yahoo-seeking-alpha-chatgpt'],
+    body: [
+      'Search interest in Polymarket is about prices: what is YES trading at, and how fast did it move. That is useful. It is not the same as asking whether 32% is a calibrated probability for the event the contract actually settles on.',
+      'Agents61 Prediction Markets is built as the research layer above the exchange. We read the mid, run specialized agents (base rate, news, domain, resolution, red team), and publish Agents61 probability, a range, and a Probability Gap. Free users get one analyze. Paid desks get a news layer and a Pro Prediction Clerk. Nobody gets a Buy YES button.',
+      'The SEO lesson from our equity desk applies here: people already search named masters, compare hubs, and how-to guides. Prediction markets need the same structure — compare vs Polymarket, a learn path for gaps, and a use case for hunting disagreement — not a thin product page with buzzwords.',
+    ],
+    sections: [
+      {
+        heading: 'What the crowd mid is good at',
+        body: 'Aggregating attention and money. Liquid markets often move faster than a solo analyst. Volume and a clear settlement source matter. Keep Polymarket (or Kalshi later) as the venue.',
+      },
+      {
+        heading: 'Where the mid can lie',
+        body: 'Thin books, narrative double-counting, and resolution wording that does not match the headline question. An event can “happen in the world” and still resolve NO if the contract text is stricter.',
+      },
+      {
+        heading: 'How Agents61 frames a gap',
+        body: 'Gap = Agents61 − Market. Positive means we estimate YES higher than the mid; negative means lower. We force why-the-market-may-be-wrong and why-it-may-be-right. Invalidation conditions are mandatory.',
+      },
+      {
+        heading: 'A workflow that matches search intent',
+        body: 'Paste a Polymarket URL on /predictions. Read Market vs Agents61 on one screen. Open the Strategy Report. Add to Watchlist to see whether the mid converges. Do not ask the product for a wager size.',
+      },
+      {
+        heading: 'Compliance, same as the equity desk',
+        body: 'Research simulation. Informational only. Estimates can be wrong. Jurisdictions restrict prediction-market participation. Agents61 does not execute trades.',
+      },
+    ],
+    faqs: [
+      {
+        question: 'Is Agents61 a Polymarket alternative?',
+        answer: 'No. See /compare/polymarket. We are the research layer.',
+      },
+      {
+        question: 'Where do I start?',
+        answer: 'https://agents61.com/predictions or the learn guide on probability gaps.',
+      },
+    ],
+  },
 ];

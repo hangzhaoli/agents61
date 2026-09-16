@@ -317,6 +317,53 @@ export const COMPARE_HUBS: CompareHub[] = [
     ],
     related: RELATED_CORE,
   },
+  {
+    slug: 'polymarket',
+    competitor: 'Polymarket',
+    keyword: 'Polymarket research tool',
+    title: 'Agents61 vs Polymarket — Research Layer vs Prediction Exchange (2026)',
+    description:
+      'Polymarket prices YES/NO. Agents61 researches the odds: multi-agent probability gaps, Strategy Reports, and resolution checks. Not a wallet. Not a betting bot.',
+    h1: 'Agents61 vs Polymarket: research the odds, do not replace the exchange',
+    eyebrow: 'Compare · Prediction markets',
+    intro:
+      'Polymarket is the market: prices, volume, and settlement. Agents61 is the intelligence layer above it. We import crowd YES%, run a specialized prediction committee, and publish a Probability Gap — research simulation only. No buy YES/NO. No order routing.',
+    whenCompetitorWins:
+      'You need live odds, liquidity, or to trade the contract on Polymarket itself.',
+    whenA61Wins:
+      'You already see a mid and want independent probability research: base rates, news layer, resolution risk, and why the crowd may be wrong.',
+    rows: [
+      { feature: 'Job', a61: 'Prediction-market probability research', competitor: 'Prediction exchange + prices' },
+      { feature: 'Market probability', a61: 'Reads Polymarket YES mid as input', competitor: 'Sets the mid via trading' },
+      { feature: 'Independent estimate', a61: 'Multi-agent Agents61 probability + range', competitor: 'Crowd-implied only' },
+      { feature: 'Probability Gap', a61: 'Core product metric (A61 − Market)', competitor: 'Not a research product' },
+      { feature: 'Trade / wallet', a61: 'None — View Market only', competitor: 'Buy YES / NO on venue' },
+      { feature: 'Best for', a61: 'Investors researching event odds', competitor: 'Traders who want the contract' },
+    ],
+    faqs: [
+      {
+        question: 'Is Agents61 a Polymarket alternative?',
+        answer:
+          'No. Polymarket is the venue. Agents61 is odds research on top of public market data — paste a URL, analyze, watchlist. We do not execute trades.',
+      },
+      {
+        question: 'Can Agents61 guarantee a profitable gap?',
+        answer:
+          'No. Gaps are probability disagreement, not guaranteed returns. Resolution wording and information risk can dominate.',
+      },
+      {
+        question: 'Do you support Kalshi?',
+        answer:
+          'Architecture is multi-provider. Polymarket is live first; Kalshi follows after validation.',
+      },
+    ],
+    related: [
+      { label: 'Prediction Markets desk', href: '/predictions' },
+      { label: 'Market Scanner', href: '/predictions/scanner' },
+      { label: 'How to research a probability gap', href: '/learn/probability-gap-research' },
+      { label: 'All comparisons', href: '/compare' },
+    ],
+  },
 ];
 
 export function getCompareHub(slug: string) {
