@@ -38,6 +38,7 @@ import HallOfLegends from '@/components/landing/HallOfLegends';
 import WorkKitsStrip from '@/components/landing/WorkKitsStrip';
 import MiniSpark from '@/components/landing/MiniSpark';
 import PrivateDeskHooks from '@/components/landing/PrivateDeskHooks';
+import PredictionMarketsTeaser from '@/components/landing/PredictionMarketsTeaser';
 import { getLivePulse } from '@/lib/landing-pulse';
 
 /** Hourly refresh so homepage tape shows new listings / cached prices. */
@@ -91,7 +92,7 @@ export default async function HomePage() {
             </Link>
           </p>
 
-          <div className="animate-fade-in-up stagger-4 mt-8 flex items-center justify-center gap-6 text-sm text-slate-500">
+          <div className="animate-fade-in-up stagger-4 mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-slate-500">
             <span className="flex items-center gap-1.5">
               <CheckCircle className="h-4 w-4 text-emerald-500" fill="currentColor" />
               US stocks first
@@ -104,6 +105,13 @@ export default async function HomePage() {
               <CheckCircle className="h-4 w-4 text-emerald-500" fill="currentColor" />
               Crypto / on-chain
             </span>
+            <Link
+              href="#prediction-markets"
+              className="flex items-center gap-1.5 text-[#0052d9] font-semibold hover:underline"
+            >
+              <CheckCircle className="h-4 w-4 text-emerald-500" fill="currentColor" />
+              Polymarket odds
+            </Link>
             <span className="flex items-center gap-1.5 text-slate-400">
               A-shares later
             </span>
@@ -122,6 +130,8 @@ export default async function HomePage() {
       <WhyUsSection />
 
       <PrivateDeskHooks />
+
+      <PredictionMarketsTeaser />
 
       {/* ============ BLOCKCHAIN ============ */}
       <section id="blockchain" className="py-16 md:py-24 border-y border-slate-100">

@@ -150,6 +150,28 @@ export const SEO_CLUSTERS = {
     'on-chain due diligence',
     'ETF committee research',
   ],
+  predictions: [
+    'Polymarket research',
+    'Polymarket odds research',
+    'Polymarket probability analysis',
+    'prediction market research',
+    'prediction market probability',
+    'prediction market due diligence',
+    'AI prediction market analysis',
+    'multi-agent odds research',
+    'probability gap analysis',
+    'mispriced prediction markets',
+    'crowd odds vs research probability',
+    'YES probability research',
+    'Polymarket vs AI probability',
+    'event market research',
+    'Fed prediction market analysis',
+    'crypto prediction markets research',
+    'geopolitics prediction markets',
+    'Agents61 prediction markets',
+    'Polymarket research tool',
+    'prediction market strategy report',
+  ],
 } as const;
 
 export const ALL_SEO_KEYWORDS: string[] = [
@@ -161,6 +183,7 @@ export const ALL_SEO_KEYWORDS: string[] = [
   ...SEO_CLUSTERS.ai,
   ...SEO_CLUSTERS.masters,
   ...SEO_CLUSTERS.markets,
+  ...SEO_CLUSTERS.predictions,
 ];
 
 export const PRIMARY_KEYWORDS: string[] = [
@@ -182,6 +205,9 @@ export const PRIMARY_KEYWORDS: string[] = [
   'investment thesis',
   'red team stock idea',
   'isolated research briefs',
+  'Polymarket research',
+  'prediction market probability',
+  'AI prediction market analysis',
 ];
 
 export function keywordCount(): number {

@@ -12,14 +12,20 @@ import AuthGateLink from '@/components/auth/AuthGateLink';
 export const revalidate = 300;
 
 export const metadata = pageMeta({
-  title: 'Prediction Markets — Polymarket odds vs Agents61',
+  title: 'Prediction Markets — Polymarket odds vs Agents61 research',
   description:
-    'Markets price the future. Agents61 researches the odds. Compare Polymarket YES probability with multi-agent research — probability gaps, not betting tickets.',
+    'Polymarket odds research and AI prediction market analysis. Compare crowd YES probability with Agents61 multi-agent briefs — hunt probability gaps. Research simulation, not betting.',
   path: '/prediction-markets',
   keywords: [
     'Polymarket research',
+    'Polymarket odds research',
     'prediction market probability',
-    'AI probability research',
+    'AI prediction market analysis',
+    'probability gap analysis',
+    'mispriced prediction markets',
+    'Polymarket research tool',
+    'crowd odds vs research probability',
+    'event market research',
     'Agents61 prediction markets',
   ],
 });
@@ -58,8 +64,9 @@ export default async function PredictionMarketsPage() {
             <span className="text-gradient"> Agents61 researches the odds.</span>
           </h1>
           <p className="mt-4 text-lg text-slate-600 leading-relaxed">
-            Compare Polymarket YES probability with Agents61 multi-agent research. The product is the
-            Probability Gap — research simulation, not a trading desk. No wallet. No buy YES/NO.
+            Polymarket odds research for investors who want prediction market due diligence without a
+            wallet. Compare crowd YES probability with Agents61 multi-agent AI odds analysis. The
+            product is the Probability Gap — research simulation, not a trading desk. No buy YES/NO.
           </p>
           <p className="mt-2 text-xs text-slate-400">
             Feed: {live ? 'live Polymarket Gamma' : 'curated fallback (Polymarket unreachable from this region/host)'}

@@ -34,7 +34,9 @@ export function pageMeta(opts: {
 /** Canonical copy for public surfaces. Keep under ~160 characters. */
 export const PAGE_DESCRIPTIONS = {
   home:
-    '61-master AI investment committee for US stock research, ETFs, and on-chain names. Isolated briefs or division of labor. Not Yahoo Finance. Not ChatGPT. No buy button.',
+    '61-master AI investment committee for US stocks, ETFs, crypto, and Polymarket prediction market odds research. Probability gaps vs crowd YES%. Not a buy button.',
+  predictions:
+    'Polymarket odds research: compare crowd YES probability with Agents61 multi-agent prediction market analysis. Hunt probability gaps — research simulation, not betting.',
   features:
     'Features: isolated master agents, pipeline handoff, lineup stock screens, crypto research, red-team debate, cycle meter, PDF briefs. AI stock analysis without a copilot that agrees with you.',
   howItWorks:
