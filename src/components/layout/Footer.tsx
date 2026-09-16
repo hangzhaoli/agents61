@@ -7,6 +7,7 @@ const FOOTER_SECTIONS = [
     title: 'Product',
     links: [
       { label: 'Committee Desk', href: '/dashboard' },
+      { label: 'Prediction Markets', href: '/prediction-markets' },
       { label: 'AI investment committee', href: '/ai-investment-committee' },
       { label: 'AI stock research', href: '/ai-stock-research' },
       { label: 'Stock analysis AI', href: '/stock-analysis-ai' },

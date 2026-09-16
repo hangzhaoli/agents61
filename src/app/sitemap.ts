@@ -33,6 +33,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/methodology',
     '/cycle',
     '/demo',
+    '/prediction-markets',
     '/masters',
     '/pricing',
     '/research/crypto',

@@ -15,17 +15,18 @@ import { parsePlan, PLANS } from '@/lib/tiers';
 
 const NAV_ITEMS = [
   { label: 'Desk', href: '/dashboard' },
+  { label: 'Predictions', href: '/prediction-markets' },
   { label: 'Legends', href: '/masters' },
   { label: 'Markets', href: '/markets' },
   { label: 'Compare', href: '/compare' },
-  { label: 'Pipeline', href: '/pipeline' },
   { label: 'Pricing', href: '/pricing' },
 ];
 
 const MORE_ITEMS = [
-      { label: 'How it works', href: '/how-it-works' },
-      { label: 'Kernel demo', href: '/demo' },
-      { label: 'Features', href: '/features' },
+  { label: 'How it works', href: '/how-it-works' },
+  { label: 'Kernel demo', href: '/demo' },
+  { label: 'Pipeline', href: '/pipeline' },
+  { label: 'Features', href: '/features' },
   { label: 'Solutions', href: '/solutions' },
   { label: 'Use cases', href: '/use-cases' },
   { label: 'Learn', href: '/learn' },
