@@ -3,9 +3,17 @@
  * Clerk-only entries. Mid fills, zero fees. Not advice / not real trading.
  */
 
-import { analyzePredictionMarket } from '@/lib/prediction/analyze';
+import { deepseekChat, hasDeepseekKey } from '@/lib/llm/deepseek';
+import { getEventNewsDigest } from '@/lib/llm/news-scan';
+import { seedTemplateReport } from '@/lib/prediction/analyze';
 import { getPredictionMarket, listPredictionMarkets } from '@/lib/prediction/polymarket';
-import { gapOf, type PredictionMarket, type StrategyReport } from '@/lib/prediction/types';
+import {
+  gapOf,
+  type Confidence,
+  type PredictionMarket,
+  type ResolutionRisk,
+  type StrategyReport,
+} from '@/lib/prediction/types';
 import { supabaseAdmin, supabaseConfigured } from '@/lib/supabase/admin';
 
 export type PaperSide = 'YES' | 'NO';
@@ -48,6 +56,8 @@ export type PaperRun = {
   opened?: number;
   settled?: number;
   stillOpen?: number;
+  clerkOk?: number;
+  clerkFail?: number;
   note?: string;
 };
 
@@ -93,6 +103,7 @@ export type PaperBook = {
     engine: string;
     traded: boolean;
     at: string;
+    note?: string;
   }>;
   runs: PaperRun[];
 };
@@ -108,6 +119,109 @@ export type PaperOpenOpts = {
 
 const LEDGER_ID = 'default';
 
+function clamp(n: number, lo = 1, hi = 99): number {
+  return Math.max(lo, Math.min(hi, Math.round(n)));
+}
+
+/**
+ * Paper clerk: Flash + thinking off (reliable JSON). Pro/thinking often returns
+ * empty content or prose — silent template fallback blocked all trades.
+ */
+async function paperClerkAnalyze(market: PredictionMarket): Promise<StrategyReport> {
+  const draft = seedTemplateReport(market);
+  if (!hasDeepseekKey()) {
+    return { ...draft, engine: 'template' };
+  }
+
+  let newsBullets: string[] = [];
+  try {
+    const digest = await getEventNewsDigest(market.question);
+    newsBullets = digest?.bullets ?? [];
+  } catch {
+    /* optional */
+  }
+
+  const newsSection =
+    newsBullets.length > 0
+      ? `NEWS (unverified):\n- ${newsBullets.slice(0, 4).join('\n- ')}`
+      : 'NEWS LAYER: unavailable — do not invent headlines.';
+
+  const { content } = await deepseekChat({
+    lane: 'card',
+    thinking: false,
+    temperature: 0.2,
+    timeoutMs: 45_000,
+    maxTokens: 900,
+    messages: [
+      {
+        role: 'system',
+        content: `You are Agents61 Prediction Clerk (research simulation, not a bookie).
+Never say bet/buy/sell YES/NO or give position size.
+Calibrate carefully — only diverge from market mid when resolution wording, base rates, or news justify it.
+Return ONLY JSON (no markdown):
+{"agents61Probability":1-99,"confidence":"High"|"Medium"|"Low","resolutionRisk":"Low"|"Medium"|"High","executiveSummary":"string","whyGap":"one sentence"}`,
+      },
+      {
+        role: 'user',
+        content: JSON.stringify({
+          question: market.question,
+          description: market.description.slice(0, 600),
+          marketProbability: market.marketProbability,
+          category: market.category,
+          endDate: market.endDate,
+          volumeUsd: market.volumeUsd,
+          draft: {
+            agents61Probability: draft.agents61Probability,
+            probabilityGap: draft.probabilityGap,
+            confidence: draft.confidence,
+            resolutionRisk: draft.resolutionRisk,
+          },
+          newsSection,
+        }),
+      },
+    ],
+  });
+
+  const start = content.indexOf('{');
+  const end = content.lastIndexOf('}');
+  if (start < 0 || end <= start) throw new Error(`Clerk JSON missing: ${content.slice(0, 100)}`);
+  const parsed = JSON.parse(content.slice(start, end + 1)) as {
+    agents61Probability?: number;
+    confidence?: Confidence;
+    resolutionRisk?: ResolutionRisk;
+    executiveSummary?: string;
+    whyGap?: string;
+  };
+  const p = clamp(Number(parsed.agents61Probability ?? draft.agents61Probability));
+  const confidence: Confidence =
+    parsed.confidence === 'High' || parsed.confidence === 'Medium' || parsed.confidence === 'Low'
+      ? parsed.confidence
+      : draft.confidence;
+  const resolutionRisk: ResolutionRisk =
+    parsed.resolutionRisk === 'High' ||
+    parsed.resolutionRisk === 'Medium' ||
+    parsed.resolutionRisk === 'Low'
+      ? parsed.resolutionRisk
+      : draft.resolutionRisk;
+
+  return {
+    ...draft,
+    agents61Probability: p,
+    probabilityGap: gapOf(p, market.marketProbability),
+    confidence,
+    resolutionRisk,
+    risks: { ...draft.risks, resolution: resolutionRisk, overall: resolutionRisk },
+    executiveSummary: String(parsed.executiveSummary || draft.executiveSummary),
+    whyMarketMayBeWrong: parsed.whyGap
+      ? [String(parsed.whyGap), ...draft.whyMarketMayBeWrong.slice(0, 2)]
+      : draft.whyMarketMayBeWrong,
+    whyDisagree: parsed.whyGap ? [String(parsed.whyGap)] : draft.whyDisagree,
+    engine: 'deepseek',
+    newsBullets: newsBullets.length ? newsBullets : draft.newsBullets,
+    analyzedAt: new Date().toISOString(),
+  };
+}
+
 const DEFAULT_ASSUMPTIONS = (opts: Required<PaperOpenOpts>) => ({
   fill: 'Polymarket YES mid (optimistic — no book/slippage)',
   fees: 0,
@@ -115,9 +229,9 @@ const DEFAULT_ASSUMPTIONS = (opts: Required<PaperOpenOpts>) => ({
   bankrollUsd: opts.bankroll,
   minAbsGapPp: opts.minGap,
   minVolumeUsd: opts.minVol,
-  engine: opts.useClerk ? 'deepseek-clerk-only' : 'template-forbidden-for-trades',
+  engine: opts.useClerk ? 'deepseek-flash-clerk-only' : 'template-forbidden-for-trades',
   warning:
-    'Template gaps are hash-seeded — never trade them. Clerk-only paper entries. Realized P&L needs settlement. Not advice.',
+    'Template gaps are hash-seeded — never trade them. Clerk-only paper entries (Flash). Realized P&L needs settlement. Not advice.',
 });
 
 function emptyBook(opts: Required<PaperOpenOpts>): PaperBook {
@@ -310,6 +424,9 @@ export async function openPaperBook(opts?: PaperOpenOpts): Promise<PaperBook> {
   if (!n.useClerk) {
     throw new Error('Paper book refuses template-only opens — set useClerk true');
   }
+  if (!hasDeepseekKey()) {
+    throw new Error('DEEPSEEK_API_KEY missing — paper book will not open on template gaps');
+  }
 
   const book = await loadPaperBook(n);
   book.assumptions = DEFAULT_ASSUMPTIONS(n);
@@ -336,14 +453,23 @@ export async function openPaperBook(opts?: PaperOpenOpts): Promise<PaperBook> {
     .filter((m) => !openIds.has(m.id))
     .slice(0, Math.max(n.limit * 3, 12));
 
-  const analyses: Array<{ market: PredictionMarket; report: StrategyReport }> = [];
+  const analyses: Array<{ market: PredictionMarket; report: StrategyReport; note?: string }> = [];
+  let clerkOk = 0;
+  let clerkFail = 0;
   for (const market of candidates) {
     if (analyses.length >= n.limit) break;
     try {
-      const report = await analyzePredictionMarket(market, { useClerk: true });
+      const report = await paperClerkAnalyze(market);
+      if (report.engine === 'deepseek') clerkOk += 1;
+      else clerkFail += 1;
       analyses.push({ market, report });
-    } catch {
-      /* skip failed analyze */
+    } catch (e) {
+      clerkFail += 1;
+      analyses.push({
+        market,
+        report: seedTemplateReport(market),
+        note: e instanceof Error ? e.message.slice(0, 120) : 'clerk failed',
+      });
     }
   }
 
@@ -351,7 +477,7 @@ export async function openPaperBook(opts?: PaperOpenOpts): Promise<PaperBook> {
   let opened = 0;
   const at = new Date().toISOString();
 
-  for (const { market, report } of analyses) {
+  for (const { market, report, note } of analyses) {
     const traded =
       report.engine === 'deepseek' &&
       Math.abs(report.probabilityGap) >= n.minGap &&
@@ -368,6 +494,7 @@ export async function openPaperBook(opts?: PaperOpenOpts): Promise<PaperBook> {
       engine: report.engine,
       traded,
       at,
+      note,
     });
 
     if (!traded) continue;
@@ -414,6 +541,8 @@ export async function openPaperBook(opts?: PaperOpenOpts): Promise<PaperBook> {
     action: 'open',
     analyzed: analyses.length,
     opened,
+    clerkOk,
+    clerkFail,
     note: live ? undefined : 'fallback markets',
   });
   book.runs = book.runs.slice(0, 60);
@@ -425,8 +554,9 @@ export async function openPaperBook(opts?: PaperOpenOpts): Promise<PaperBook> {
 export async function runPaperDaily(opts?: PaperOpenOpts): Promise<PaperBook> {
   await settlePaperBook(opts);
   const book = await openPaperBook(opts);
+  const last = book.runs[0];
   book.runs[0] = {
-    ...(book.runs[0] ?? { at: new Date().toISOString(), action: 'open' }),
+    ...(last ?? { at: new Date().toISOString(), action: 'open' }),
     action: 'daily',
   };
   await savePaperBook(book);

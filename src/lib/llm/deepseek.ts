@@ -91,7 +91,9 @@ export async function deepseekChat(opts: {
       throw new Error(`DeepSeek HTTP ${res.status}${detail ? `: ${detail.slice(0, 240)}` : ''}`);
     }
     const json = (await res.json()) as CompletionJson;
-    const content = json.choices?.[0]?.message?.content?.trim();
+    const message = json.choices?.[0]?.message;
+    const content =
+      message?.content?.trim() || message?.reasoning_content?.trim() || '';
     if (!content) throw new Error('Empty DeepSeek content');
     return { content, model };
   } finally {
