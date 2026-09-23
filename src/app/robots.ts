@@ -9,6 +9,7 @@ const PRIVATE_PATHS: string[] = [
   '/auth/',
   '/checkout/',
   '/internal/',
+  '/predictions/desk',
 ];
 
 const AI_CRAWLERS = [

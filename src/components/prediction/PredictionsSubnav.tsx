@@ -5,6 +5,7 @@ const LINKS = [
   { href: '/predictions/scanner', label: 'Market Scanner' },
   { href: '/predictions#gaps', label: 'Top Gaps' },
   { href: '/predictions/watchlist', label: 'Watchlist' },
+  { href: '/predictions/desk', label: 'Paper Desk' },
 ] as const;
 
 export default function PredictionsSubnav({ active }: { active?: string }) {
