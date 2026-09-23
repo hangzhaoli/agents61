@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { ArrowRight, Check, X } from 'lucide-react';
+import { ArrowRight, Check, Link2, Unplug, X } from 'lucide-react';
 import type { GapRow } from '@/lib/prediction/gaps';
 import { formatGap } from '@/lib/prediction/types';
 import {
@@ -16,9 +16,29 @@ import {
   type DeskBook,
   type DeskSide,
 } from '@/lib/prediction/paper-desk';
+import {
+  appendLiveFill,
+  emptyLiveBook,
+  readLiveBook,
+  type LiveBook,
+} from '@/lib/prediction/live-desk';
+import { placeLiveMarketBuy, tokenIdForSide, clearClobSession, fetchClobCollateral } from '@/lib/prediction/clob';
+import {
+  connectWallet,
+  ensurePolygon,
+  getChainId,
+  getEthereum,
+  POLYGON_CHAIN_ID,
+  readMaticAndUsdc,
+  shortAddr,
+} from '@/lib/prediction/wallet';
 
 const DEFAULT_STAKE = 100;
 const MIN_GAP = 3;
+const MIN_MID = 10;
+const MAX_MID = 90;
+
+type DeskMode = 'paper' | 'live';
 
 function fmtUsd(n: number) {
   const sign = n > 0 ? '+' : '';
@@ -26,29 +46,101 @@ function fmtUsd(n: number) {
 }
 
 export default function PaperTradeDesk({ rows }: { rows: GapRow[] }) {
+  const [mode, setMode] = useState<DeskMode>('paper');
   const [book, setBook] = useState<DeskBook>(() => emptyDeskBook());
+  const [liveBook, setLiveBook] = useState<LiveBook>(() => emptyLiveBook());
   const [hydrated, setHydrated] = useState(false);
   const [stake, setStake] = useState(DEFAULT_STAKE);
   const [flash, setFlash] = useState<string | null>(null);
+  const [busyId, setBusyId] = useState<string | null>(null);
 
-  const sync = useCallback(() => {
-    setBook(readDeskBook());
+  const [address, setAddress] = useState<string | null>(null);
+  const [chainId, setChainId] = useState<number | null>(null);
+  const [matic, setMatic] = useState<number | null>(null);
+  const [usdc, setUsdc] = useState<number | null>(null);
+  const [clobBal, setClobBal] = useState<number | null>(null);
+  const [clobAllow, setClobAllow] = useState<number | null>(null);
+  const [walletBusy, setWalletBusy] = useState(false);
+
+  const syncPaper = useCallback(() => setBook(readDeskBook()), []);
+  const syncLive = useCallback(() => setLiveBook(readLiveBook()), []);
+
+  useEffect(() => {
+    syncPaper();
+    syncLive();
+    setHydrated(true);
+    window.addEventListener('agents61-paper-desk', syncPaper);
+    window.addEventListener('agents61-live-desk', syncLive);
+    window.addEventListener('storage', syncPaper);
+    return () => {
+      window.removeEventListener('agents61-paper-desk', syncPaper);
+      window.removeEventListener('agents61-live-desk', syncLive);
+      window.removeEventListener('storage', syncPaper);
+    };
+  }, [syncPaper, syncLive]);
+
+  const refreshChain = useCallback(async (addr: string) => {
+    try {
+      const cid = await getChainId();
+      setChainId(cid);
+      if (cid !== POLYGON_CHAIN_ID) {
+        setMatic(null);
+        setUsdc(null);
+        setClobBal(null);
+        setClobAllow(null);
+        return;
+      }
+      const bals = await readMaticAndUsdc(addr);
+      setMatic(bals.matic);
+      setUsdc(bals.usdc);
+      try {
+        const c = await fetchClobCollateral();
+        setClobBal(c.balance);
+        setClobAllow(c.allowance);
+      } catch {
+        setClobBal(null);
+        setClobAllow(null);
+      }
+    } catch {
+      /* ignore refresh errors */
+    }
   }, []);
 
   useEffect(() => {
-    sync();
-    setHydrated(true);
-    window.addEventListener('agents61-paper-desk', sync);
-    window.addEventListener('storage', sync);
-    return () => {
-      window.removeEventListener('agents61-paper-desk', sync);
-      window.removeEventListener('storage', sync);
+    const eth = getEthereum();
+    if (!eth?.on) return;
+    const onAccounts = (...args: unknown[]) => {
+      const accs = args[0] as string[] | undefined;
+      clearClobSession();
+      const next = accs?.[0] ?? null;
+      setAddress(next);
+      if (next) void refreshChain(next);
+      else {
+        setChainId(null);
+        setMatic(null);
+        setUsdc(null);
+        setClobBal(null);
+        setClobAllow(null);
+      }
     };
-  }, [sync]);
+    const onChain = (...args: unknown[]) => {
+      const hex = args[0] as string | undefined;
+      if (hex) setChainId(Number.parseInt(hex, 16));
+      clearClobSession();
+      if (address) void refreshChain(address);
+    };
+    eth.on('accountsChanged', onAccounts);
+    eth.on('chainChanged', onChain);
+    return () => {
+      eth.removeListener?.('accountsChanged', onAccounts);
+      eth.removeListener?.('chainChanged', onChain);
+    };
+  }, [address, refreshChain]);
 
   const suggestions = useMemo(() => {
     return [...rows]
       .filter((r) => Math.abs(r.gap) >= MIN_GAP)
+      .filter((r) => r.market.marketProbability >= MIN_MID && r.market.marketProbability <= MAX_MID)
       .sort((a, b) => Math.abs(b.gap) - Math.abs(a.gap))
       .slice(0, 12);
   }, [rows]);
@@ -67,10 +159,25 @@ export default function PaperTradeDesk({ rows }: { rows: GapRow[] }) {
 
   function toast(msg: string) {
     setFlash(msg);
-    window.setTimeout(() => setFlash(null), 2800);
+    window.setTimeout(() => setFlash(null), 3200);
   }
 
-  function execute(row: GapRow, side: DeskSide) {
+  async function onConnect() {
+    setWalletBusy(true);
+    try {
+      const addr = await connectWallet();
+      await ensurePolygon();
+      setAddress(addr);
+      await refreshChain(addr);
+      toast(`Connected ${shortAddr(addr)} · Polygon`);
+    } catch (e) {
+      toast(e instanceof Error ? e.message : String(e));
+    } finally {
+      setWalletBusy(false);
+    }
+  }
+
+  function executePaper(row: GapRow, side: DeskSide) {
     const next = readDeskBook();
     if (next.positions.some((p) => p.status === 'open' && p.marketId === row.market.id)) {
       toast('Already open on this market');
@@ -102,6 +209,61 @@ export default function PaperTradeDesk({ rows }: { rows: GapRow[] }) {
     toast(`Paper ${side} @ ${entry}% · $${stake}`);
   }
 
+  async function executeLive(row: GapRow, side: DeskSide) {
+    if (!address) {
+      toast('Connect wallet first');
+      return;
+    }
+    if (!tokenIdForSide(row.market, side)) {
+      toast('No CLOB tokens for this market — paper only');
+      return;
+    }
+    setBusyId(row.market.id);
+    try {
+      await ensurePolygon();
+      const result = await placeLiveMarketBuy({
+        market: row.market,
+        side,
+        amountUsd: stake,
+      });
+      const tokenId = tokenIdForSide(row.market, side)!;
+      const fill = {
+        id: `live-${row.market.id}-${Date.now()}`,
+        marketId: row.market.id,
+        question: row.market.question,
+        url: row.market.url,
+        side,
+        amountUsd: stake,
+        entryMid: row.market.marketProbability,
+        agents61: row.agents61Probability,
+        gap: row.gap,
+        tokenId,
+        orderId: result.orderId,
+        status: result.status || (result.ok ? 'posted' : 'failed'),
+        openedAt: new Date().toISOString(),
+        error: result.error,
+        mode: 'live' as const,
+      };
+      const next = appendLiveFill(fill);
+      setLiveBook(next);
+      if (result.ok) {
+        toast(`Live ${side} posted · $${stake}${result.orderId ? ` · ${result.orderId.slice(0, 10)}…` : ''}`);
+        void refreshChain(address);
+      } else {
+        toast(result.error || 'Live order failed');
+      }
+    } catch (e) {
+      toast(e instanceof Error ? e.message : String(e));
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  function execute(row: GapRow, side: DeskSide) {
+    if (mode === 'live') void executeLive(row, side);
+    else executePaper(row, side);
+  }
+
   function settleOne(id: string, finalMid: number) {
     const next = readDeskBook();
     const pos = next.positions.find((p) => p.id === id);
@@ -125,7 +287,6 @@ export default function PaperTradeDesk({ rows }: { rows: GapRow[] }) {
       if (pos.status !== 'open') continue;
       const mid = midById.get(pos.marketId) ?? pos.markMid;
       if (mid == null) continue;
-      // V1 manual settle: only extreme mids OR user force via button — auto-pass onesided
       if (mid > 5 && mid < 95) {
         pos.markMid = mid;
         continue;
@@ -153,8 +314,10 @@ export default function PaperTradeDesk({ rows }: { rows: GapRow[] }) {
   }
 
   if (!hydrated) {
-    return <div className="card p-8 text-sm text-slate-500">Loading paper desk…</div>;
+    return <div className="card p-8 text-sm text-slate-500">Loading trade desk…</div>;
   }
+
+  const onPolygon = chainId === POLYGON_CHAIN_ID;
 
   return (
     <div className="space-y-4">
@@ -162,61 +325,199 @@ export default function PaperTradeDesk({ rows }: { rows: GapRow[] }) {
         <div className="rounded-xl bg-[#0052d9] text-white text-sm font-medium px-4 py-2">{flash}</div>
       ) : null}
 
-      <div className="grid sm:grid-cols-4 gap-3">
-        <div className="card-flat p-4">
-          <p className="text-[10px] uppercase tracking-wider text-slate-400">Bankroll</p>
-          <p className="text-xl font-bold text-slate-900">${book.bankrollUsd}</p>
-        </div>
-        <div className="card-flat p-4">
-          <p className="text-[10px] uppercase tracking-wider text-slate-400">Deployed</p>
-          <p className="text-xl font-bold text-slate-900">${deployed}</p>
-        </div>
-        <div className="card-flat p-4">
-          <p className="text-[10px] uppercase tracking-wider text-slate-400">Realized</p>
-          <p className={`text-xl font-bold ${realized >= 0 ? 'text-emerald-700' : 'text-rose-700'}`}>
-            {fmtUsd(realized)}
+      {/* Mode + chain */}
+      <div className="card p-4 md:p-5 space-y-4">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="inline-flex rounded-lg border border-slate-200 p-0.5 bg-slate-50">
+            <button
+              type="button"
+              onClick={() => setMode('paper')}
+              className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wide rounded-md ${
+                mode === 'paper' ? 'bg-white text-[#0052d9] shadow-sm' : 'text-slate-500'
+              }`}
+            >
+              Paper
+            </button>
+            <button
+              type="button"
+              onClick={() => setMode('live')}
+              className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wide rounded-md ${
+                mode === 'live' ? 'bg-white text-[#0052d9] shadow-sm' : 'text-slate-500'
+              }`}
+            >
+              Live
+            </button>
+          </div>
+          <p className="text-xs text-slate-500 flex-1 min-w-[12rem]">
+            {mode === 'paper'
+              ? 'Virtual mid fills · 0 fees · this browser'
+              : 'Real USDC on Polygon via Polymarket CLOB · wallet signs every order'}
           </p>
+          {mode === 'live' ? (
+            address ? (
+              <button
+                type="button"
+                onClick={() => {
+                  clearClobSession();
+                  setAddress(null);
+                  setChainId(null);
+                  setMatic(null);
+                  setUsdc(null);
+                  setClobBal(null);
+                  setClobAllow(null);
+                  toast('Wallet session cleared (browser still connected)');
+                }}
+                className="btn-secondary text-xs"
+              >
+                <Unplug className="h-3.5 w-3.5" strokeWidth={2.5} />
+                Disconnect session
+              </button>
+            ) : (
+              <button
+                type="button"
+                disabled={walletBusy}
+                onClick={() => void onConnect()}
+                className="btn-primary text-xs disabled:opacity-40"
+              >
+                <Link2 className="h-3.5 w-3.5" strokeWidth={2.5} />
+                {walletBusy ? 'Connecting…' : 'Connect wallet'}
+              </button>
+            )
+          ) : null}
         </div>
-        <div className="card-flat p-4">
-          <p className="text-[10px] uppercase tracking-wider text-slate-400">Open / Settled</p>
-          <p className="text-xl font-bold text-slate-900">
-            {open.length} / {settled.length}
-          </p>
-        </div>
+
+        {mode === 'live' ? (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-3 text-sm">
+            <div className="rounded-lg border border-slate-100 bg-slate-50/80 p-3">
+              <p className="text-[10px] uppercase tracking-wider text-slate-400">Wallet</p>
+              <p className="font-semibold text-slate-900 mt-0.5">
+                {address ? shortAddr(address) : '—'}
+              </p>
+            </div>
+            <div className="rounded-lg border border-slate-100 bg-slate-50/80 p-3">
+              <p className="text-[10px] uppercase tracking-wider text-slate-400">Chain</p>
+              <p className={`font-semibold mt-0.5 ${onPolygon ? 'text-emerald-700' : 'text-amber-700'}`}>
+                {chainId == null ? '—' : onPolygon ? 'Polygon 137' : `Wrong chain (${chainId})`}
+              </p>
+              {address && !onPolygon ? (
+                <button
+                  type="button"
+                  className="text-[11px] text-[#0052d9] mt-1"
+                  onClick={() => {
+                    void (async () => {
+                      await ensurePolygon();
+                      if (address) await refreshChain(address);
+                    })();
+                  }}
+                >
+                  Switch to Polygon
+                </button>
+              ) : null}
+            </div>
+            <div className="rounded-lg border border-slate-100 bg-slate-50/80 p-3">
+              <p className="text-[10px] uppercase tracking-wider text-slate-400">POL (gas)</p>
+              <p className="font-semibold text-slate-900 mt-0.5">
+                {matic == null ? '—' : matic.toFixed(4)}
+              </p>
+            </div>
+            <div className="rounded-lg border border-slate-100 bg-slate-50/80 p-3">
+              <p className="text-[10px] uppercase tracking-wider text-slate-400">USDC.e (wallet)</p>
+              <p className="font-semibold text-slate-900 mt-0.5">
+                {usdc == null ? '—' : `$${usdc.toFixed(2)}`}
+              </p>
+            </div>
+            <div className="rounded-lg border border-slate-100 bg-slate-50/80 p-3">
+              <p className="text-[10px] uppercase tracking-wider text-slate-400">CLOB collateral</p>
+              <p className="font-semibold text-slate-900 mt-0.5">
+                {clobBal == null ? '—' : `$${clobBal.toFixed(2)}`}
+              </p>
+              <p className="text-[10px] text-slate-400 mt-0.5">
+                allow {clobAllow == null ? '—' : `$${clobAllow.toFixed(2)}`}
+              </p>
+            </div>
+          </div>
+        ) : null}
       </div>
+
+      {mode === 'paper' ? (
+        <div className="grid sm:grid-cols-4 gap-3">
+          <div className="card-flat p-4">
+            <p className="text-[10px] uppercase tracking-wider text-slate-400">Bankroll</p>
+            <p className="text-xl font-bold text-slate-900">${book.bankrollUsd}</p>
+          </div>
+          <div className="card-flat p-4">
+            <p className="text-[10px] uppercase tracking-wider text-slate-400">Deployed</p>
+            <p className="text-xl font-bold text-slate-900">${deployed}</p>
+          </div>
+          <div className="card-flat p-4">
+            <p className="text-[10px] uppercase tracking-wider text-slate-400">Realized</p>
+            <p className={`text-xl font-bold ${realized >= 0 ? 'text-emerald-700' : 'text-rose-700'}`}>
+              {fmtUsd(realized)}
+            </p>
+          </div>
+          <div className="card-flat p-4">
+            <p className="text-[10px] uppercase tracking-wider text-slate-400">Open / Settled</p>
+            <p className="text-xl font-bold text-slate-900">
+              {open.length} / {settled.length}
+            </p>
+          </div>
+        </div>
+      ) : (
+        <div className="grid sm:grid-cols-2 gap-3">
+          <div className="card-flat p-4">
+            <p className="text-[10px] uppercase tracking-wider text-slate-400">Live fills (browser log)</p>
+            <p className="text-xl font-bold text-slate-900">{liveBook.fills.length}</p>
+          </div>
+          <div className="card-flat p-4">
+            <p className="text-[10px] uppercase tracking-wider text-slate-400">Last live</p>
+            <p className="text-sm font-semibold text-slate-900 mt-1 line-clamp-2">
+              {liveBook.fills[0]
+                ? `${liveBook.fills[0].side} $${liveBook.fills[0].amountUsd} · ${liveBook.fills[0].status}`
+                : '—'}
+            </p>
+          </div>
+        </div>
+      )}
 
       <div className="flex flex-wrap items-center gap-3">
         <label className="text-sm text-slate-600 flex items-center gap-2">
-          Stake $
+          {mode === 'live' ? 'Size $' : 'Stake $'}
           <input
             type="number"
-            min={10}
-            max={book.bankrollUsd}
-            step={10}
+            min={1}
+            max={mode === 'paper' ? book.bankrollUsd : 10_000}
+            step={1}
             value={stake}
-            onChange={(e) => setStake(Math.max(10, Number(e.target.value) || 10))}
+            onChange={(e) => setStake(Math.max(1, Number(e.target.value) || 1))}
             className="w-24 rounded-lg border border-slate-200 px-2 py-1.5 text-sm"
           />
         </label>
-        <button type="button" onClick={settleOpenWithMarks} className="btn-secondary text-sm">
-          Auto-settle extreme mids
-        </button>
-        <button type="button" onClick={resetBook} className="text-xs text-slate-400 hover:text-rose-600">
-          Reset desk
-        </button>
-        <p className="text-xs text-slate-400">Paper only · mid fill · 0 fees · this browser</p>
+        {mode === 'paper' ? (
+          <>
+            <button type="button" onClick={settleOpenWithMarks} className="btn-secondary text-sm">
+              Auto-settle extreme mids
+            </button>
+            <button type="button" onClick={resetBook} className="text-xs text-slate-400 hover:text-rose-600">
+              Reset desk
+            </button>
+          </>
+        ) : (
+          <p className="text-xs text-slate-400">
+            Live uses FAK market buys on CLOB. Deposit USDC on polymarket.com if collateral is empty.
+          </p>
+        )}
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6 items-start">
-        {/* LEFT: suggestions */}
         <section className="card p-5 md:p-6">
           <h2 className="text-lg font-bold text-slate-900 mb-1">Suggestions</h2>
           <p className="text-sm text-slate-600 mb-4">
-            Gap ≥ {MIN_GAP}pp from Top Gaps. Execute opens a paper fill at the live YES mid.
+            Gap ≥ {MIN_GAP}pp · mid {MIN_MID}–{MAX_MID}% (filters near-0/near-100 noise).{' '}
+            {mode === 'paper' ? 'Paper fills at YES mid.' : 'Live posts a CLOB BUY signed by your wallet.'}
           </p>
           {suggestions.length === 0 ? (
             <p className="text-sm text-slate-500">
-              No gaps ≥ {MIN_GAP}pp yet. Run Analyze on markets or open the{' '}
+              No gaps in range. Run Analyze or open the{' '}
               <Link href="/predictions/scanner" className="text-[#0052d9]">
                 scanner
               </Link>
@@ -227,7 +528,9 @@ export default function PaperTradeDesk({ rows }: { rows: GapRow[] }) {
               {suggestions.map((r) => {
                 const side: DeskSide = r.gap > 0 ? 'YES' : 'NO';
                 const ev = modelEv(side, r.market.marketProbability, r.agents61Probability, stake);
-                const already = openIds.has(r.market.id);
+                const already = mode === 'paper' && openIds.has(r.market.id);
+                const hasClob = Boolean(r.market.clobTokenIds);
+                const liveBlocked = mode === 'live' && (!address || !hasClob || !onPolygon);
                 return (
                   <li key={r.market.id} className="rounded-xl border border-slate-100 p-4">
                     <Link
@@ -242,20 +545,29 @@ export default function PaperTradeDesk({ rows }: { rows: GapRow[] }) {
                       <span className="font-semibold text-slate-800">{formatGap(r.gap)}</span>
                       <span>{r.confidence}</span>
                       <span>Model EV {fmtUsd(ev)}</span>
+                      {mode === 'live' ? (
+                        <span className={hasClob ? 'text-emerald-700' : 'text-amber-700'}>
+                          {hasClob ? 'CLOB ready' : 'No token ids'}
+                        </span>
+                      ) : null}
                     </div>
                     <div className="mt-3 flex flex-wrap gap-2">
                       <button
                         type="button"
-                        disabled={already}
+                        disabled={already || liveBlocked || busyId === r.market.id}
                         onClick={() => execute(r, side)}
                         className="btn-primary text-xs disabled:opacity-40"
                       >
-                        Paper {side}
+                        {busyId === r.market.id
+                          ? 'Signing…'
+                          : mode === 'live'
+                            ? `Live ${side}`
+                            : `Paper ${side}`}
                         <ArrowRight className="h-3.5 w-3.5" strokeWidth={2.5} />
                       </button>
                       <button
                         type="button"
-                        disabled={already}
+                        disabled={already || liveBlocked || busyId === r.market.id}
                         onClick={() => execute(r, side === 'YES' ? 'NO' : 'YES')}
                         className="btn-secondary text-xs disabled:opacity-40"
                       >
@@ -270,73 +582,112 @@ export default function PaperTradeDesk({ rows }: { rows: GapRow[] }) {
           )}
         </section>
 
-        {/* RIGHT: book */}
         <section className="space-y-6">
-          <div className="card p-5 md:p-6">
-            <h2 className="text-lg font-bold text-slate-900 mb-4">Open positions</h2>
-            {open.length === 0 ? (
-              <p className="text-sm text-slate-500">No open paper positions.</p>
-            ) : (
-              <ul className="space-y-3">
-                {open.map((p) => {
-                  const mark = midById.get(p.marketId) ?? p.markMid ?? p.entryMid;
-                  return (
-                    <li key={p.id} className="rounded-xl border border-slate-100 p-4 text-sm">
-                      <p className="font-semibold text-slate-900 line-clamp-2">{p.question}</p>
-                      <p className="mt-1 text-xs text-slate-500">
-                        {p.side} @ {p.entryMid}% · stake ${p.stake} · mark {mark}% · gap{' '}
-                        {formatGap(p.gap)}
-                      </p>
-                      <div className="mt-2 flex flex-wrap gap-2">
-                        <button
-                          type="button"
-                          className="btn-secondary text-xs"
-                          onClick={() => settleOne(p.id, mark)}
-                        >
-                          Force settle @ mark
-                        </button>
-                        <a
-                          href={p.url}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-xs text-[#0052d9] self-center"
-                        >
-                          Polymarket
-                        </a>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
-          </div>
+          {mode === 'paper' ? (
+            <>
+              <div className="card p-5 md:p-6">
+                <h2 className="text-lg font-bold text-slate-900 mb-4">Open positions</h2>
+                {open.length === 0 ? (
+                  <p className="text-sm text-slate-500">No open paper positions.</p>
+                ) : (
+                  <ul className="space-y-3">
+                    {open.map((p) => {
+                      const mark = midById.get(p.marketId) ?? p.markMid ?? p.entryMid;
+                      return (
+                        <li key={p.id} className="rounded-xl border border-slate-100 p-4 text-sm">
+                          <p className="font-semibold text-slate-900 line-clamp-2">{p.question}</p>
+                          <p className="mt-1 text-xs text-slate-500">
+                            {p.side} @ {p.entryMid}% · stake ${p.stake} · mark {mark}% · gap{' '}
+                            {formatGap(p.gap)}
+                          </p>
+                          <div className="mt-2 flex flex-wrap gap-2">
+                            <button
+                              type="button"
+                              className="btn-secondary text-xs"
+                              onClick={() => settleOne(p.id, mark)}
+                            >
+                              Force settle @ mark
+                            </button>
+                            <a
+                              href={p.url}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-xs text-[#0052d9] self-center"
+                            >
+                              Polymarket
+                            </a>
+                          </div>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+              </div>
 
-          <div className="card p-5 md:p-6">
-            <h2 className="text-lg font-bold text-slate-900 mb-4">Settled</h2>
-            {settled.length === 0 ? (
-              <p className="text-sm text-slate-500">Nothing settled yet.</p>
-            ) : (
-              <ul className="space-y-2">
-                {settled.slice(0, 20).map((p) => (
-                  <li
-                    key={p.id}
-                    className="flex flex-wrap items-center gap-2 text-sm border-b border-slate-50 pb-2 last:border-0"
-                  >
-                    {p.won ? (
-                      <Check className="h-4 w-4 text-emerald-600" strokeWidth={2.5} />
-                    ) : (
-                      <X className="h-4 w-4 text-rose-600" strokeWidth={2.5} />
-                    )}
-                    <span className="font-semibold">{p.won ? 'WIN' : 'LOSS'}</span>
-                    <span className="text-slate-600 line-clamp-1 flex-1">{p.question}</span>
-                    <span className={p.realizedPnL && p.realizedPnL >= 0 ? 'text-emerald-700' : 'text-rose-700'}>
-                      {fmtUsd(p.realizedPnL ?? 0)}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
+              <div className="card p-5 md:p-6">
+                <h2 className="text-lg font-bold text-slate-900 mb-4">Settled</h2>
+                {settled.length === 0 ? (
+                  <p className="text-sm text-slate-500">Nothing settled yet.</p>
+                ) : (
+                  <ul className="space-y-2">
+                    {settled.slice(0, 20).map((p) => (
+                      <li
+                        key={p.id}
+                        className="flex flex-wrap items-center gap-2 text-sm border-b border-slate-50 pb-2 last:border-0"
+                      >
+                        {p.won ? (
+                          <Check className="h-4 w-4 text-emerald-600" strokeWidth={2.5} />
+                        ) : (
+                          <X className="h-4 w-4 text-rose-600" strokeWidth={2.5} />
+                        )}
+                        <span className="font-semibold">{p.won ? 'WIN' : 'LOSS'}</span>
+                        <span className="text-slate-600 line-clamp-1 flex-1">{p.question}</span>
+                        <span
+                          className={
+                            p.realizedPnL && p.realizedPnL >= 0 ? 'text-emerald-700' : 'text-rose-700'
+                          }
+                        >
+                          {fmtUsd(p.realizedPnL ?? 0)}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </>
+          ) : (
+            <div className="card p-5 md:p-6">
+              <h2 className="text-lg font-bold text-slate-900 mb-1">Live order log</h2>
+              <p className="text-xs text-slate-500 mb-4">
+                Local record of CLOB posts from this browser. Source of truth remains Polymarket /
+                Polygon.
+              </p>
+              {liveBook.fills.length === 0 ? (
+                <p className="text-sm text-slate-500">No live fills yet.</p>
+              ) : (
+                <ul className="space-y-3">
+                  {liveBook.fills.slice(0, 30).map((f) => (
+                    <li key={f.id} className="rounded-xl border border-slate-100 p-4 text-sm">
+                      <p className="font-semibold text-slate-900 line-clamp-2">{f.question}</p>
+                      <p className="mt-1 text-xs text-slate-500">
+                        {f.side} · ${f.amountUsd} · mid {f.entryMid}% · {f.status}
+                        {f.orderId ? ` · ${f.orderId.slice(0, 12)}…` : ''}
+                      </p>
+                      {f.error ? <p className="mt-1 text-xs text-rose-600">{f.error}</p> : null}
+                      <a
+                        href={f.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-xs text-[#0052d9] mt-2 inline-block"
+                      >
+                        Polymarket
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
         </section>
       </div>
     </div>

@@ -1,6 +1,5 @@
 /**
- * Prediction Markets MVP types — research simulation only.
- * No trading, wallet, or order routing.
+ * Prediction Markets types — research + optional desk execution (paper / live CLOB).
  */
 
 export type Confidence = 'High' | 'Medium' | 'Low';
@@ -28,6 +27,10 @@ export type PredictionMarket = {
   category: string;
   /** Gamma closed flag when known (settle path) */
   closed?: boolean;
+  /** CLOB YES/NO token ids (Polygon) when Gamma provides them */
+  clobTokenIds?: [string, string];
+  tickSize?: string;
+  negRisk?: boolean;
 };
 
 export type PredictionAgentId =

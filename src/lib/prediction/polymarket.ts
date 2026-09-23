@@ -27,7 +27,38 @@ type GammaMarket = {
   closed?: boolean;
   active?: boolean;
   events?: Array<{ slug?: string; title?: string }>;
+  clobTokenIds?: string | string[];
+  tickSize?: string | number;
+  minimum_tick_size?: string | number;
+  negRisk?: boolean;
+  neg_risk?: boolean;
 };
+
+function parseClobTokenIds(raw: string | string[] | undefined): [string, string] | undefined {
+  let arr: unknown[] | null = null;
+  if (typeof raw === 'string') {
+    try {
+      const parsed = JSON.parse(raw) as unknown;
+      if (Array.isArray(parsed)) arr = parsed;
+    } catch {
+      return undefined;
+    }
+  } else if (Array.isArray(raw)) {
+    arr = raw;
+  }
+  if (!arr || arr.length < 2) return undefined;
+  const yes = String(arr[0] ?? '').trim();
+  const no = String(arr[1] ?? '').trim();
+  if (!yes || !no) return undefined;
+  return [yes, no];
+}
+
+function parseTickSize(raw: string | number | undefined): string | undefined {
+  if (raw == null) return undefined;
+  const s = String(raw).trim();
+  if (s === '0.1' || s === '0.01' || s === '0.001' || s === '0.0001') return s;
+  return undefined;
+}
 
 function parsePrices(raw: string | number[] | undefined): number[] {
   if (!raw) return [];
@@ -80,6 +111,9 @@ export function normalizeGammaMarket(raw: GammaMarket): PredictionMarket | null 
   const endDate = raw.endDateIso || raw.endDate || null;
   const vol = volumeOf(raw);
   const eventSlug = raw.events?.[0]?.slug;
+  const clobTokenIds = parseClobTokenIds(raw.clobTokenIds);
+  const tickSize = parseTickSize(raw.tickSize ?? raw.minimum_tick_size);
+  const negRisk = Boolean(raw.negRisk ?? raw.neg_risk);
   return {
     id,
     slug,
@@ -97,6 +131,9 @@ export function normalizeGammaMarket(raw: GammaMarket): PredictionMarket | null 
     provider: 'polymarket',
     category: categoryOf(question),
     closed: Boolean(raw.closed),
+    ...(clobTokenIds ? { clobTokenIds } : {}),
+    ...(tickSize ? { tickSize } : {}),
+    negRisk,
   };
 }
 
@@ -165,7 +202,7 @@ export const listPredictionMarkets = unstable_cache(
     }
     return { markets: FALLBACK_MARKETS, live: false };
   },
-  ['prediction-markets-v1'],
+  ['prediction-markets-v2'],
   { revalidate: 300, tags: ['prediction-markets'] }
 );
 

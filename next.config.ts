@@ -3,6 +3,7 @@ import path from "path";
 
 const nextConfig: NextConfig = {
   outputFileTracingRoot: path.join(__dirname),
+  transpilePackages: ['@polymarket/clob-client'],
   async redirects() {
     return [
       // SpaceX graduated to public equity (SPCX) — permanent SEO redirect off private desk.
