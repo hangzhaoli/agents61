@@ -96,6 +96,7 @@ export function normalizeGammaMarket(raw: GammaMarket): PredictionMarket | null 
     source: 'polymarket',
     provider: 'polymarket',
     category: categoryOf(question),
+    closed: Boolean(raw.closed),
   };
 }
 
@@ -182,4 +183,31 @@ export async function getPredictionMarket(id: string): Promise<PredictionMarket 
   // slug search via list
   const { markets } = await listPredictionMarkets();
   return markets.find((m) => m.id === id || m.slug === id) ?? fromFallback ?? null;
+}
+
+/** Settle snapshot — same as get by id, but always prefer raw Gamma (incl. closed). */
+export async function getMarketSettleSnapshot(
+  id: string
+): Promise<{ mid: number; closed: boolean; endDate: string | null; question: string } | null> {
+  try {
+    const live = await fetchGammaById(id);
+    if (live) {
+      return {
+        mid: live.marketProbability,
+        closed: Boolean(live.closed),
+        endDate: live.endDate,
+        question: live.question,
+      };
+    }
+  } catch {
+    /* ignore */
+  }
+  const listed = await getPredictionMarket(id);
+  if (!listed) return null;
+  return {
+    mid: listed.marketProbability,
+    closed: Boolean(listed.closed),
+    endDate: listed.endDate,
+    question: listed.question,
+  };
 }

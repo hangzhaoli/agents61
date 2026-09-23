@@ -26,6 +26,8 @@ export type PredictionMarket = {
   provider: PredictionProvider;
   /** Optional category tag for domain expert routing */
   category: string;
+  /** Gamma closed flag when known (settle path) */
+  closed?: boolean;
 };
 
 export type PredictionAgentId =

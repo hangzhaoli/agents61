@@ -6,7 +6,7 @@
 import { deepseekChat, hasDeepseekKey } from '@/lib/llm/deepseek';
 import { getEventNewsDigest } from '@/lib/llm/news-scan';
 import { seedTemplateReport } from '@/lib/prediction/analyze';
-import { getPredictionMarket, listPredictionMarkets } from '@/lib/prediction/polymarket';
+import { getMarketSettleSnapshot, listPredictionMarkets } from '@/lib/prediction/polymarket';
 import {
   gapOf,
   type Confidence,
@@ -300,10 +300,7 @@ function paperMath(side: PaperSide, entryPct: number, agents61Pct: number, stake
 }
 
 function settlePnL(pos: PaperPosition, finalYesPct: number) {
-  if (finalYesPct > 5 && finalYesPct < 95) {
-    return { status: 'open' as const, realizedPnL: null as number | null, won: null as boolean | null };
-  }
-  const won = pos.side === 'YES' ? finalYesPct >= 95 : finalYesPct <= 5;
+  const won = pos.side === 'YES' ? finalYesPct >= 50 : finalYesPct < 50;
   const entry = pos.entryMid / 100;
   if (pos.side === 'YES') {
     const shares = pos.stake / entry;
@@ -314,6 +311,44 @@ function settlePnL(pos: PaperPosition, finalYesPct: number) {
   const shares = pos.stake / noEntry;
   const realized = won ? shares * entry : -pos.stake;
   return { status: 'settled' as const, realizedPnL: Math.round(realized * 100) / 100, won };
+}
+
+/**
+ * Decide whether a market is resolved enough to settle the paper book.
+ * Mid alone at 70–90 after endDate used to leave positions stuck forever.
+ */
+function resolveSettleDecision(opts: {
+  mid: number;
+  closed: boolean;
+  endDate: string | null;
+  now?: number;
+}): { settle: boolean; reason: string } {
+  const now = opts.now ?? Date.now();
+  const mid = opts.mid;
+  if (mid <= 5 || mid >= 95) {
+    return { settle: true, reason: 'extreme-mid' };
+  }
+  if (opts.closed) {
+    return { settle: true, reason: 'gamma-closed' };
+  }
+  if (!opts.endDate) return { settle: false, reason: 'no-end' };
+  const end = Date.parse(opts.endDate);
+  if (!Number.isFinite(end)) return { settle: false, reason: 'bad-end' };
+  const hoursPast = (now - end) / 3_600_000;
+  if (hoursPast < 36) return { settle: false, reason: 'within-grace' };
+  // 36h+ past scheduled end: one-sided tape ≈ resolved
+  if (mid >= 75 || mid <= 25) {
+    return { settle: true, reason: 'past-end-onesided' };
+  }
+  // 72h+: accept a clearer lean (esports/crypto often leave residual mids)
+  if (hoursPast >= 72 && (mid >= 60 || mid <= 40)) {
+    return { settle: true, reason: 'past-end-lean' };
+  }
+  // 7d+ past end: force settle on majority mid (disputed/stale books)
+  if (hoursPast >= 24 * 7) {
+    return { settle: true, reason: 'past-end-force' };
+  }
+  return { settle: false, reason: 'past-end-ambiguous' };
 }
 
 function recomputeSummary(book: PaperBook, bankroll: number) {
@@ -388,23 +423,27 @@ export async function settlePaperBook(opts?: PaperOpenOpts): Promise<PaperBook> 
 
   for (const pos of book.positions) {
     if (pos.status === 'settled') continue;
-    const live = await getPredictionMarket(pos.marketId);
-    if (!live) {
+    const snap = await getMarketSettleSnapshot(pos.marketId);
+    const mid = snap?.mid ?? pos.markMid ?? null;
+    if (mid == null) {
       stillOpen += 1;
       continue;
     }
-    const result = settlePnL(pos, live.marketProbability);
-    if (result.status === 'settled') {
-      pos.status = 'settled';
-      pos.realizedPnL = result.realizedPnL;
-      pos.won = result.won;
-      pos.settledAt = new Date().toISOString();
-      pos.finalYesPct = live.marketProbability;
-      settledN += 1;
-    } else {
-      pos.markMid = live.marketProbability;
+    const closed = Boolean(snap?.closed);
+    const endDate = snap?.endDate ?? pos.endDate;
+    const decision = resolveSettleDecision({ mid, closed, endDate });
+    pos.markMid = mid;
+    if (!decision.settle) {
       stillOpen += 1;
+      continue;
     }
+    const result = settlePnL(pos, mid);
+    pos.status = 'settled';
+    pos.realizedPnL = result.realizedPnL;
+    pos.won = result.won;
+    pos.settledAt = new Date().toISOString();
+    pos.finalYesPct = mid;
+    settledN += 1;
   }
 
   recomputeSummary(book, n.bankroll);
