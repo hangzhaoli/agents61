@@ -8,6 +8,7 @@ import { COMPLIANCE_BLOCK } from '@/lib/personas/types';
 import { fallbackQuantStrategy } from '@/lib/quant-lab/fallback';
 import { getQuantMaster, QUANT_LAB_DISCLAIMER } from '@/lib/quant-lab/masters';
 import { isCryptoTicker, normalizeQuantTicker } from '@/lib/quant-lab/crypto-tickers';
+import { estimateTradeOdds, parseOddsFromSpec } from '@/lib/quant-lab/trade-odds';
 import type { GeneratedQuantStrategy, QuantMasterSlug, ThorpReview } from '@/lib/quant-lab/types';
 import { deepseekChat, hasDeepseekKey } from '@/lib/llm/deepseek';
 
@@ -74,6 +75,7 @@ export async function generateQuantStrategy(opts: GenerateQuantOpts): Promise<Ge
     '2) ```python``` a self-contained yfinance daily backtest script for ONE ticker',
     '',
     'spec fields: name, masterSlug, masterName, ticker, timeframe, style, entryRules[], exitRules[], filters[], parameters{}, positionSizing, disclaimer',
+    'In parameters include when possible: historical_win_rate_pct (0-100) and sample_trades (closed trades in the script window) as your best estimate from the rules — honest, not marketing.',
     'thorpReview fields: edgeClaim (yes|no|unknown), kellyFractionBand, overfittingWarnings[], significanceNotes[], ruinNote, summary',
     'Python must: use yfinance+pandas+numpy only, include PAPER BACKTEST header comment, define backtest(), print trade count and win rate.',
     crypto
@@ -126,6 +128,12 @@ export async function generateQuantStrategy(opts: GenerateQuantOpts): Promise<Ge
     const specRaw = jsonPart.spec ?? jsonPart;
     const thorpReview = parseThorp(jsonPart.thorpReview ?? (specRaw as Record<string, unknown>).thorpReview);
 
+    const parameters =
+      typeof (specRaw as Record<string, unknown>).parameters === 'object' &&
+      (specRaw as Record<string, unknown>).parameters
+        ? ((specRaw as Record<string, unknown>).parameters as Record<string, number | string | boolean>)
+        : qm.defaultParams;
+
     const spec = {
       name: String((specRaw as Record<string, unknown>).name ?? `${master.nameEn} · ${ticker}`),
       masterSlug: slug,
@@ -142,21 +150,27 @@ export async function generateQuantStrategy(opts: GenerateQuantOpts): Promise<Ge
       filters: Array.isArray((specRaw as Record<string, unknown>).filters)
         ? ((specRaw as Record<string, unknown>).filters as unknown[]).map(String)
         : [],
-      parameters:
-        typeof (specRaw as Record<string, unknown>).parameters === 'object' &&
-        (specRaw as Record<string, unknown>).parameters
-          ? ((specRaw as Record<string, unknown>).parameters as Record<string, number | string | boolean>)
-          : qm.defaultParams,
+      parameters,
       positionSizing: String(
         (specRaw as Record<string, unknown>).positionSizing ?? 'Fixed risk per trade — see Thorp Kelly band.'
       ),
       disclaimer: QUANT_LAB_DISCLAIMER,
     };
 
+    const parsed = parseOddsFromSpec(parameters);
+    const tradeOdds = estimateTradeOdds({
+      masterSlug: slug,
+      ticker,
+      thorp: thorpReview,
+      historicalWinRatePct: parsed.historicalWinRatePct,
+      sampleTrades: parsed.sampleTrades,
+    });
+
     return {
       spec,
       python,
       thorpReview,
+      tradeOdds,
       engine: model,
     };
   } catch (err) {

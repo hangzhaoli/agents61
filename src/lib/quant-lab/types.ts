@@ -34,10 +34,24 @@ export type ThorpReview = {
   summary: string;
 };
 
+export type TradeOdds = {
+  historicalWinRatePct: number;
+  sampleTrades: number;
+  nextTradeWinProbPct: number;
+  confidencePct: number;
+  selectScore: number;
+  verdict: 'lean_long' | 'watch' | 'skip';
+  plainHeadline: string;
+  plainDetail: string;
+  assetClass: 'equity' | 'crypto';
+};
+
 export type GeneratedQuantStrategy = {
   spec: StrategySpec;
   python: string;
   thorpReview: ThorpReview;
+  /** Composite win-prob for trade selection (paper estimate) */
+  tradeOdds: TradeOdds;
   engine: 'deepseek-v4-pro' | 'deepseek-v4-flash' | 'template';
 };
 

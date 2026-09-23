@@ -3,9 +3,9 @@
  */
 
 import { getMasterBySlug } from '@/lib/masters';
-import { getQuantMaster } from '@/lib/quant-lab/masters';
+import { getQuantMaster, QUANT_LAB_DISCLAIMER } from '@/lib/quant-lab/masters';
+import { estimateTradeOdds } from '@/lib/quant-lab/trade-odds';
 import type { GeneratedQuantStrategy, QuantMasterSlug } from '@/lib/quant-lab/types';
-import { QUANT_LAB_DISCLAIMER } from '@/lib/quant-lab/masters';
 
 function pythonHeader(ticker: string, master: string): string {
   const crypto = /-USD$/i.test(ticker) || /^(BTC|ETH|SOL)/i.test(ticker);
@@ -197,6 +197,23 @@ export function fallbackQuantStrategy(
       python = turtlePython(sym, 20, 10);
   }
 
+  const thorpReview = {
+      edgeClaim: 'unknown' as const,
+      kellyFractionBand: '0% until out-of-sample edge is shown',
+      overfittingWarnings: [
+        'Template strategy — parameters not optimized on this ticker.',
+        'Single-asset backtest ignores correlation and regime change.',
+        'Survivorship and look-ahead bias possible if you tweak rules after seeing results.',
+      ],
+      significanceNotes: [
+        'Run walk-forward or hold-out years before trusting win rate.',
+        'Fewer than 30 closed trades → significance is not meaningful.',
+      ],
+      ruinNote: 'Full Kelly on noisy short-term edges risks ruin — use fractional Kelly or fixed risk per trade.',
+      paperTradingOnly: true as const,
+      summary: 'Template compile. DeepSeek not configured or call failed — methodology card only.',
+    };
+
   return {
     spec: {
       name: `${master?.nameEn ?? qm.label} · ${sym}`,
@@ -213,22 +230,8 @@ export function fallbackQuantStrategy(
       disclaimer: QUANT_LAB_DISCLAIMER,
     },
     python,
-    thorpReview: {
-      edgeClaim: 'unknown',
-      kellyFractionBand: '0% until out-of-sample edge is shown',
-      overfittingWarnings: [
-        'Template strategy — parameters not optimized on this ticker.',
-        'Single-asset backtest ignores correlation and regime change.',
-        'Survivorship and look-ahead bias possible if you tweak rules after seeing results.',
-      ],
-      significanceNotes: [
-        'Run walk-forward or hold-out years before trusting win rate.',
-        'Fewer than 30 closed trades → significance is not meaningful.',
-      ],
-      ruinNote: 'Full Kelly on noisy short-term edges risks ruin — use fractional Kelly or fixed risk per trade.',
-      paperTradingOnly: true,
-      summary: 'Template compile. DeepSeek not configured or call failed — methodology card only.',
-    },
+    thorpReview,
+    tradeOdds: estimateTradeOdds({ masterSlug, ticker: sym, thorp: thorpReview }),
     engine: 'template',
   };
 }

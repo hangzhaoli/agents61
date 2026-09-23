@@ -24,8 +24,9 @@ export default function QuantLabPage() {
           </h1>
           <p className="text-lg text-slate-600">
             Compile timing masters into paper backtests. Equity/ETF (SPY…) or crypto USD pairs
-            (BTC-USD, ETH-USD) via yfinance. Thorp reviews Kelly and overfitting. Strategy Vault
-            saves the script — not live orders.
+            (BTC-USD, ETH-USD). After compile you get a <strong>综合选单胜率</strong> card
+            (next-trade win prob + 确信度) for whether to paper-try the setup. Thorp reviews Kelly.
+            Not live contracts.
           </p>
         </div>
 

@@ -33,7 +33,21 @@ import {
   writeVault,
 } from '@/lib/quant-lab/strategy-vault';
 import type { GeneratedQuantStrategy, QuantMasterSlug, VaultStrategy } from '@/lib/quant-lab/types';
+import { estimateTradeOdds } from '@/lib/quant-lab/trade-odds';
+import QuantTradeOddsCard from '@/components/quant/QuantTradeOddsCard';
 import { isUnlocked, PLANS, type PlanId } from '@/lib/tiers';
+
+function withOdds(s: GeneratedQuantStrategy): GeneratedQuantStrategy {
+  if (s.tradeOdds) return s;
+  return {
+    ...s,
+    tradeOdds: estimateTradeOdds({
+      masterSlug: s.spec.masterSlug as QuantMasterSlug,
+      ticker: s.spec.ticker,
+      thorp: s.thorpReview,
+    }),
+  };
+}
 
 type Tab = 'spec' | 'python' | 'thorp';
 
@@ -112,7 +126,7 @@ export default function QuantLabPanel({ plan }: { plan: PlanId }) {
         setError(data.error ?? 'Generation failed');
         return;
       }
-      setResult(data);
+      setResult(withOdds(data));
       setTab('spec');
     } catch {
       setError('Network error — try again.');
@@ -279,7 +293,11 @@ export default function QuantLabPanel({ plan }: { plan: PlanId }) {
             onChange={(e) => setNotes(e.target.value)}
             rows={3}
             className="quant-input resize-none mb-3"
-            placeholder="e.g. long-only, 5y daily, ignore earnings gaps"
+            placeholder={
+              assetClass === 'crypto'
+                ? 'e.g. BTC-USD 日线趋势，纸面选单看综合胜率'
+                : 'e.g. long-only, 5y daily, ignore earnings gaps'
+            }
           />
           {master && (
             <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600 mb-3">
@@ -316,6 +334,7 @@ export default function QuantLabPanel({ plan }: { plan: PlanId }) {
 
       {result && (
         <div className="quant-output">
+          {result.tradeOdds ? <QuantTradeOddsCard odds={result.tradeOdds} /> : null}
           <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
             <div>
               <h3 className="text-sm font-bold text-slate-900">{result.spec.name}</h3>
