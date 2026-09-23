@@ -8,11 +8,12 @@ import type { GeneratedQuantStrategy, QuantMasterSlug } from '@/lib/quant-lab/ty
 import { QUANT_LAB_DISCLAIMER } from '@/lib/quant-lab/masters';
 
 function pythonHeader(ticker: string, master: string): string {
+  const crypto = /-USD$/i.test(ticker) || /^(BTC|ETH|SOL)/i.test(ticker);
   return `# Agents61 Quant Lab — PAPER BACKTEST ONLY
-# Master: ${master} | Ticker: ${ticker}
+# Master: ${master} | Ticker: ${ticker}${crypto ? ' | Asset: crypto (yfinance USD pair)' : ''}
 # Run: pip install yfinance pandas numpy && python this_file.py
 # NOT investment advice. NOT for live orders.
-
+${crypto ? '# Crypto: price/volume rules only — no fake P/E or earnings filters.\n' : ''}
 `;
 }
 

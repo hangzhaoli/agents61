@@ -5,7 +5,7 @@ import Link from 'next/link';
 import type { GapRow, GapSort } from '@/lib/prediction/gaps';
 import { filterGapRows, sortGapRows } from '@/lib/prediction/gaps';
 import type { PredictionProvider } from '@/lib/prediction/types';
-import { formatGap } from '@/lib/prediction/types';
+import { formatConfidencePlain, formatGap } from '@/lib/prediction/types';
 
 const CATEGORIES = [
   'all',
@@ -69,8 +69,8 @@ export default function ScannerClient({ rows }: { rows: GapRow[] }) {
             onChange={(e) => setSort(e.target.value as GapSort)}
           >
             <option value="volume">Volume</option>
-            <option value="abs_gap">|Gap|</option>
-            <option value="confidence">Confidence</option>
+            <option value="abs_gap">差了多少</option>
+            <option value="confidence">确信度</option>
             <option value="closing">Closing soon</option>
             <option value="newest">Newest</option>
           </select>
@@ -98,10 +98,10 @@ export default function ScannerClient({ rows }: { rows: GapRow[] }) {
             <tr className="text-left text-[10px] uppercase tracking-wider text-slate-500">
               <th className="p-3 font-bold">Question</th>
               <th className="p-3 font-bold">Provider</th>
-              <th className="p-3 font-bold">Market</th>
-              <th className="p-3 font-bold">Agents61</th>
-              <th className="p-3 font-bold">Gap</th>
-              <th className="p-3 font-bold">Conf.</th>
+              <th className="p-3 font-bold">市场胜算</th>
+              <th className="p-3 font-bold">我们的胜算</th>
+              <th className="p-3 font-bold">差了多少</th>
+              <th className="p-3 font-bold">确信度</th>
               <th className="p-3 font-bold">Volume</th>
               <th className="p-3 font-bold">Closes</th>
               <th className="p-3 font-bold" />
@@ -122,7 +122,7 @@ export default function ScannerClient({ rows }: { rows: GapRow[] }) {
                 <td className="p-3 tabular-nums">{row.market.marketProbability}%</td>
                 <td className="p-3 tabular-nums">{row.agents61Probability}%</td>
                 <td className="p-3 tabular-nums font-medium text-[#0052d9]">{formatGap(row.gap)}</td>
-                <td className="p-3">{row.confidence}</td>
+                <td className="p-3">{formatConfidencePlain(row.confidence).short}</td>
                 <td className="p-3 tabular-nums text-slate-600">{row.market.volumeLabel}</td>
                 <td className="p-3 text-slate-600">{row.market.endDateLabel}</td>
                 <td className="p-3">

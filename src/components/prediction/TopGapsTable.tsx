@@ -4,20 +4,20 @@ import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import type { GapRow, GapSort } from '@/lib/prediction/gaps';
 import { sortGapRows } from '@/lib/prediction/gaps';
-import { formatGap } from '@/lib/prediction/types';
+import { formatConfidencePlain, formatGap } from '@/lib/prediction/types';
 
 const SORTS: { id: GapSort; label: string }[] = [
-  { id: 'abs_gap', label: 'Largest Absolute Gap' },
-  { id: 'confidence', label: 'Highest Confidence' },
-  { id: 'volume', label: 'Highest Volume' },
-  { id: 'newest', label: 'Newest' },
-  { id: 'closing', label: 'Closing Soon' },
+  { id: 'abs_gap', label: '差得最多' },
+  { id: 'confidence', label: '确信度最高' },
+  { id: 'volume', label: '成交量最大' },
+  { id: 'newest', label: '较新' },
+  { id: 'closing', label: '快到期' },
 ];
 
 export default function TopGapsTable({
   rows,
-  title = 'Top Probability Gaps',
-  subtitle = 'Markets where Agents61 disagrees most with current pricing.',
+  title = '胜算差最大的盘',
+  subtitle = '市场胜算 vs 我们的胜算：差得越多，越值得点进去看确信度。',
 }: {
   rows: GapRow[];
   title?: string;
@@ -33,7 +33,7 @@ export default function TopGapsTable({
 
       <div className="flex flex-wrap gap-2 mb-5">
         <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 self-center mr-1">
-          Sort by
+          排序
         </span>
         {SORTS.map((s) => (
           <button
@@ -58,12 +58,12 @@ export default function TopGapsTable({
           <table className="w-full text-sm">
             <thead>
               <tr className="text-left text-[10px] uppercase tracking-wider text-slate-400 border-b border-slate-200">
-                <th className="py-2 pr-3 font-bold">Market</th>
-                <th className="py-2 pr-3 font-bold">Market (%)</th>
-                <th className="py-2 pr-3 font-bold">Agents61 (%)</th>
-                <th className="py-2 pr-3 font-bold">Gap</th>
-                <th className="py-2 pr-3 font-bold">Confidence</th>
-                <th className="py-2 font-bold">Volume</th>
+                <th className="py-2 pr-3 font-bold">问题</th>
+                <th className="py-2 pr-3 font-bold">市场胜算</th>
+                <th className="py-2 pr-3 font-bold">我们的胜算</th>
+                <th className="py-2 pr-3 font-bold">差了多少</th>
+                <th className="py-2 pr-3 font-bold">确信度</th>
+                <th className="py-2 font-bold">成交量</th>
               </tr>
             </thead>
             <tbody>
@@ -82,7 +82,7 @@ export default function TopGapsTable({
                   <td className="py-3 pr-3 tabular-nums font-semibold text-[#0052d9]">
                     {formatGap(row.gap)}
                   </td>
-                  <td className="py-3 pr-3">{row.confidence}</td>
+                  <td className="py-3 pr-3">{formatConfidencePlain(row.confidence).short}</td>
                   <td className="py-3 tabular-nums text-slate-600">{row.market.volumeLabel}</td>
                 </tr>
               ))}

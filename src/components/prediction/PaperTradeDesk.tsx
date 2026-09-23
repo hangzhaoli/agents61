@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { ArrowRight, Check, Link2, Unplug, X } from 'lucide-react';
 import type { GapRow } from '@/lib/prediction/gaps';
-import { formatGap } from '@/lib/prediction/types';
+import { daysUntilEnd, formatConfidencePlain, formatDaysLeft, formatGap } from '@/lib/prediction/types';
 import {
   emptyDeskBook,
   modelEv,
@@ -23,6 +23,13 @@ import {
   type LiveBook,
 } from '@/lib/prediction/live-desk';
 import { placeLiveMarketBuy, tokenIdForSide, clearClobSession, fetchClobCollateral } from '@/lib/prediction/clob';
+import { buildTradeGuide } from '@/lib/prediction/trade-guide';
+import {
+  DEFAULT_BATCH_RULES,
+  matchBatchRules,
+  type BatchRuleConfig,
+} from '@/lib/prediction/batch-rules';
+import TradeGuidePanel from '@/components/prediction/TradeGuidePanel';
 import {
   connectWallet,
   ensurePolygon,
@@ -39,6 +46,22 @@ const MIN_MID = 10;
 const MAX_MID = 90;
 
 type DeskMode = 'paper' | 'live';
+/** Desk default horizon: short event windows where research can still settle soon. */
+type Horizon = '1-3' | '1-7' | 'any';
+
+const HORIZON_LABEL: Record<Horizon, string> = {
+  '1-3': '1–3 days',
+  '1-7': '1–7 days',
+  any: 'Any horizon',
+};
+
+function inHorizon(endDate: string | null, horizon: Horizon): boolean {
+  if (horizon === 'any') return true;
+  const d = daysUntilEnd(endDate);
+  if (d == null) return false;
+  if (horizon === '1-3') return d >= 1 && d <= 3;
+  return d >= 1 && d <= 7;
+}
 
 function fmtUsd(n: number) {
   const sign = n > 0 ? '+' : '';
@@ -47,6 +70,8 @@ function fmtUsd(n: number) {
 
 export default function PaperTradeDesk({ rows }: { rows: GapRow[] }) {
   const [mode, setMode] = useState<DeskMode>('paper');
+  const [horizon, setHorizon] = useState<Horizon>('1-3');
+  const [batchBusy, setBatchBusy] = useState(false);
   const [book, setBook] = useState<DeskBook>(() => emptyDeskBook());
   const [liveBook, setLiveBook] = useState<LiveBook>(() => emptyLiveBook());
   const [hydrated, setHydrated] = useState(false);
@@ -137,13 +162,53 @@ export default function PaperTradeDesk({ rows }: { rows: GapRow[] }) {
     };
   }, [address, refreshChain]);
 
-  const suggestions = useMemo(() => {
+  const baseCandidates = useMemo(() => {
     return [...rows]
       .filter((r) => Math.abs(r.gap) >= MIN_GAP)
       .filter((r) => r.market.marketProbability >= MIN_MID && r.market.marketProbability <= MAX_MID)
-      .sort((a, b) => Math.abs(b.gap) - Math.abs(a.gap))
-      .slice(0, 12);
+      .sort((a, b) => Math.abs(b.gap) - Math.abs(a.gap));
   }, [rows]);
+
+  const horizonCounts = useMemo(() => {
+    const d13 = baseCandidates.filter((r) => inHorizon(r.market.endDate, '1-3')).length;
+    const d17 = baseCandidates.filter((r) => inHorizon(r.market.endDate, '1-7')).length;
+    return { '1-3': d13, '1-7': d17, any: baseCandidates.length };
+  }, [baseCandidates]);
+
+  const suggestions = useMemo(() => {
+    return baseCandidates.filter((r) => inHorizon(r.market.endDate, horizon)).slice(0, 12);
+  }, [baseCandidates, horizon]);
+
+  const primaryGuide = useMemo(() => {
+    const top = suggestions[0];
+    if (!top) return null;
+    return {
+      row: top,
+      guide: buildTradeGuide({
+        row: top,
+        stakeUsd: stake,
+        chain: {
+          connected: Boolean(address),
+          onPolygon: chainId === POLYGON_CHAIN_ID,
+          usdc,
+          clobBal,
+          clobAllow,
+        },
+      }),
+    };
+  }, [suggestions, stake, address, chainId, usdc, clobBal, clobAllow]);
+
+  const batchRules: BatchRuleConfig = useMemo(() => {
+    const base = { ...DEFAULT_BATCH_RULES, stakeUsd: stake };
+    if (horizon === '1-3') return { ...base, minDays: 1, maxDays: 3 };
+    if (horizon === '1-7') return { ...base, minDays: 1, maxDays: 7 };
+    return { ...base, minDays: null, maxDays: null };
+  }, [horizon, stake]);
+
+  const batchCandidates = useMemo(
+    () => matchBatchRules(suggestions, batchRules),
+    [suggestions, batchRules]
+  );
 
   const open = book.positions.filter((p) => p.status === 'open');
   const settled = book.positions.filter((p) => p.status === 'settled').slice().reverse();
@@ -262,6 +327,56 @@ export default function PaperTradeDesk({ rows }: { rows: GapRow[] }) {
   function execute(row: GapRow, side: DeskSide) {
     if (mode === 'live') void executeLive(row, side);
     else executePaper(row, side);
+  }
+
+  function batchPaperOpen() {
+    if (mode !== 'paper') {
+      toast('批量开仓仅限 Paper（不自动 Live）');
+      return;
+    }
+    if (batchCandidates.length === 0) {
+      toast('规则下没有候选');
+      return;
+    }
+    setBatchBusy(true);
+    try {
+      const next = readDeskBook();
+      let opened = 0;
+      let skipped = 0;
+      for (const c of batchCandidates) {
+        if (next.positions.some((p) => p.status === 'open' && p.marketId === c.row.market.id)) {
+          skipped += 1;
+          continue;
+        }
+        const deployedNow = openDeployed(next);
+        if (deployedNow + stake > next.bankrollUsd) {
+          skipped += 1;
+          continue;
+        }
+        const entry = c.row.market.marketProbability;
+        next.positions.push({
+          id: `desk-batch-${c.row.market.id}-${Date.now()}-${opened}`,
+          marketId: c.row.market.id,
+          question: c.row.market.question,
+          url: c.row.market.url,
+          side: c.side,
+          entryMid: entry,
+          agents61: c.row.agents61Probability,
+          gap: c.row.gap,
+          stake,
+          openedAt: new Date().toISOString(),
+          status: 'open',
+          realizedPnL: null,
+          markMid: entry,
+        });
+        opened += 1;
+      }
+      writeDeskBook(next);
+      setBook(next);
+      toast(`规则批量纸面：开 ${opened} · 跳过 ${skipped}`);
+    } finally {
+      setBatchBusy(false);
+    }
   }
 
   function settleOne(id: string, finalMid: number) {
@@ -497,6 +612,15 @@ export default function PaperTradeDesk({ rows }: { rows: GapRow[] }) {
             <button type="button" onClick={settleOpenWithMarks} className="btn-secondary text-sm">
               Auto-settle extreme mids
             </button>
+            <button
+              type="button"
+              disabled={batchBusy || batchCandidates.length === 0}
+              onClick={batchPaperOpen}
+              className="btn-primary text-sm disabled:opacity-40"
+              title="按规则批量纸面开仓：|gap|≥3、mid 10–90、确信度非 Low、当前期限窗"
+            >
+              {batchBusy ? 'Opening…' : `规则批量纸面 (${batchCandidates.length})`}
+            </button>
             <button type="button" onClick={resetBook} className="text-xs text-slate-400 hover:text-rose-600">
               Reset desk
             </button>
@@ -504,20 +628,69 @@ export default function PaperTradeDesk({ rows }: { rows: GapRow[] }) {
         ) : (
           <p className="text-xs text-slate-400">
             Live uses FAK market buys on CLOB. Deposit USDC on polymarket.com if collateral is empty.
+            批量规则只开 Paper，不自动 Live。
           </p>
         )}
       </div>
 
+      {mode === 'paper' && batchCandidates.length > 0 ? (
+        <div className="rounded-xl border border-slate-200 bg-slate-50/80 px-4 py-3 text-xs text-slate-600">
+          <p className="font-bold text-slate-800 mb-1">量化规则引擎（Prediction）</p>
+          <p>
+            |gap|≥{batchRules.minAbsGap} · mid {batchRules.minMid}–{batchRules.maxMid}% · 确信度 Medium+
+            · 期限 {horizon === 'any' ? '不限' : HORIZON_LABEL[horizon]} · 最多{' '}
+            {batchRules.maxPositions} 笔 · 每笔 ${stake}
+          </p>
+          <ul className="mt-2 space-y-0.5">
+            {batchCandidates.map((c) => (
+              <li key={c.row.market.id} className="line-clamp-1">
+                {c.side} · {c.reason} · {c.row.market.question.slice(0, 64)}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
+      {primaryGuide ? (
+        <TradeGuidePanel
+          guide={primaryGuide.guide}
+          title="区块链交易指导 · 当前最佳候选"
+          question={primaryGuide.row.market.question}
+          onApplySide={(side) => execute(primaryGuide.row, side)}
+        />
+      ) : (
+        <div className="rounded-2xl border border-dashed border-slate-200 p-5 text-sm text-slate-500">
+          当前筛选下没有可指导的候选。放宽到 1–7 天或 Any，或先去 Analyze 几个盘。
+        </div>
+      )}
+
       <div className="grid lg:grid-cols-2 gap-6 items-start">
         <section className="card p-5 md:p-6">
           <h2 className="text-lg font-bold text-slate-900 mb-1">Suggestions</h2>
-          <p className="text-sm text-slate-600 mb-4">
-            Gap ≥ {MIN_GAP}pp · mid {MIN_MID}–{MAX_MID}% (filters near-0/near-100 noise).{' '}
-            {mode === 'paper' ? 'Paper fills at YES mid.' : 'Live posts a CLOB BUY signed by your wallet.'}
+          <p className="text-sm text-slate-600 mb-3">
+            Prediction agents → A61 probability → Gap → desk. Default window{' '}
+            <strong>1–3 days</strong> (same-day is too thin). Gap ≥ {MIN_GAP}pp · mid {MIN_MID}–
+            {MAX_MID}%.
           </p>
+          <div className="inline-flex rounded-lg border border-slate-200 p-0.5 bg-slate-50 mb-4">
+            {(['1-3', '1-7', 'any'] as Horizon[]).map((h) => (
+              <button
+                key={h}
+                type="button"
+                onClick={() => setHorizon(h)}
+                className={`px-2.5 py-1.5 text-[11px] font-bold uppercase tracking-wide rounded-md ${
+                  horizon === h ? 'bg-white text-[#0052d9] shadow-sm' : 'text-slate-500'
+                }`}
+              >
+                {HORIZON_LABEL[h]}
+                <span className="ml-1 font-semibold text-slate-400">({horizonCounts[h]})</span>
+              </button>
+            ))}
+          </div>
           {suggestions.length === 0 ? (
             <p className="text-sm text-slate-500">
-              No gaps in range. Run Analyze or open the{' '}
+              No gaps in {HORIZON_LABEL[horizon].toLowerCase()}. Try{' '}
+              {horizon === '1-3' ? '1–7 days' : 'Any horizon'}, run Analyze, or open the{' '}
               <Link href="/predictions/scanner" className="text-[#0052d9]">
                 scanner
               </Link>
@@ -531,6 +704,7 @@ export default function PaperTradeDesk({ rows }: { rows: GapRow[] }) {
                 const already = mode === 'paper' && openIds.has(r.market.id);
                 const hasClob = Boolean(r.market.clobTokenIds);
                 const liveBlocked = mode === 'live' && (!address || !hasClob || !onPolygon);
+                const days = daysUntilEnd(r.market.endDate);
                 return (
                   <li key={r.market.id} className="rounded-xl border border-slate-100 p-4">
                     <Link
@@ -540,10 +714,13 @@ export default function PaperTradeDesk({ rows }: { rows: GapRow[] }) {
                       {r.market.question}
                     </Link>
                     <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs text-slate-500">
+                      <span className="font-semibold text-[#0052d9]">{formatDaysLeft(days)}</span>
                       <span>Mid {r.market.marketProbability}%</span>
                       <span>A61 {r.agents61Probability}%</span>
                       <span className="font-semibold text-slate-800">{formatGap(r.gap)}</span>
-                      <span>{r.confidence}</span>
+                      <span title={formatConfidencePlain(r.confidence).detail}>
+                        确信度 {formatConfidencePlain(r.confidence).short}
+                      </span>
                       <span>Model EV {fmtUsd(ev)}</span>
                       {mode === 'live' ? (
                         <span className={hasClob ? 'text-emerald-700' : 'text-amber-700'}>

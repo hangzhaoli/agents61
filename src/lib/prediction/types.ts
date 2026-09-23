@@ -167,6 +167,57 @@ export function formatGap(gap: number): string {
   return `${sign}${gap.toFixed(0)}%`;
 }
 
+/** Map High/Medium/Low → a rough “how sure are we” score for plain UI. */
+export function confidenceScore(c: Confidence): number {
+  if (c === 'High') return 80;
+  if (c === 'Medium') return 55;
+  return 35;
+}
+
+/** Plain-language confidence: 确信度约 xx% / 约八成把握 */
+export function formatConfidencePlain(c: Confidence): {
+  score: number;
+  short: string;
+  label: string;
+  detail: string;
+} {
+  const score = confidenceScore(c);
+  if (c === 'High') {
+    return {
+      score,
+      short: `约 ${score}%`,
+      label: '确信度高',
+      detail: '我们对这个判断把握较大（大约八成）',
+    };
+  }
+  if (c === 'Medium') {
+    return {
+      score,
+      short: `约 ${score}%`,
+      label: '确信度中',
+      detail: '我们对这个判断把握一般（大约五成多）',
+    };
+  }
+  return {
+    score,
+    short: `约 ${score}%`,
+    label: '确信度低',
+    detail: '我们对这个判断把握偏弱（大约三成多）',
+  };
+}
+
+/** Plain YES odds label — “胜算” = chance YES resolves true, not guaranteed profit. */
+export function formatYesOdds(pct: number): string {
+  return `${Math.round(pct)}%`;
+}
+
+export function gapPlain(gap: number): string {
+  const abs = Math.abs(Math.round(gap));
+  if (gap > 0) return `我们比市场更看好 YES（多 ${abs} 个点）`;
+  if (gap < 0) return `我们比市场更不看好 YES（少 ${abs} 个点）`;
+  return '我们和市场看法差不多';
+}
+
 export function formatVolume(n: number): string {
   if (!Number.isFinite(n) || n <= 0) return '—';
   if (n >= 1e9) return `$${(n / 1e9).toFixed(2)}B`;
@@ -180,6 +231,21 @@ export function formatEndDate(iso: string | null): string {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return 'Open';
   return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+}
+
+/** Whole calendar days until endDate (UTC). Null if missing/invalid. */
+export function daysUntilEnd(iso: string | null | undefined): number | null {
+  if (!iso) return null;
+  const t = Date.parse(iso);
+  if (!Number.isFinite(t)) return null;
+  return Math.max(0, Math.ceil((t - Date.now()) / 86_400_000));
+}
+
+export function formatDaysLeft(days: number | null): string {
+  if (days == null) return 'Open-ended';
+  if (days <= 0) return 'Ends today';
+  if (days === 1) return '1 day left';
+  return `${days} days left`;
 }
 
 /** Map legacy `source` onto canonical `provider`. */

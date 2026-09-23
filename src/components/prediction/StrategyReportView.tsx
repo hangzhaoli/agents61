@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import type { StrategyReport } from '@/lib/prediction/types';
-import { formatGap } from '@/lib/prediction/types';
+import { formatConfidencePlain, formatGap, gapPlain } from '@/lib/prediction/types';
 
 function List({ items, tone }: { items: string[]; tone?: 'emerald' | 'red' | 'slate' }) {
   const border =
@@ -26,30 +26,36 @@ export default function StrategyReportView({ report }: { report: StrategyReport 
   const scenarios = report.scenarios;
   const resolution = report.resolutionCheck;
 
+  const conf = formatConfidencePlain(report.confidence);
+
   return (
     <div className="space-y-6">
       <section className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {(
           [
-            ['Market', `${report.marketProbability}%`],
-            ['Agents61', `${report.agents61Probability}%`],
-            ['Gap', formatGap(report.probabilityGap)],
-            ['Confidence', report.confidence],
+            ['市场胜算', `${report.marketProbability}%`, 'Polymarket 认为 YES'],
+            ['我们的胜算', `${report.agents61Probability}%`, 'Agents61 认为 YES'],
+            ['差了多少', formatGap(report.probabilityGap), gapPlain(report.probabilityGap)],
+            ['确信度', conf.short, conf.detail],
           ] as const
-        ).map(([k, v]) => (
+        ).map(([k, v, hint]) => (
           <div key={k} className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-center">
-            <div className="text-[10px] font-bold tracking-widest text-slate-400 uppercase">{k}</div>
+            <div className="text-[10px] font-bold tracking-wide text-slate-400">{k}</div>
             <div className="text-2xl font-extrabold text-slate-900 tabular-nums mt-1">{v}</div>
+            <p className="text-[10px] text-slate-400 mt-1 leading-snug line-clamp-2">{hint}</p>
           </div>
         ))}
       </section>
 
       <p className="text-sm text-slate-600">
-        Probability range <strong>{report.probabilityRange[0]}%–{report.probabilityRange[1]}%</strong>
+        胜算合理区间{' '}
+        <strong>
+          {report.probabilityRange[0]}%–{report.probabilityRange[1]}%
+        </strong>
         {' · '}
-        Resolution risk <strong>{report.resolutionRisk}</strong>
+        结算规则风险 <strong>{report.resolutionRisk === 'High' ? '偏高' : report.resolutionRisk === 'Low' ? '偏低' : '中等'}</strong>
         {' · '}
-        Engine <strong>{report.engine}</strong>
+        引擎 <strong>{report.engine === 'deepseek' ? 'Clerk 精炼' : '模板草稿'}</strong>
       </p>
 
       {report.executiveSummary && (

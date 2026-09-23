@@ -7,6 +7,7 @@ import { getPersona } from '@/lib/personas';
 import { COMPLIANCE_BLOCK } from '@/lib/personas/types';
 import { fallbackQuantStrategy } from '@/lib/quant-lab/fallback';
 import { getQuantMaster, QUANT_LAB_DISCLAIMER } from '@/lib/quant-lab/masters';
+import { isCryptoTicker, normalizeQuantTicker } from '@/lib/quant-lab/crypto-tickers';
 import type { GeneratedQuantStrategy, QuantMasterSlug, ThorpReview } from '@/lib/quant-lab/types';
 import { deepseekChat, hasDeepseekKey } from '@/lib/llm/deepseek';
 
@@ -50,7 +51,8 @@ export type GenerateQuantOpts = {
 
 export async function generateQuantStrategy(opts: GenerateQuantOpts): Promise<GeneratedQuantStrategy> {
   const slug = opts.masterSlug;
-  const ticker = opts.ticker.trim().toUpperCase() || 'SPY';
+  const ticker = normalizeQuantTicker(opts.ticker.trim() || 'SPY');
+  const crypto = isCryptoTicker(ticker);
   if (!hasDeepseekKey()) {
     return fallbackQuantStrategy(slug, ticker);
   }
@@ -74,6 +76,9 @@ export async function generateQuantStrategy(opts: GenerateQuantOpts): Promise<Ge
     'spec fields: name, masterSlug, masterName, ticker, timeframe, style, entryRules[], exitRules[], filters[], parameters{}, positionSizing, disclaimer',
     'thorpReview fields: edgeClaim (yes|no|unknown), kellyFractionBand, overfittingWarnings[], significanceNotes[], ruinNote, summary',
     'Python must: use yfinance+pandas+numpy only, include PAPER BACKTEST header comment, define backtest(), print trade count and win rate.',
+    crypto
+      ? 'ASSET CLASS: CRYPTO. Use yfinance ticker exactly as given (e.g. BTC-USD). Do NOT invent P/E, earnings, or equity CANSLIM fundamentals — adapt rules to price/volume/volatility only. Warn about 24/7 markets and weekend gaps differently than equities.'
+      : 'ASSET CLASS: EQUITY/ETF (or index). Standard US session daily bars.',
     'Never include API keys, broker SDKs, or order placement.',
     QUANT_LAB_DISCLAIMER,
   ].join('\n');
@@ -84,10 +89,11 @@ export async function generateQuantStrategy(opts: GenerateQuantOpts): Promise<Ge
     `SIGNATURE: ${master.signature}`,
     `COMPILE HINT: ${qm.compileHint}`,
     `DEFAULT PARAMS: ${JSON.stringify(qm.defaultParams)}`,
-    `TICKER: ${ticker}`,
+    `TICKER: ${ticker}${crypto ? ' (crypto / yfinance USD pair)' : ''}`,
     opts.notes ? `USER NOTES: ${opts.notes}` : '',
     '',
     'Thorp quant layer must warn about overfitting, low sample size, and fractional Kelly.',
+    crypto ? 'Thorp must also note crypto regime shifts and that paper fills ignore funding/perp fees.' : '',
   ]
     .filter(Boolean)
     .join('\n');

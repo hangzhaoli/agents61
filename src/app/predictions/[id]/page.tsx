@@ -14,6 +14,7 @@ import ProbabilityCompare from '@/components/prediction/ProbabilityCompare';
 import ProbabilityHistoryChart from '@/components/prediction/ProbabilityHistoryChart';
 import PredictionsSubnav from '@/components/prediction/PredictionsSubnav';
 import PredictionDisclaimer from '@/components/prediction/PredictionDisclaimer';
+import ReportTradeGuide from '@/components/prediction/ReportTradeGuide';
 import AuthGateLink from '@/components/auth/AuthGateLink';
 import { ArrowRight } from 'lucide-react';
 
@@ -79,6 +80,7 @@ export default async function PredictionDetailPage({ params }: Props) {
             agents61Probability={agents61}
             gap={gap}
             range={report?.probabilityRange}
+            confidence={report?.confidence}
           />
           <ProbabilityHistoryChart marketId={market.id} />
         </div>
@@ -87,8 +89,7 @@ export default async function PredictionDetailPage({ params }: Props) {
           <AnalyzeButton marketId={market.id} />
           <WatchlistButton market={market} agents61Probability={agents61} />
           <p className="text-xs text-slate-500 max-w-md pt-2">
-            What does the market think? What does Agents61 think? How large is the disagreement? Why —
-            and what would make Agents61 wrong?
+            市场胜算是多少？我们的胜算是多少？差了多少？确信度大概几成？——点 Analyze 出完整报告。
           </p>
         </div>
 
@@ -104,6 +105,7 @@ export default async function PredictionDetailPage({ params }: Props) {
               />
             </div>
             <StrategyReportView report={report} />
+            <ReportTradeGuide market={market} report={report} />
           </section>
         ) : (
           <section className="card p-8 text-center text-slate-600">

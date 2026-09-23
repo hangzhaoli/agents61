@@ -30,13 +30,13 @@ export default async function PredictionsDeskPage() {
       <div className="section-container py-12 md:py-16">
         <PredictionsSubnav active="/predictions/desk" />
         <header className="max-w-3xl mb-8">
-          <div className="badge badge-primary mb-3">Trade desk · V2</div>
+          <div className="badge badge-primary mb-3">Trade desk · V2 · 1–3d focus</div>
           <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900">Trade desk</h1>
           <p className="mt-3 text-slate-600 leading-relaxed">
-            Left: gap suggestions (mid 10–90%). Right: paper book or live CLOB log. Toggle{' '}
-            <strong>Paper</strong> for browser-only fills, or <strong>Live</strong> to connect a
-            Polygon wallet and sign real Polymarket orders. Feed:{' '}
-            {live ? 'live Polymarket' : 'fallback'}. Agents61 never holds keys or USDC.
+            Structure: prediction agents → Gap → 区块链交易指导 →{' '}
+            <strong>规则批量纸面</strong> / Live. Default horizon <strong>1–3 days</strong>. Quant
+            Lab handles BTC/ETH paper backtests separately. Feed:{' '}
+            {live ? 'live Polymarket' : 'fallback'}.
           </p>
         </header>
         <PaperTradeDesk rows={rows} />

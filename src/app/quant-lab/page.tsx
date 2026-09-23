@@ -6,9 +6,9 @@ import { pageMeta } from '@/lib/seo/meta';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = pageMeta({
-  title: 'Quant Lab — compile master strategies to Python backtests',
+  title: 'Quant Lab — equity & crypto paper backtests',
   description:
-    'Agents61 Quant Lab: Jesse Livermore, CANSLIM, Turtle rules → strategy spec + yfinance backtest script. Ed Thorp Kelly and overfitting review. Paper research only.',
+    'Agents61 Quant Lab: master rules → Python backtest for SPY or BTC-USD/ETH-USD. Ed Thorp Kelly review. Paper research only — not live trading.',
   path: '/quant-lab',
 });
 
@@ -20,12 +20,12 @@ export default function QuantLabPage() {
         <div className="max-w-3xl mb-10">
           <div className="badge badge-primary mb-4">Quant Lab</div>
           <h1 className="text-4xl font-extrabold text-slate-900 mb-4">
-            Short-term masters → rule-based Python
+            Masters → Python · equity or crypto
           </h1>
           <p className="text-lg text-slate-600">
-            Pick a timing or exit master. DeepSeek compiles a strategy spec and a paper backtest
-            script. Ed Thorp&apos;s quant layer reviews Kelly sizing, significance, and overfitting.
-            Save to your Strategy Vault. Not live trading.
+            Compile timing masters into paper backtests. Equity/ETF (SPY…) or crypto USD pairs
+            (BTC-USD, ETH-USD) via yfinance. Thorp reviews Kelly and overfitting. Strategy Vault
+            saves the script — not live orders.
           </p>
         </div>
 
@@ -39,10 +39,10 @@ export default function QuantLabPage() {
         </div>
 
         <ol className="space-y-3 mb-10 max-w-2xl text-sm text-slate-700">
-          <li><strong>1.</strong> Select master (O&apos;Neil on Analyst; Turtle/Livermore on higher seats)</li>
-          <li><strong>2.</strong> LLM writes strategy spec + Python (yfinance daily backtest)</li>
+          <li><strong>1.</strong> Select master + asset class (Equity / Crypto)</li>
+          <li><strong>2.</strong> Pick SPY… or BTC-USD / ETH-USD — LLM writes spec + Python</li>
           <li><strong>3.</strong> Thorp quant pass: Kelly band, overfitting, sample-size warnings</li>
-          <li><strong>4.</strong> Save to Strategy Vault on your device</li>
+          <li><strong>4.</strong> Save to Strategy Vault · crypto stays price/volume only (no fake P/E)</li>
         </ol>
 
         <p className="text-xs text-amber-800 bg-amber-50 border border-amber-200 rounded-xl p-4 mb-8 max-w-2xl">

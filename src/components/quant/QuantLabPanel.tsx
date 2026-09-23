@@ -16,6 +16,11 @@ import MasterAvatar from '@/components/masters/MasterAvatar';
 import { getMasterBySlug } from '@/lib/masters';
 import { QUANT_MASTERS, QUANT_LAB_DISCLAIMER } from '@/lib/quant-lab/masters';
 import {
+  CRYPTO_QUANT_PRESETS,
+  normalizeQuantTicker,
+  type QuantAssetClass,
+} from '@/lib/quant-lab/crypto-tickers';
+import {
   hydrateVault,
   pushVault,
   type CloudSyncState,
@@ -34,6 +39,7 @@ type Tab = 'spec' | 'python' | 'thorp';
 
 export default function QuantLabPanel({ plan }: { plan: PlanId }) {
   const [masterSlug, setMasterSlug] = useState<QuantMasterSlug>('william-oneil');
+  const [assetClass, setAssetClass] = useState<QuantAssetClass>('equity');
   const [ticker, setTicker] = useState('SPY');
   const [notes, setNotes] = useState('');
   const [tab, setTab] = useState<Tab>('spec');
@@ -92,7 +98,14 @@ export default function QuantLabPanel({ plan }: { plan: PlanId }) {
       const res = await fetch('/api/quant/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ masterSlug, ticker, notes }),
+        body: JSON.stringify({
+          masterSlug,
+          ticker: normalizeQuantTicker(ticker, assetClass),
+          notes:
+            assetClass === 'crypto'
+              ? `${notes ? notes + ' · ' : ''}crypto paper backtest — price/volume only, no equity fundamentals`
+              : notes,
+        }),
       });
       const data = (await res.json()) as GeneratedQuantStrategy & { error?: string };
       if (!res.ok) {
@@ -187,13 +200,79 @@ export default function QuantLabPanel({ plan }: { plan: PlanId }) {
         </div>
 
         <div>
+          <label className="quant-label">Asset class</label>
+          <div className="inline-flex rounded-lg border border-slate-200 p-0.5 bg-slate-50 mb-3">
+            {(['equity', 'crypto'] as QuantAssetClass[]).map((ac) => (
+              <button
+                key={ac}
+                type="button"
+                onClick={() => {
+                  setAssetClass(ac);
+                  if (ac === 'crypto' && !/-USD$/i.test(ticker)) setTicker('BTC-USD');
+                  if (ac === 'equity' && /-USD$/i.test(ticker)) setTicker('SPY');
+                }}
+                className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wide rounded-md ${
+                  assetClass === ac ? 'bg-white text-[#0052d9] shadow-sm' : 'text-slate-500'
+                }`}
+              >
+                {ac === 'equity' ? 'Equity / ETF' : 'Crypto / chain'}
+              </button>
+            ))}
+          </div>
           <label className="quant-label">Compile for ticker</label>
           <input
             value={ticker}
-            onChange={(e) => setTicker(e.target.value.toUpperCase())}
+            onChange={(e) =>
+              setTicker(
+                assetClass === 'crypto'
+                  ? e.target.value.toUpperCase()
+                  : e.target.value.toUpperCase()
+              )
+            }
             className="quant-input mb-2"
-            placeholder="SPY"
+            placeholder={assetClass === 'crypto' ? 'BTC-USD' : 'SPY'}
           />
+          {assetClass === 'crypto' ? (
+            <div className="flex flex-wrap gap-1.5 mb-2">
+              {CRYPTO_QUANT_PRESETS.map((p) => (
+                <button
+                  key={p.symbol}
+                  type="button"
+                  onClick={() => setTicker(p.yfinance)}
+                  className={`px-2.5 py-1 rounded-md text-xs font-semibold border ${
+                    ticker === p.yfinance || ticker === p.symbol
+                      ? 'border-[#0052d9] bg-blue-50 text-[#0052d9]'
+                      : 'border-slate-200 text-slate-600 hover:border-slate-300'
+                  }`}
+                >
+                  {p.symbol}
+                </button>
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-wrap gap-1.5 mb-2">
+              {['SPY', 'QQQ', 'AAPL', 'NVDA'].map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => setTicker(t)}
+                  className={`px-2.5 py-1 rounded-md text-xs font-semibold border ${
+                    ticker === t
+                      ? 'border-[#0052d9] bg-blue-50 text-[#0052d9]'
+                      : 'border-slate-200 text-slate-600 hover:border-slate-300'
+                  }`}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
+          )}
+          {assetClass === 'crypto' ? (
+            <p className="text-[11px] text-slate-500 mb-2">
+              Uses yfinance pairs (BTC-USD / ETH-USD). Rules stay price/volume — no fake P/E. Paper
+              only.
+            </p>
+          ) : null}
           <label className="quant-label">Notes (optional)</label>
           <textarea
             value={notes}

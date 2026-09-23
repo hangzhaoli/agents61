@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers';
 import { generateQuantStrategy } from '@/lib/llm/write-quant-strategy';
 import { QUANT_MASTERS } from '@/lib/quant-lab/masters';
+import { normalizeQuantTicker } from '@/lib/quant-lab/crypto-tickers';
 import type { QuantMasterSlug } from '@/lib/quant-lab/types';
 import { entitlementFromJar, TRIAL_FORBIDDEN } from '@/lib/desk-trial';
 import { isUnlocked, parsePlan } from '@/lib/tiers';
@@ -20,12 +21,12 @@ export async function POST(request: Request) {
   }
 
   const masterSlug = (body.masterSlug ?? '').trim() as QuantMasterSlug;
-  const ticker = (body.ticker ?? 'SPY').trim().toUpperCase();
+  const ticker = normalizeQuantTicker(body.ticker ?? 'SPY');
   if (!SLUGS.has(masterSlug)) {
     return Response.json({ error: 'Pick a Quant Lab master.' }, { status: 400 });
   }
-  if (!ticker || ticker.length > 12) {
-    return Response.json({ error: 'Ticker required (max 12 chars).' }, { status: 400 });
+  if (!ticker || ticker.length > 16) {
+    return Response.json({ error: 'Ticker required (max 16 chars).' }, { status: 400 });
   }
 
   const jar = await cookies();

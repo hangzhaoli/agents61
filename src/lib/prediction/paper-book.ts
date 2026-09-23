@@ -115,6 +115,20 @@ export type PaperOpenOpts = {
   bankroll?: number;
   minVol?: number;
   useClerk?: boolean;
+  /** Inclusive short-horizon filter (days until end). null = disabled. Default 1–3. */
+  minDaysToEnd?: number | null;
+  maxDaysToEnd?: number | null;
+};
+
+type NormOpts = {
+  limit: number;
+  minGap: number;
+  stake: number;
+  bankroll: number;
+  minVol: number;
+  useClerk: boolean;
+  minDaysToEnd: number | null;
+  maxDaysToEnd: number | null;
 };
 
 const LEDGER_ID = 'default';
@@ -222,7 +236,7 @@ Return ONLY JSON (no markdown):
   };
 }
 
-const DEFAULT_ASSUMPTIONS = (opts: Required<PaperOpenOpts>) => ({
+const DEFAULT_ASSUMPTIONS = (opts: NormOpts) => ({
   fill: 'Polymarket YES mid (optimistic — no book/slippage)',
   fees: 0,
   stakePerPositionUsd: opts.stake,
@@ -234,7 +248,7 @@ const DEFAULT_ASSUMPTIONS = (opts: Required<PaperOpenOpts>) => ({
     'Template gaps are hash-seeded — never trade them. Clerk-only paper entries (Flash). Realized P&L needs settlement. Not advice.',
 });
 
-function emptyBook(opts: Required<PaperOpenOpts>): PaperBook {
+function emptyBook(opts: NormOpts): PaperBook {
   const now = new Date().toISOString();
   return {
     version: 2,
@@ -264,7 +278,7 @@ function emptyBook(opts: Required<PaperOpenOpts>): PaperBook {
   };
 }
 
-function normalizeOpts(raw: PaperOpenOpts = {}): Required<PaperOpenOpts> {
+function normalizeOpts(raw: PaperOpenOpts = {}): NormOpts {
   return {
     limit: Math.min(8, Math.max(1, raw.limit ?? 4)),
     minGap: raw.minGap ?? 3,
@@ -272,6 +286,8 @@ function normalizeOpts(raw: PaperOpenOpts = {}): Required<PaperOpenOpts> {
     bankroll: raw.bankroll ?? 1000,
     minVol: raw.minVol ?? 50_000,
     useClerk: raw.useClerk !== false,
+    minDaysToEnd: raw.minDaysToEnd === undefined ? 1 : raw.minDaysToEnd,
+    maxDaysToEnd: raw.maxDaysToEnd === undefined ? 3 : raw.maxDaysToEnd,
   };
 }
 
@@ -490,6 +506,14 @@ export async function openPaperBook(opts?: PaperOpenOpts): Promise<PaperBook> {
     .filter((m) => m.volumeUsd >= n.minVol)
     .filter((m) => m.marketProbability >= 12 && m.marketProbability <= 88)
     .filter((m) => !openIds.has(m.id))
+    .filter((m) => {
+      if (n.minDaysToEnd == null && n.maxDaysToEnd == null) return true;
+      const d = daysUntil(m.endDate);
+      if (d == null) return false;
+      if (n.minDaysToEnd != null && d < n.minDaysToEnd) return false;
+      if (n.maxDaysToEnd != null && d > n.maxDaysToEnd) return false;
+      return true;
+    })
     .slice(0, Math.max(n.limit * 3, 12));
 
   const analyses: Array<{ market: PredictionMarket; report: StrategyReport; note?: string }> = [];
