@@ -295,7 +295,7 @@ export default function QuantLabPanel({ plan }: { plan: PlanId }) {
             className="quant-input resize-none mb-3"
             placeholder={
               assetClass === 'crypto'
-                ? 'e.g. BTC-USD 日线趋势，纸面选单看综合胜率'
+                ? 'e.g. BTC-USD daily trend — use trade-selection odds for paper picks'
                 : 'e.g. long-only, 5y daily, ignore earnings gaps'
             }
           />

@@ -13,7 +13,7 @@ export type TradeOdds = {
   historicalWinRatePct: number;
   /** Approximate closed-trade count in the research window */
   sampleTrades: number;
-  /** Shrunk next-trade win probability (%) — what to use for “综合胜率” */
+  /** Shrunk next-trade win probability (%) — primary selection odds */
   nextTradeWinProbPct: number;
   /** How sure we are about the odds themselves (%) */
   confidencePct: number;
@@ -30,11 +30,31 @@ const MASTER_PRIOR: Record<
   QuantMasterSlug,
   { winRate: number; sample: number; note: string }
 > = {
-  'jesse-livermore': { winRate: 42, sample: 35, note: '趋势金字塔：胜率常不高，靠盈亏比' },
-  'william-oneil': { winRate: 48, sample: 40, note: '突破过滤后胜率中等，止损纪律关键' },
-  'richard-dennis': { winRate: 40, sample: 55, note: '海龟突破：胜率偏低、趋势单吃厚' },
-  'ed-seykota': { winRate: 45, sample: 50, note: '趋势跟随：胜率中低、持有期长' },
-  'mark-minervini': { winRate: 50, sample: 38, note: 'SEPA 过滤偏严，胜率略高、样本更少' },
+  'jesse-livermore': {
+    winRate: 42,
+    sample: 35,
+    note: 'Trend pyramid: win rate often modest; payoff ratio carries the edge',
+  },
+  'william-oneil': {
+    winRate: 48,
+    sample: 40,
+    note: 'Breakout filters → mid win rate; stop discipline matters',
+  },
+  'richard-dennis': {
+    winRate: 40,
+    sample: 55,
+    note: 'Turtle breakouts: lower win rate, fat trend winners',
+  },
+  'ed-seykota': {
+    winRate: 45,
+    sample: 50,
+    note: 'Trend following: mid-low win rate, longer holds',
+  },
+  'mark-minervini': {
+    winRate: 50,
+    sample: 38,
+    note: 'SEPA filters are strict: slightly higher win rate, fewer samples',
+  },
 };
 
 function clamp(n: number, lo: number, hi: number) {
@@ -66,7 +86,7 @@ export function estimateTradeOdds(opts: {
   const prior = MASTER_PRIOR[opts.masterSlug] ?? {
     winRate: 45,
     sample: 30,
-    note: '通用趋势规则先验',
+    note: 'Generic trend-rule prior',
   };
   const crypto = isCryptoTicker(opts.ticker);
   let hist = opts.historicalWinRatePct ?? prior.winRate;
@@ -105,8 +125,12 @@ export function estimateTradeOdds(opts: {
   if (selectScore < 42 || next < 45 || opts.thorp.edgeClaim === 'no') verdict = 'skip';
   else if (selectScore >= 55 && next >= 50 && conf >= 45) verdict = 'lean_long';
 
-  const verdictCn =
-    verdict === 'lean_long' ? '可作纸面试探多头' : verdict === 'skip' ? '建议跳过这笔选单' : '先观察，不急开仓';
+  const verdictEn =
+    verdict === 'lean_long'
+      ? 'Paper long probe is reasonable'
+      : verdict === 'skip'
+        ? 'Skip this selection'
+        : 'Watch — do not rush an entry';
 
   return {
     historicalWinRatePct: hist,
@@ -115,8 +139,8 @@ export function estimateTradeOdds(opts: {
     confidencePct: conf,
     selectScore,
     verdict,
-    plainHeadline: `综合选单胜率约 ${next}%（确信度约 ${conf}%）`,
-    plainDetail: `${opts.ticker} · ${prior.note}。历史规则胜率约 ${hist}%（~${sample} 笔样本，已向 50% 收缩）。Thorp 边：${opts.thorp.edgeClaim}。${verdictCn}。纸面估计，非实盘保证。`,
+    plainHeadline: `Trade-selection win odds ~${next}% (confidence ~${conf}%)`,
+    plainDetail: `${opts.ticker} · ${prior.note}. Historical rule win rate ~${hist}% (~${sample} sample trades, shrunk toward 50%). Thorp edge: ${opts.thorp.edgeClaim}. ${verdictEn}. Paper estimate — not a live guarantee.`,
     assetClass: crypto ? 'crypto' : 'equity',
   };
 }

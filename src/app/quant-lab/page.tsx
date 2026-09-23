@@ -24,9 +24,9 @@ export default function QuantLabPage() {
           </h1>
           <p className="text-lg text-slate-600">
             Compile timing masters into paper backtests. Equity/ETF (SPY…) or crypto USD pairs
-            (BTC-USD, ETH-USD). After compile you get a <strong>综合选单胜率</strong> card
-            (next-trade win prob + 确信度) for whether to paper-try the setup. Thorp reviews Kelly.
-            Not live contracts.
+            (BTC-USD, ETH-USD). After compile you get a <strong>trade-selection odds</strong> card
+            (next-trade win probability + confidence) for whether to paper-try the setup. Thorp
+            reviews Kelly. Not live contracts.
           </p>
         </div>
 
