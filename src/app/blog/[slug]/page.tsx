@@ -6,6 +6,7 @@ import { ArrowLeft } from 'lucide-react';
 import { BLOG_POSTS, getPost } from '@/lib/blog';
 import JsonLd from '@/components/seo/JsonLd';
 import SeoRegisterCta from '@/components/seo/SeoRegisterCta';
+import { PostMedia } from '@/components/blog/PostMedia';
 import type { Metadata } from 'next';
 
 interface Props {
@@ -100,6 +101,7 @@ export default async function BlogPostPage({ params }: Props): Promise<React.Rea
             {post.keyTakeaway}
           </div>
         ) : null}
+        <PostMedia visuals={post.visuals} tables={post.tables} />
         <div className="prose-legal">
           {post.body.map((para) => (
             <p key={para.slice(0, 48)}>{para}</p>

@@ -2,7 +2,14 @@ import type { BlogPost } from '@/lib/blog';
 
 type Overlay = Pick<
   BlogPost,
-  'category' | 'keyTakeaway' | 'sections' | 'faqs' | 'relatedSlugs' | 'readingMinutes'
+  | 'category'
+  | 'keyTakeaway'
+  | 'sections'
+  | 'faqs'
+  | 'relatedSlugs'
+  | 'readingMinutes'
+  | 'visuals'
+  | 'tables'
 >;
 
 const OVERLAYS: Record<string, Overlay> = {
@@ -86,7 +93,73 @@ const OVERLAYS: Record<string, Overlay> = {
     readingMinutes: 11,
     keyTakeaway:
       'The useful sequence is flow, cycle, classification, inversion, timing, exit. AI can staff the seats. It cannot take the risk. There is no buy button at the end of a serious checklist.',
-    relatedSlugs: ['red-team-stock-idea', 'how-to-red-team-nvda', 'etf-research-without-a-rating'],
+    relatedSlugs: [
+      'how-to-use-agents61-to-make-money',
+      'red-team-stock-idea',
+      'how-to-red-team-nvda',
+      'etf-research-without-a-rating',
+    ],
+    visuals: [
+      {
+        title: 'Six gates on one US name',
+        intro:
+          'This is the stock file. Coins do not enter it. Stop at the first fail. The desk will not print a buy ticket after gate 6.',
+        gates: [
+          {
+            n: '1',
+            question: 'Where might capital flow?',
+            pass: 'You can name the neighborhood from Discover or a lineup, then take one ticker out of it.',
+            fail: 'You are shopping a screener list. A theme you cannot explain for a dull year is not a position.',
+          },
+          {
+            n: '2',
+            question: 'Where is the cycle?',
+            pass: 'You know whether you are paying a late multiple or a washed-out one. Cycle seats overlay this. They do not size you.',
+            fail: 'You add because the memo was fluent this morning. Timing is a condition, not “now”.',
+          },
+          {
+            n: '3',
+            question: 'Is it a business?',
+            pass: 'Revenue, ROE, leverage, or owner earnings are on the page. A serious seat may stay inconclusive if they are missing.',
+            fail: 'You invent a multiple. An inconclusive seat is a stop, not a prompt to ask the model again until it agrees.',
+          },
+          {
+            n: '4',
+            question: 'What kills it?',
+            pass: 'One sentence: the fact that forces a sale. Earnings quality, hidden leverage, a related party, a consensus with nothing left.',
+            fail: 'You only have the bull paragraph. That is the expensive draft. Do not open the broker.',
+          },
+          {
+            n: '5',
+            question: 'Which paper book matches the account?',
+            pass: 'Long-only cash uses Shares. Read drawdown before return. On 26 September 2026 the AAPL shares book was +68.39% with a −13.77% hole from 2022-09-30. The contract book on the same bars was +1.09% with profit factor 1.01.',
+            fail: 'You pick the prettier ending. The contract row shows a long-short rule that barely paid for its hole. The shares row is only real if you can fund −13.77% on your account.',
+          },
+          {
+            n: '6',
+            question: 'Is the exit written before the entry?',
+            pass: 'The kill from gate 4 is an order you could enter the same day as the shares, at a size that cannot change rent.',
+            fail: 'Any missing line. Agents61 does not send the order. Missing means the capital stays put.',
+          },
+        ],
+      },
+    ],
+    tables: [
+      {
+        caption: 'What each gate is allowed to change',
+        columns: ['Gate', 'Desk surface', 'Pass looks like', 'Effect on capital'],
+        rows: [
+          ['Flow', 'Discover, lineup', 'One neighborhood, one ticker', 'You stop buying random names'],
+          ['Cycle', 'Cycle seats', 'A regime, not a slogan', 'You do not size up just because the paragraph is new'],
+          ['Classify', 'Selection seats', 'Filings, or an honest blank', 'You do not pay a story multiple for a missing number'],
+          ['Invert', 'Red team', 'A written kill', 'This is the step that saves money'],
+          ['Rehearse', 'US quant, Shares first', 'Hole in dollars, then return', 'You refuse a curve you would have abandoned'],
+          ['Execute', 'Your broker', 'Size and exit the same day', 'The only place P&L can appear'],
+        ],
+        footnote:
+          'Paper figures in gate 5 were read from the public US book on 26 September 2026, virtual $10,000, Sina daily bars. They are a drill, not a track record. Full tape and the wheel comparison sit in the desk tutorial.',
+      },
+    ],
     sections: [
       {
         heading: 'Start with the wrong question’s opposite',
@@ -180,7 +253,55 @@ const OVERLAYS: Record<string, Overlay> = {
     readingMinutes: 9,
     keyTakeaway:
       'Forcing cash-flow multiples onto BTC, ETH, or SOL is how equity tools fail crypto. Settlement, usage, and policy are the file. No fake P/E. No coin rating.',
-    relatedSlugs: ['on-chain-due-diligence-desk', 'ai-agents-for-investing'],
+    relatedSlugs: [
+      'how-to-use-agents61-to-make-money',
+      'on-chain-due-diligence-desk',
+      'ai-agents-for-investing',
+    ],
+    visuals: [
+      {
+        title: 'Three gates before a coin is allowed near capital',
+        intro:
+          'A coin that fails gate 1 does not get a stock memo with the nouns swapped. The paper perpetual is a trend rehearsal, not a reason to open a live liquidation engine.',
+        gates: [
+          {
+            n: '1',
+            question: 'Does it have cash flow?',
+            pass: 'A token with a business underneath can meet an owner-earnings test. Say so, and use the stock file.',
+            fail: 'BTC, and most L1s, do not. Inventing a P/E is the stop. Value seats are allowed to stay skeptical. Do not average them into a coin rating.',
+          },
+          {
+            n: '2',
+            question: 'Are you asking about usage or about price?',
+            pass: 'Usage, issuance, security budget, and policy go to the committee. Price path goes to the blockchain paper perpetual, labeled as such.',
+            fail: 'You blend a skeptical value note and a trend trade into one score, then size from the average.',
+          },
+          {
+            n: '3',
+            question: 'Can you fund the paper hole without a liquidation fantasy?',
+            pass: 'On 26 September 2026, BTC contract was +5.95% with a −6.76% hole (about +$595 versus a $676 hole on the virtual $10,000). ETH was +6.94% with a −5.27% hole and profit factor 1.89. You can name those dollars on your real account and still walk away.',
+            fail: 'You open a live perp because the paper tape was green. The paper book has fees and a research funding estimate. It cannot liquidate you. A live venue can.',
+          },
+        ],
+      },
+    ],
+    tables: [
+      {
+        caption: 'Stock file versus chain file',
+        columns: ['Question', 'US share', 'BTC / ETH perpetual'],
+        rows: [
+          ['Value test', 'Revenue, ROE, owner earnings', 'Usually refuse. No earnings to multiply.'],
+          ['What you read', 'Filings', 'Issuance, security budget, usage, listings, policy'],
+          ['Paper book', 'Shares, then Contract or Wheel if the account matches', 'Perpetual on /research/crypto only'],
+          ['Window in this drill', '2022-09-30 → 2026-09-25', '2024-01-01 → 2026-09-26'],
+          ['BTC on that window', '—', '+5.95% return, −6.76% hole, 25 closes, win 44%, profit factor 1.53'],
+          ['ETH on that window', '—', '+6.94% return, −5.27% hole, 23 closes, win 52%, profit factor 1.89'],
+          ['Where money moves', 'Your stock broker, after the kill is written', 'Not on this site. Not from the paper result.'],
+        ],
+        footnote:
+          'Crypto rows are the public paper perpetual on Binance daily candles, virtual $10,000, read 26 September 2026. Funding is a clipped research estimate, not the exchange’s funding print. Re-open the book before you treat a cell as current.',
+      },
+    ],
     sections: [
       {
         heading: 'The stock template leak',

@@ -6,7 +6,7 @@ export const EARN_WITH_AGENTS61: BlogPost = {
   title: 'How to use Agents61 to make money: a desk tutorial',
   date: 'September 26, 2026',
   category: 'desk',
-  readingMinutes: 18,
+  readingMinutes: 22,
   excerpt:
     'A practical tour of the committee, the US paper books, the blockchain perpetual, and the prediction desk — and where your own capital actually changes hands.',
   tags: [
@@ -24,6 +24,94 @@ export const EARN_WITH_AGENTS61: BlogPost = {
     'crypto-research-not-pe',
     'seating-3-16-61',
   ],
+  visuals: [
+    {
+      title: 'Eight gates before capital moves',
+      intro:
+        'Read this top to bottom. A later gate does not repair an earlier stop. The paper percentages further down are a reading drill from 26 September 2026, not a forecast.',
+      gates: [
+        {
+          n: '1',
+          question: 'What is the asset?',
+          pass: 'A US stock goes to Analyze, Isolated. A coin goes to the blockchain desk. A yes/no event goes to Predictions.',
+          fail: 'You force a stock multiple onto bitcoin, or you treat an event contract like a share. Stop. Wrong file.',
+        },
+        {
+          n: '2',
+          question: 'Do you already have one name?',
+          pass: 'Isolated. Each seat writes alone. You are here for the split, not for a blended score.',
+          fail: 'The question is still “where might capital flow?” Use division of labor as a pipeline, then pick one name. Do not flip the method mid-run.',
+        },
+        {
+          n: '3',
+          question: 'Can you write the kill in one sentence?',
+          pass: 'A fact that would make you sell, restated with the page closed. Example: services growth stalls and the multiple stays elevated while buybacks slow.',
+          fail: 'You are still hunting a rating. Do not open a paper book for comfort, and do not open a broker.',
+        },
+        {
+          n: '4',
+          question: 'Which book matches the account you have?',
+          pass: 'Cash, long-only: Shares. A financed long/short you can actually monitor: Contract. Cash to be assigned, plus options vocabulary: Wheel.',
+          fail: 'You pick the style with the highest ending percent. That number is not a job. See the AAPL row: Shares +68%, Wheel +6% with a worse hole.',
+        },
+        {
+          n: '5',
+          question: 'What window is on the card?',
+          pass: 'You can name the dates. These tables: crypto dailies 2024-01-01 to 2026-09-26; US dailies 2022-09-30 to 2026-09-25. One thousand bars.',
+          fail: 'You treat one regime as the next regime. The US window starts near a bear-market low. That inflates long-only endings.',
+        },
+        {
+          n: '6',
+          question: 'What is the hole in your dollars?',
+          pass: 'Max drawdown times your account, not the virtual $10,000. You can sit through that hole without turning the rule off.',
+          fail: 'You would have quit halfway. The ending return is not yours. AAPL shares −13.77% is about $275 on $2,000 and about $6,900 on $50,000.',
+        },
+        {
+          n: '7',
+          question: 'Do win rate and profit factor agree?',
+          pass: 'You can say both. Profit factor is closed-trade gains divided by closed-trade losses. Near 1 means the wins do not pay for the losses.',
+          fail: 'You quote the return alone. SPY wheel wins 74% of closes and still has a profit factor of 1.05. AAPL wheel is +5.81% with a profit factor of 0.40.',
+        },
+        {
+          n: '8',
+          question: 'Is the live gate actually open?',
+          pass: 'Kill written, hole affordable, style matches the account, size cannot change rent. Then you place the order at your broker, with the exit the same day.',
+          fail: 'Any line missing. Agents61 still does not send the order. A missing line means the money stays put.',
+        },
+      ],
+    },
+  ],
+  tables: [
+    {
+      caption: 'Where a desk move can and cannot become money',
+      columns: ['Move', 'You leave with', 'You do not leave with', 'Money logic'],
+      rows: [
+        ['Isolated split', 'A kill sentence', 'A buy rating', 'Refusing a bad idea is the first P&L'],
+        ['Shares / Contract / Wheel', 'Drawdown and a trade list', 'Income', 'The curve is a rehearsal on $10,000 of paper'],
+        ['Blockchain perpetual', 'A daily rule on public candles', 'A Binance fill', 'No liquidation engine, no USDT movement'],
+        ['Predictions', 'A probability next to a story', 'A wallet bet', 'If your story cannot beat a stated mid, it is a mood'],
+        ['Quant Lab script', 'A rule you can read', 'A curve fitted after the fact', 'Editing the script to flatter history is not evidence'],
+        ['Paid seating', 'More isolated writers', 'A higher win rate', 'You pay for seats that write, not for luck'],
+      ],
+      footnote:
+        'Observer is $0 and can already open the public US quant and blockchain books. Seating changes how many prompts run.',
+    },
+    {
+      caption: 'Paper snapshot, 26 September 2026 — virtual $10,000, not a customer account',
+      columns: ['Book', 'Window', 'Return', 'Max hole', 'Closed', 'Win', 'Profit factor', 'Judgment'],
+      rows: [
+        ['BTC contract', '2024-01-01 → 2026-09-26', '+5.95%', '−6.76%', '25', '44%', '1.53', 'About +$595 after a $676 hole. Not a salary.'],
+        ['ETH contract', 'same crypto window', '+6.94%', '−5.27%', '23', '52%', '1.89', 'Cleaner tape. Do not average it with a value seat that rejects coins.'],
+        ['AAPL contract', '2022-09-30 → 2026-09-25', '+1.09%', '−8.85%', '26', '35%', '1.01', 'About +$109 after an $885 hole. Fail.'],
+        ['AAPL shares', 'same US window', '+68.39%', '−13.77%', '14', '57%', '3.11', 'The pretty row. Only yours if you held −13.77% from a 2022 low.'],
+        ['AAPL wheel', 'same US window', '+5.81%', '−21.66%', '53', '53%', '0.40', 'Curve up, closed losses larger than wins, deepest hole. Fail unless you can be assigned.'],
+        ['SPY shares', 'same US window', '+27.55%', '−11.11%', '20', '45%', '2.47', 'Fewer trades. Losses smaller than wins. Still a window, not a promise.'],
+        ['SPY wheel', 'same US window', '+33.43%', '−8.61%', '47', '74%', '1.05', 'High win rate, almost no edge per loss. Do not call 74% a machine.'],
+      ],
+      footnote:
+        'Return is the equity curve, including open marks. Profit factor uses closed trades only, so a positive return can sit next to a profit factor under 1. Crypto source: Binance daily. US source: Sina daily. Option prices are a Black-Scholes model on the stock’s own realized volatility, not an exchange chain. Re-open the book before you treat a cell as current.',
+    },
+  ],
   body: [
     'Agents61.com is a research desk, not a brokerage, not a signal chat, and not a machine that deposits profit into your account. The honest way to use it to make money is narrower than the ads in this category usually claim. You use the committee to kill weak ideas before they become positions. You use the US quant books and the blockchain paper perpetual to see how a written rule would have behaved on daily bars, including the losing stretches. You use the prediction desk to separate a probability from a story. Then you decide, yourself, whether any of that deserves capital at a broker you control. The site will not click buy for you. There is no order button on the report, on the crypto board, or on the US quant tape. That limit is the product. A desk that also routed orders would be a different company, with a different license, and it would be much easier to confuse a simulation with a paycheck.',
     'Start by separating two piles of money. The first pile is the subscription, if you pay one. Observer is free and already lets you read the public pages, including the US quant book at /research/us-quant and the blockchain board at /research/crypto. Paid seating — Analyst, Associate, Principal, Committee, Partners — buys more isolated writers on a report, not a higher win rate. The second pile is the capital you might later place at a broker. Agents61 never touches that second pile. A paper book starts at a virtual ten thousand dollars so the percentages are readable. A plus sign on that book is not income. A minus sign is not a loss in your bank account. It is a rehearsal. People who skip that distinction treat a backtest like a salary and then size the live trade as if the rehearsal were already cash. That is the fastest way to lose money while staring at a research site.',
@@ -31,6 +119,10 @@ export const EARN_WITH_AGENTS61: BlogPost = {
     'A newcomer should not open every door on day one. The useful first hour is small. Register, land on the dashboard, and leave the method on Isolated. Type one US ticker you already know how to spell, something with filings, not a ticker you saw in a screenshot that morning. Read the seats that disagree. Write down, in your own notes, the one fact that would make you sell. Only after that sentence exists should you open US quant and load the same symbol on the Shares book. You are checking whether a simple trend rule would have been a comfortable ride, not whether the site has anointed the stock. If you cannot explain the rule in one sentence — rising medium-term trend, enter on a break of the recent high, exit on a break of the recent low or a volatility stop — you are not ready to care about the percentage at the top of the card.',
   ],
   sections: [
+    {
+      heading: 'How a row becomes a decision',
+      body: 'Take AAPL on the US window, virtual $10,000. Contract made about $109 and asked you to sit an $885 hole, with a profit factor of 1.01. That is a coin-flip after costs. Fail gate 7. The wheel ended about $581 higher and asked for a $2,166 hole, while closed losses were larger than closed wins (profit factor 0.40). Fail gates 4 and 7 unless being assigned the shares is the account you already wanted. Shares ended about $6,839 higher, profit factor 3.11, fourteen closes, and a $1,377 hole. It passes the tape test and still fails gate 6 if you cannot hold a 13.77% drawdown on the account you actually have. The window also starts on 30 September 2022, close to a broad low, so the long-only ending is flattered. BTC is a different file: about $595 of paper profit against a $676 hole over the crypto window. Gate 1 keeps it off the stock checklist. Gate 8 stays shut until the kill sentence exists. The money, if it comes, is the size of a rule you did not abandon, placed at your broker. Most rows in the table are there to be refused.',
+    },
     {
       heading: 'What the committee is for',
       body: 'The committee exists to stop you from falling in love with the first fluent paragraph. Isolated mode is the default and the one you should use when you already have a name. Each unlocked seat sees the ticker and its own rules. Buffett does not read Wood. Burry does not read Lynch. A clerk stacks agreements and splits after the notes exist. Division of labor is the other switch, and it is a pipeline rather than a group chat: trend can hand a map to cycle, cycle can hand a regime note to selection, selection can hand a pool to the red team. Peers in the same group still do not see each other. Use Isolated for “what is wrong with this name.” Use Division of labor when the question is a sequence — where capital may be flowing, where the cycle sits, which names survive — and you are willing to read handoffs instead of a single verdict. Neither switch prints a buy rating. If the page feels unfinished because it refuses to say “buy,” it is working.',

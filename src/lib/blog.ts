@@ -5,6 +5,26 @@ import { EARN_WITH_AGENTS61 } from '@/lib/blog-earn-guide';
 export const BLOG_CATEGORIES = ['method', 'compare', 'markets', 'desk'] as const;
 export type BlogCategory = (typeof BLOG_CATEGORIES)[number];
 
+export type BlogTable = {
+  caption: string;
+  columns: string[];
+  rows: string[][];
+  footnote?: string;
+};
+
+export type BlogGate = {
+  n: string;
+  question: string;
+  pass: string;
+  fail: string;
+};
+
+export type BlogVisual = {
+  title: string;
+  intro?: string;
+  gates: BlogGate[];
+};
+
 export type BlogPost = {
   slug: string;
   title: string;
@@ -18,6 +38,9 @@ export type BlogPost = {
   faqs?: { question: string; answer: string }[];
   relatedSlugs?: string[];
   readingMinutes?: number;
+  /** Decision figure. Rendered under the takeaway so the page is not a wall of paragraphs. */
+  visuals?: BlogVisual[];
+  tables?: BlogTable[];
 };
 
 const CORE_POSTS: BlogPost[] = [
