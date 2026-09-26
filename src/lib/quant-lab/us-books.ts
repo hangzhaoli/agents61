@@ -385,35 +385,40 @@ export function runWheelBook(
   const trades: PerpTrade[] = [];
   const curve: PerpEquityPoint[] = [];
 
-  const pushOpt = (index: number, exitPrice: number, reason: PerpTrade['exitReason'], pnl: number) => {
-    if (!opt) return;
+  const pushOpt = (
+    held: ShortOpt,
+    index: number,
+    exitPrice: number,
+    reason: PerpTrade['exitReason'],
+    pnl: number
+  ) => {
     trades.push({
       id: nextId++,
       side: 'short',
-      instrument: opt.right === 'call' ? 'Call' : 'Put',
+      instrument: held.right === 'call' ? 'Call' : 'Put',
       status: reason === 'open' ? 'open' : 'closed',
-      entryDate: opt.entryDate,
+      entryDate: held.entryDate,
       exitDate: reason === 'open' ? null : candles[index]!.date,
-      entryPrice: opt.premium,
+      entryPrice: held.premium,
       exitPrice,
-      pnlPct: opt.strike > 0 ? round2((pnl / (opt.strike * opt.qty)) * 100) : 0,
+      pnlPct: held.strike > 0 ? round2((pnl / (held.strike * held.qty)) * 100) : 0,
       pnlUsd: round2(pnl),
-      bars: index - opt.entryIdx,
+      bars: index - held.entryIdx,
       exitReason: reason,
-      feesUsd: round2(opt.qty * candles[opt.entryIdx]!.close * STOCK_FEE),
+      feesUsd: round2(held.qty * candles[held.entryIdx]!.close * STOCK_FEE),
       fundingUsd: 0,
     });
   };
 
-  const sellOption = (right: 'call' | 'put', index: number, qty: number) => {
+  const sellOption = (right: 'call' | 'put', index: number, qty: number): ShortOpt | null => {
     const bar = candles[index]!;
     const vol = realizedVol(closes, index);
     const strike = strikeForDelta(right, bar.close, vol);
     const premium = bsPrice(right, bar.close, strike, HOLD_DAYS, vol);
-    if (!Number.isFinite(premium) || premium <= 0 || qty <= 0) return false;
+    if (!Number.isFinite(premium) || premium <= 0 || qty <= 0) return null;
     const fee = qty * bar.close * STOCK_FEE;
     cash += premium * qty - fee;
-    opt = {
+    return {
       right,
       strike,
       qty,
@@ -423,7 +428,6 @@ export function runWheelBook(
       entryDate: bar.date,
       vol,
     };
-    return true;
   };
 
   for (let i = 0; i < candles.length; i++) {
@@ -441,13 +445,13 @@ export function runWheelBook(
         shareFee = 0;
         const atr = atrAt(candles, i);
         shareStop = opt.strike - (Number.isFinite(atr) ? atr : opt.strike * 0.03) * 2.2;
-        pushOpt(i, intrinsic, 'assigned', pnl);
+        pushOpt(opt, i, intrinsic, 'assigned', pnl);
       } else if (opt.right === 'call' && bar.close > opt.strike) {
         cash += opt.strike * shares;
         shares = 0;
-        pushOpt(i, intrinsic, 'called', pnl);
+        pushOpt(opt, i, intrinsic, 'called', pnl);
       } else {
-        pushOpt(i, 0, 'expiry', pnl);
+        pushOpt(opt, i, 0, 'expiry', pnl);
       }
       opt = null;
     } else if (opt && shares > 0 && bar.low <= shareStop) {
@@ -456,7 +460,7 @@ export function runWheelBook(
       const mark = bsPrice('call', exitPx, opt.strike, daysLeft, opt.vol);
       const optPnl = opt.premium * opt.qty - mark * opt.qty;
       cash -= mark * opt.qty;
-      pushOpt(i, mark, 'stop', optPnl);
+      pushOpt(opt, i, mark, 'stop', optPnl);
       opt = null;
       const fee = shares * exitPx * STOCK_FEE;
       const sharePnl = (exitPx - shareEntry) * shares - fee - shareFee;
@@ -484,12 +488,17 @@ export function runWheelBook(
       const emaNow = ema[i];
       const slope = i >= 5 && Number.isFinite(ema[i - 5]!) && emaNow != null ? emaNow - ema[i - 5]! : 0;
       const bullish = emaNow != null && Number.isFinite(emaNow) && bar.close > emaNow && slope > 0;
-      if (shares > 0) sellOption('call', i, shares);
-      else if (bullish) {
+      if (shares > 0) {
+        const sold = sellOption('call', i, shares);
+        if (sold) opt = sold;
+      } else if (bullish) {
         const vol = realizedVol(closes, i);
         const strike = strikeForDelta('put', bar.close, vol);
         const qty = (cash * 0.95) / strike;
-        if (qty > 0) sellOption('put', i, qty);
+        if (qty > 0) {
+          const sold = sellOption('put', i, qty);
+          if (sold) opt = sold;
+        }
       }
     }
 
@@ -508,7 +517,7 @@ export function runWheelBook(
   if (last && opt) {
     const daysLeft = Math.max(opt.expiry - (candles.length - 1), 0);
     const mark = bsPrice(opt.right, last.close, opt.strike, daysLeft, opt.vol);
-    pushOpt(candles.length - 1, mark, 'open', opt.premium * opt.qty - mark * opt.qty);
+    pushOpt(opt, candles.length - 1, mark, 'open', opt.premium * opt.qty - mark * opt.qty);
   }
   if (last && shares > 0) {
     trades.push({

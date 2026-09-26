@@ -295,13 +295,13 @@ export function runPerpBacktest(
         const atrPct = atrNow / bar.close;
         const tradable = atrPct >= 0.005 && atrPct <= 0.12;
         const emaSlope = i >= 5 && Number.isFinite(ema[i - 5]!) ? emaNow - ema[i - 5]! : 0;
-        const longSig =
+        const longSig: boolean =
           tradable &&
           bar.close > entryHigh &&
           bar.close > emaNow &&
           emaSlope > 0 &&
           !(cooldownSide === 'long' && i < cooldownUntil);
-        const shortSig =
+        const shortSig: boolean =
           tradable &&
           bar.close < entryLow &&
           bar.close < emaNow &&
