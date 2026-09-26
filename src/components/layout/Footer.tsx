@@ -50,6 +50,8 @@ const FOOTER_SECTIONS = [
     title: 'Guides',
     links: [
       { label: 'Learn', href: '/learn' },
+      { label: 'First sitting', href: '/learn/first-sitting' },
+      { label: 'How to use the desk', href: '/blog/how-to-use-agents61-to-make-money' },
       { label: 'Research a stock in 20 min', href: '/learn/research-a-stock-in-20-minutes' },
       { label: 'Invert a thesis', href: '/learn/invert-a-thesis' },
       { label: 'Blog', href: '/blog' },
@@ -62,6 +64,7 @@ const FOOTER_SECTIONS = [
     title: 'Markets',
     links: [
       { label: 'US Stocks', href: '/markets' },
+      { label: 'US quant', href: '/research/us-quant' },
       { label: 'Blockchain research', href: '/research/crypto' },
       { label: 'Emerging markets', href: '/research/emerging' },
       { label: 'Private / pre-IPO', href: '/research/private' },

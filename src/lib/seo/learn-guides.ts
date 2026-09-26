@@ -2,6 +2,41 @@ import type { LearnGuide } from '@/lib/seo/hub-types';
 
 export const LEARN_GUIDES: LearnGuide[] = [
   {
+    slug: 'first-sitting',
+    title: 'First sitting on the desk',
+    description:
+      'Newcomer path: one ticker, a paper book, crypto on its own desk. The long tutorial lives on the blog.',
+    h1: 'First sitting — three steps, then the long tutorial',
+    minutes: 6,
+    intro:
+      'Open the desk, refuse a weak idea, and rehearse one rule on paper. Agents61 does not pay you and does not place trades. The 18-minute walkthrough is the blog tutorial.',
+    steps: [
+      {
+        heading: 'Convene one ticker',
+        body: 'Register if you need an account, open the dashboard, and leave the method on Isolated. Run one US name you already understand. Read the split between seats. Write the fact that would make you sell before you look at any percentage.',
+      },
+      {
+        heading: 'Match a paper book',
+        body: 'Open US quant and load the same symbol. Shares is long-only stock. Contract is a financed long-short simulation on daily bars, not a listed future. The options wheel uses model premiums, not a live options chain. Read drawdown before return. None of the books send an order.',
+      },
+      {
+        heading: 'Keep crypto on its own desk',
+        body: 'Bitcoin and the other liquid pairs live on the blockchain board as a paper perpetual. Do not force a stock multiple onto them, and do not size a real exchange account from the paper tape. When you want the full operating rhythm, read the blog tutorial.',
+      },
+    ],
+    next: [
+      { label: 'Full tutorial (blog)', href: '/blog/how-to-use-agents61-to-make-money' },
+      { label: 'US quant paper books', href: '/research/us-quant' },
+      { label: 'Blockchain paper perpetual', href: '/research/crypto' },
+      { label: 'Research a stock in 20 minutes', href: '/learn/research-a-stock-in-20-minutes' },
+    ],
+    ctaTitle: 'Open the desk and run the first sitting',
+    ctaBody:
+      'Create an account, convene one ticker, and stop after a written kill-condition. Research simulation, not a trade ticket.',
+    ctaHref: '/dashboard?entry=analyze',
+    ctaGuestHref: '/register?next=%2Fdashboard%3Fentry%3Danalyze',
+  },
+  {
     slug: 'research-a-stock-in-20-minutes',
     title: 'Research a stock in 20 minutes',
     description: 'A short path: tape, convene, clerk stack, invert. No buy button at the end.',

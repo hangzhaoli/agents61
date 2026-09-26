@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
+import ContractStrategyDesk from '@/components/crypto/ContractStrategyDesk';
 import { CRYPTO_ASSETS, CRYPTO_THEMES } from '@/lib/crypto-universe';
 
 export default function CryptoDeskPane({ onLineup }: { onLineup: () => void }) {
@@ -14,7 +15,8 @@ export default function CryptoDeskPane({ onLineup }: { onLineup: () => void }) {
         </h2>
         <p className="text-sm text-slate-600 mt-2 max-w-2xl">
           Settlement, L1 usage, and policy — not a cash-flow multiple unless a business sits
-          underneath. Line up masters to screen this board. No buy button.
+          underneath. The contract book below is a paper perpetual: backtest and trades update
+          together. No buy button.
         </p>
         <div className="mt-4 flex flex-wrap gap-2">
           <button type="button" onClick={onLineup} className="btn-primary text-sm">
@@ -26,6 +28,8 @@ export default function CryptoDeskPane({ onLineup }: { onLineup: () => void }) {
           </Link>
         </div>
       </div>
+
+      <ContractStrategyDesk />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {CRYPTO_THEMES.map((t) => (

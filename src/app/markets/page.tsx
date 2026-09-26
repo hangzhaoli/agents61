@@ -54,8 +54,8 @@ export default async function MarketsPage() {
               Common shares with a US ticker and, where possible, companyfacts. Open a name from
               the desk or type a ticker. Reports include P/E and P/B when the model-input cache has them.
             </p>
-            <Link href="/dashboard?entry=discover" className="mt-4 inline-block text-sm font-semibold text-[#0052d9]">
-              What to buy pool →
+            <Link href="/research/us-quant" className="mt-4 inline-block text-sm font-semibold text-[#0052d9]">
+              US quant book →
             </Link>
           </div>
           <div className="card p-6">

@@ -1,5 +1,6 @@
 import { BLOG_PILLARS } from '@/lib/blog-pillars';
 import { enrichCorePost } from '@/lib/blog-enrichment';
+import { EARN_WITH_AGENTS61 } from '@/lib/blog-earn-guide';
 
 export const BLOG_CATEGORIES = ['method', 'compare', 'markets', 'desk'] as const;
 export type BlogCategory = (typeof BLOG_CATEGORIES)[number];
@@ -203,7 +204,7 @@ const CORE_POSTS: BlogPost[] = [
   },
 ];
 
-export const BLOG_POSTS: BlogPost[] = [...CORE_POSTS.map(enrichCorePost), ...BLOG_PILLARS];
+export const BLOG_POSTS: BlogPost[] = [EARN_WITH_AGENTS61, ...CORE_POSTS.map(enrichCorePost), ...BLOG_PILLARS];
 
 export function getPost(slug: string) {
   return BLOG_POSTS.find((p) => p.slug === slug);

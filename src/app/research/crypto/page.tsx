@@ -1,3 +1,4 @@
+import ContractStrategyDesk from '@/components/crypto/ContractStrategyDesk';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import Link from 'next/link';
@@ -32,11 +33,14 @@ export default async function CryptoResearchPage() {
           <p className="text-lg text-slate-600">
             Crypto subscriptions do not turn Agents61 into a trading venue. This module is
             research: usage, settlement, policy, and cycle overlay. P/E and P/B are not forced
-            onto tokens with no earnings. There is no buy button.
+            onto tokens with no earnings. The contract module below is a paper perpetual: one
+            backtest, and the trades that backtest produced. There is no buy button.
           </p>
         </div>
 
-        <h2 className="text-xl font-bold text-slate-900 mb-4">This week’s crypto map</h2>
+        <ContractStrategyDesk book="crypto" />
+
+        <h2 className="text-xl font-bold text-slate-900 mt-12 mb-4">This week’s crypto map</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-12">
           {CRYPTO_THEMES.map((t) => (
             <div key={t.id} className="crypto-theme-card">

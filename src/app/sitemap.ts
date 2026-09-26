@@ -39,6 +39,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/masters',
     '/pricing',
     '/research/crypto',
+    '/research/us-quant',
     '/research/emerging',
     '/research/private',
     '/quant-lab',

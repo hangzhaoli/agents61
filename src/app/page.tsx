@@ -40,6 +40,7 @@ import MiniSpark from '@/components/landing/MiniSpark';
 import PrivateDeskHooks from '@/components/landing/PrivateDeskHooks';
 import PredictionMarketsTeaser from '@/components/landing/PredictionMarketsTeaser';
 import { getLivePulse } from '@/lib/landing-pulse';
+import NewcomerGuide from '@/components/landing/NewcomerGuide';
 
 /** Hourly refresh so homepage tape shows new listings / cached prices. */
 export const revalidate = 3600;
@@ -119,6 +120,8 @@ export default async function HomePage() {
         </div>
       </section>
 
+      <NewcomerGuide />
+
       <PainSection />
 
       <section className="py-16 md:py-24 bg-slate-50/70">
@@ -147,8 +150,8 @@ export default async function HomePage() {
               </h2>
               <p className="mt-4 text-lg text-slate-600">
                 BTC, ETH, and SOL sit on the research board — settlement, usage, and policy, not a
-                cash-flow multiple unless a business sits underneath. Lined-up legends screen the
-                market alone; the clerk only stacks overlap. No buy button.
+                cash-flow multiple unless a business sits underneath. A paper perpetual strategy
+                shows its backtest and trade tape on the same desk. No buy button.
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-3 shrink-0">

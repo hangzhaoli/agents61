@@ -5,12 +5,14 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowRight, Lock, ShieldCheck } from 'lucide-react';
 import ClerkPane from '@/components/workspace/ClerkPane';
+import NewcomerGuide from '@/components/landing/NewcomerGuide';
 import { GROUP_META, GROUP_ORDER, getMasterBySlug, MASTERS } from '@/lib/masters';
 import DeskThread from '@/components/workspace/DeskThread';
 import WatchlistPanel from '@/components/workspace/WatchlistPanel';
 import QuantLabPanel from '@/components/quant/QuantLabPanel';
 import LineupPane from '@/components/workspace/LineupPane';
 import CryptoDeskPane from '@/components/workspace/CryptoDeskPane';
+import UsQuantPane from '@/components/workspace/UsQuantPane';
 import {
   CANDIDATES,
   CYCLE_SNAPSHOT,
@@ -128,7 +130,12 @@ export default function WorkspaceDesk({
         </Link>
       </div>
 
-      {entry === 'clerk' && <ClerkPane skipPaywall={skipPaywall} trialUsed={trialUsed} />}
+      {entry === 'clerk' && (
+        <div className="space-y-6">
+          <NewcomerGuide compact />
+          <ClerkPane skipPaywall={skipPaywall} trialUsed={trialUsed} />
+        </div>
+      )}
           {entry === 'analyze' && (
             <DeskThread
               key={params.get('q') ?? params.get('private') ?? 'analyze'}
@@ -149,6 +156,7 @@ export default function WorkspaceDesk({
           {entry === 'crypto' && (
             <CryptoDeskPane onLineup={() => switchEntry('lineup', { market: 'crypto' })} />
           )}
+          {entry === 'us-quant' && <UsQuantPane />}
           {entry === 'lineup' && (
             <LineupPane
               key={`${urlMarket ?? 'us'}-${deskMode}-${params.get('masters') ?? ''}`}
