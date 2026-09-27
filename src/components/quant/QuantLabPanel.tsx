@@ -35,6 +35,7 @@ import {
 import type { GeneratedQuantStrategy, QuantMasterSlug, VaultStrategy } from '@/lib/quant-lab/types';
 import { estimateTradeOdds } from '@/lib/quant-lab/trade-odds';
 import QuantTradeOddsCard from '@/components/quant/QuantTradeOddsCard';
+import QuantPipelinePanel from '@/components/quant/QuantPipelinePanel';
 import { isUnlocked, PLANS, type PlanId } from '@/lib/tiers';
 
 function withOdds(s: GeneratedQuantStrategy): GeneratedQuantStrategy {
@@ -351,6 +352,12 @@ export default function QuantLabPanel({ plan }: { plan: PlanId }) {
       </div>
 
       {error && <p className="text-sm text-red-600 mb-3">{error}</p>}
+
+      <QuantPipelinePanel
+        masterSlug={masterSlug}
+        assetClass={assetClass}
+        unlocked={unlocked}
+      />
 
       {result && (
         <div className="quant-output">
