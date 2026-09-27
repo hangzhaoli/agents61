@@ -108,6 +108,8 @@ export default function QuantLabPanel({ plan }: { plan: PlanId }) {
     setBusy(true);
     setError('');
     setResult(null);
+    const ac = new AbortController();
+    const kill = window.setTimeout(() => ac.abort(), 45_000);
     try {
       const res = await fetch('/api/quant/generate', {
         method: 'POST',
@@ -120,17 +122,35 @@ export default function QuantLabPanel({ plan }: { plan: PlanId }) {
               ? `${notes ? notes + ' · ' : ''}crypto paper backtest — price/volume only, no equity fundamentals`
               : notes,
         }),
+        signal: ac.signal,
       });
-      const data = (await res.json()) as GeneratedQuantStrategy & { error?: string };
+      let data: GeneratedQuantStrategy & { error?: string };
+      try {
+        data = (await res.json()) as GeneratedQuantStrategy & { error?: string };
+      } catch {
+        setError('Compile returned an unreadable response — try again.');
+        return;
+      }
       if (!res.ok) {
         setError(data.error ?? 'Generation failed');
         return;
       }
       setResult(withOdds(data));
       setTab('spec');
-    } catch {
-      setError('Network error — try again.');
+      if (data.engine === 'template') {
+        setError(
+          'Live model timed out or failed — showing a template paper backtest. Retry compile for a full LLM pass.'
+        );
+      }
+    } catch (e) {
+      const aborted = e instanceof DOMException && e.name === 'AbortError';
+      setError(
+        aborted
+          ? 'Compile timed out after 45s. Retry — or the server will return a template fallback shortly.'
+          : 'Network error — try again.'
+      );
     } finally {
+      window.clearTimeout(kill);
       setBusy(false);
     }
   }

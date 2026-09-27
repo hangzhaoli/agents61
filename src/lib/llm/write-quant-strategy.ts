@@ -101,16 +101,17 @@ export async function generateQuantStrategy(opts: GenerateQuantOpts): Promise<Ge
     .join('\n');
 
   try {
+    // Flash + no thinking: Pro/thinking often hangs 60–90s and looks stuck in the UI.
     const { content, model } = await deepseekChat({
-      lane: 'verdict',
+      lane: 'card',
       messages: [
         { role: 'system', content: system },
         { role: 'user', content: user },
       ],
-      thinking: true,
-      effort: 'high',
-      timeoutMs: 90_000,
-      maxTokens: 4000,
+      thinking: false,
+      temperature: 0.3,
+      timeoutMs: 35_000,
+      maxTokens: 3200,
     });
 
     const jsonPart = extractJson(content) as {

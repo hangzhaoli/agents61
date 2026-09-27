@@ -8,7 +8,8 @@ import { isUnlocked, parsePlan } from '@/lib/tiers';
 import { PLAN_COOKIE } from '@/lib/demo-session';
 
 export const dynamic = 'force-dynamic';
-export const maxDuration = 120;
+/** Keep under common proxy limits; Flash compile should finish well under this. */
+export const maxDuration = 60;
 
 const SLUGS = new Set(QUANT_MASTERS.map((m) => m.slug));
 
