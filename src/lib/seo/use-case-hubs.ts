@@ -366,6 +366,64 @@ export const USE_CASE_HUBS: SeoHub[] = [
     ctaHref: '/predictions',
     ctaGuestHref: '/register?next=%2Fpredictions',
   },
+  {
+    slug: 'paper-book-a-master-strategy',
+    path: '/use-cases/paper-book-a-master-strategy',
+    keyword: 'paper trade AI stock strategy',
+    title: 'Use Case: Paper-Book a Master Quant Strategy',
+    description:
+      'Screen a stock pool with a timing master, book longs into a virtual $100k account, sync live marks. Paper rehearsal — not a broker order.',
+    h1: 'Use case: paper-book a master strategy into $100k',
+    eyebrow: 'Use cases · Quant + paper',
+    intro:
+      'You want the full loop: pick who sells/buys (O’Neil, Turtle, Seykota…), let the desk screen a liquid universe, occupy virtual cash, then mark the book to market. That is the Paper $100k + Quant Lab job — not a live ticket.',
+    bullets: [
+      'Quant Lab full pipeline or Paper desk “Run strategy → book”.',
+      'Equal-weight slots, max open positions you choose.',
+      'Sync market revalues equity and unrealized P&L.',
+      'Ends in a paper ledger — never “you should buy.”',
+    ],
+    sections: [
+      {
+        heading: 'When to run it',
+        body: 'After you understand one ticker on the committee. Use the $100k book when the question is “how would this rule occupy a portfolio,” not “what should I buy today.”',
+      },
+      {
+        heading: 'Equity vs crypto pools',
+        body: 'Liquid mega-cap, growth, and core ETFs for stocks. Crypto majors stay price/volume. Do not force CANSLIM fundamentals onto BTC.',
+      },
+      {
+        heading: 'What good output looks like',
+        body: 'A short screen table, open lots with avg cost vs mark, and a return % on virtual equity. If the curve tempts you to skip a kill-condition on a live broker, stop — the paper book did its job.',
+      },
+    ],
+    faqs: [
+      {
+        question: 'Will this place a live order?',
+        answer: 'No. Virtual cash only. See /paper-trading-account.',
+      },
+      {
+        question: 'Where do I start?',
+        answer: 'Open /dashboard?entry=paper or run Quant Lab pipeline and book signals.',
+      },
+      {
+        question: 'How is this different from US quant Shares?',
+        answer:
+          'US quant is a single-name daily-bar tape. This use case is multi-name selection into one $100k book.',
+      },
+    ],
+    related: [
+      { label: 'Paper $100k hub', href: '/paper-trading-account' },
+      { label: 'AI Quant Lab', href: '/ai-quant-lab' },
+      { label: 'Learn guide', href: '/learn/run-paper-100k-desk' },
+      { label: 'Quant Lab', href: '/quant-lab' },
+    ],
+    ctaTitle: 'Register and book a paper strategy',
+    ctaBody:
+      'Create an account, run a master pool screen into the $100k book, and sync marks. Research simulation only.',
+    ctaHref: '/dashboard?entry=paper',
+    ctaGuestHref: '/register?next=%2Fdashboard%3Fentry%3Dpaper',
+  },
 ];
 
 export function getUseCase(slug: string) {

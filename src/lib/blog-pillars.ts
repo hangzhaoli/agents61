@@ -441,4 +441,68 @@ export const BLOG_PILLARS: BlogPost[] = [
       },
     ],
   },
+  {
+    slug: 'virtual-paper-trading-100k',
+    title: 'Virtual $100k paper trading with master quant rules',
+    date: 'October 10, 2026',
+    excerpt:
+      'Agents61 now books timing-master screens into a virtual $100k account and syncs research marks. Rehearsal — not a broker, not a salary curve.',
+    tags: [
+      'virtual paper trading',
+      'paper trading account',
+      'AI quant strategy',
+      'CANSLIM paper backtest',
+      'Quant Lab',
+      '$100k paper portfolio',
+    ],
+    category: 'desk',
+    readingMinutes: 11,
+    keyTakeaway:
+      'A paper curve is a rehearsal unit. The $100k book answers how a master rule occupies cash and marks — not whether you got paid.',
+    relatedSlugs: [
+      'how-to-use-agents61-to-make-money',
+      'crypto-research-not-pe',
+      'chatgpt-stock-analysis-limits',
+    ],
+    body: [
+      'Searchers type “paper trading account” and “AI stock strategy” because they want a loop: pick a rule, see positions, see P&L. Broker paper accounts give a blank ticket. Agents61 gives a timing master, a liquid pool, and a virtual $100,000 book that can sync research marks.',
+      'Quant Lab already compiled masters into single-ticker Python. The missing piece was portfolio feedback: screen → multi-name signals → cash slots → mark-to-market. That is now the Paper $100k desk, with the same compliance line as the committee: no order routing.',
+    ],
+    sections: [
+      {
+        heading: 'What “$100k” means here',
+        body: 'A readable starting unit. Percentages stay comparable to the US quant $10k tapes and to each other. It is not a suggestion that you fund a broker with that size, and a green equity line is not income.',
+      },
+      {
+        heading: 'Master rules that can book',
+        body: 'Timing / exit seats on Quant Lab — O’Neil-style breakouts, Turtle channels, Seykota trend, Minervini stage-2 proxies, Livermore pivot language. Screens use price/volume and relative-strength proxies. Full fundamental CANSLIM is not claimed.',
+      },
+      {
+        heading: 'Sync market is research marks',
+        body: 'The desk pulls cached quotes and daily closes. That is enough to update unrealized P&L for homework. It is not a Bloomberg flash. If a mark is missing, the lot keeps its last booked price until Sync finds one.',
+      },
+      {
+        heading: 'A search-intent workflow',
+        body: 'Open /paper-trading-account for the product framing. Run /learn/run-paper-100k-desk for the steps. Book from /dashboard?entry=paper or Quant Lab’s pipeline. Stop when you have a kill-condition for the rule — before any live size.',
+      },
+      {
+        heading: 'Compliance, same as always',
+        body: 'Paper only. Not investment advice. Slippage, fees, and survivorship are not fully modeled. Personas are unaffiliated simulations from public text.',
+      },
+    ],
+    faqs: [
+      {
+        question: 'Is the $100k account a broker paper account?',
+        answer: 'No. It is an Agents61 research book. See /paper-trading-account.',
+      },
+      {
+        question: 'Where is Quant Lab?',
+        answer: 'https://agents61.com/quant-lab and the hub /ai-quant-lab.',
+      },
+      {
+        question: 'Can crypto book into the same $100k?',
+        answer: 'Yes — crypto major pools with price/volume rules. Keep equity and crypto theses separate in your head.',
+      },
+    ],
+  },
 ];

@@ -4,11 +4,13 @@ import Link from 'next/link';
 import {
   ArrowRight,
   Bitcoin,
+  FlaskConical,
   GitMerge,
   Lock,
   Scale,
   ShieldCheck,
   Users,
+  Wallet,
 } from 'lucide-react';
 import AuthGateLink from '@/components/auth/AuthGateLink';
 import { pageMeta, PAGE_DESCRIPTIONS } from '@/lib/seo/meta';
@@ -58,6 +60,16 @@ const FEATURES = [
     icon: ShieldCheck,
     title: 'Quant always on',
     body: 'Thorp, Simons, and platform-quant seats refuse stories without significance. Size as if variance is understated.',
+  },
+  {
+    icon: FlaskConical,
+    title: 'Quant Lab',
+    body: 'Timing masters compile to paper Python, trade-selection odds, and a full pool pipeline. Book into the virtual $100k account — still not a broker.',
+  },
+  {
+    icon: Wallet,
+    title: 'Virtual $100k paper account',
+    body: 'Master/quant screens occupy virtual cash, sync research marks, and show equity P&L. Rehearsal only — no order routing.',
   },
 ];
 
@@ -112,6 +124,12 @@ export default function FeaturesPage() {
           </Link>
           <Link href="/compare" className="btn-secondary">
             vs Yahoo, Seeking Alpha, ChatGPT
+          </Link>
+          <Link href="/paper-trading-account" className="btn-secondary">
+            Paper $100k
+          </Link>
+          <Link href="/ai-quant-lab" className="btn-secondary">
+            AI Quant Lab
           </Link>
         </div>
       </div>

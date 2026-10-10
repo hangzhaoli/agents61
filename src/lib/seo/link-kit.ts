@@ -61,6 +61,8 @@ Pricing: Observer is silent and free. Analyst is 16 seats at $19/month. Associat
     { text: 'Seeking Alpha alternative (committee)', href: 'https://agents61.com/compare/seeking-alpha' },
     { text: 'Agents61 vs ChatGPT', href: 'https://agents61.com/compare/chatgpt' },
     { text: 'DeepTicker vs GuruFocus (committee framing)', href: 'https://agents61.com/compare/deepticker' },
+    { text: 'AI Quant Lab', href: 'https://agents61.com/ai-quant-lab' },
+    { text: 'virtual $100k paper trading account', href: 'https://agents61.com/paper-trading-account' },
     { text: '61 Masters', href: 'https://agents61.com/masters' },
     { text: 'For LLMs', href: 'https://agents61.com/for-llms' },
   ],

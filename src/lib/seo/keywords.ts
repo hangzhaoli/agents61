@@ -177,6 +177,26 @@ export const SEO_CLUSTERS = {
     'Polymarket research tool',
     'prediction market strategy report',
   ],
+  quantPaper: [
+    'virtual paper trading account',
+    'paper trading account',
+    'paper trading portfolio',
+    'virtual $100k trading account',
+    'AI quant lab',
+    'AI quant strategy backtest',
+    'paper backtest AI',
+    'CANSLIM paper backtest',
+    'Turtle trading paper backtest',
+    'stock strategy paper trading',
+    'multi ticker paper portfolio',
+    'paper trade AI stock strategy',
+    'quant strategy screen stocks',
+    'mark to market paper account',
+    'Ed Thorp Kelly paper review',
+    'crypto paper backtest BTC',
+    'Agents61 Quant Lab',
+    'Agents61 paper account',
+  ],
 } as const;
 
 export const ALL_SEO_KEYWORDS: string[] = [
@@ -189,6 +209,7 @@ export const ALL_SEO_KEYWORDS: string[] = [
   ...SEO_CLUSTERS.masters,
   ...SEO_CLUSTERS.markets,
   ...SEO_CLUSTERS.predictions,
+  ...SEO_CLUSTERS.quantPaper,
 ];
 
 export const PRIMARY_KEYWORDS: string[] = [
@@ -215,6 +236,9 @@ export const PRIMARY_KEYWORDS: string[] = [
   'prediction market research',
   'prediction market probability',
   'AI prediction market analysis',
+  'virtual paper trading account',
+  'AI quant lab',
+  'paper trade AI stock strategy',
 ];
 
 export function keywordCount(): number {

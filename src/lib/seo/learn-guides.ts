@@ -28,6 +28,7 @@ export const LEARN_GUIDES: LearnGuide[] = [
       { label: 'Full tutorial (blog)', href: '/blog/how-to-use-agents61-to-make-money' },
       { label: 'US quant paper books', href: '/research/us-quant' },
       { label: 'Blockchain paper perpetual', href: '/research/crypto' },
+      { label: 'Run the $100k paper desk', href: '/learn/run-paper-100k-desk' },
       { label: 'Research a stock in 20 minutes', href: '/learn/research-a-stock-in-20-minutes' },
     ],
     ctaTitle: 'Open the desk and run the first sitting',
@@ -254,6 +255,49 @@ export const LEARN_GUIDES: LearnGuide[] = [
       'Create an account to open Prediction Markets, run Analyze, and watchlist mids. Keep Polymarket for trading — Agents61 stays research-only.',
     ctaHref: '/predictions',
     ctaGuestHref: '/register?next=%2Fpredictions',
+  },
+  {
+    slug: 'run-paper-100k-desk',
+    title: 'Run the virtual $100k paper desk',
+    description:
+      'Pick a timing master, screen a pool, book into $100k virtual cash, sync market marks. Paper only — no broker.',
+    h1: 'Run the $100k paper desk in 12 minutes — then stop',
+    minutes: 12,
+    intro:
+      'This path is for portfolio rehearsal, not a tip. You leave with open paper lots and a marked equity number. You do not leave with a live order.',
+    steps: [
+      {
+        heading: 'Open Paper $100k on the desk',
+        body: 'Register if needed, then go to /dashboard?entry=paper. Confirm starting virtual cash is $100,000 and there are no open lots (or reset if you are starting clean).',
+      },
+      {
+        heading: 'Pick master, asset class, and pool',
+        body: 'Choose a timing master (for example William O’Neil). Equity pools: liquid mega-cap, growth, or core ETFs. Crypto: majors only, price/volume rules. Set max open positions (2–6).',
+      },
+      {
+        heading: 'Run strategy → book to $100k',
+        body: 'The desk screens the pool, attaches live marks, and books equal-weight longs into free slots. Read the screen table and fill list. Skip names you do not understand.',
+      },
+      {
+        heading: 'Sync market and read dollars',
+        body: 'Tap Sync market. Equity, cash, return %, and unrealized P&L update from research marks. Picture the drawdown on your real account size — not the virtual $100k alone.',
+      },
+      {
+        heading: 'Stop before the broker',
+        body: 'Write one kill-condition for the rule you booked. Do not size a live trade from a green paper curve. Optional: compile the same master on Quant Lab for a single-ticker Python tape.',
+      },
+    ],
+    next: [
+      { label: 'Paper $100k hub', href: '/paper-trading-account' },
+      { label: 'AI Quant Lab', href: '/ai-quant-lab' },
+      { label: 'Use case: book a strategy', href: '/use-cases/paper-book-a-master-strategy' },
+      { label: 'Blog: virtual $100k', href: '/blog/virtual-paper-trading-100k' },
+    ],
+    ctaTitle: 'Register and open Paper $100k',
+    ctaBody:
+      'Create an account, book one master pool into virtual cash, and sync marks. Research simulation — not a trade ticket.',
+    ctaHref: '/dashboard?entry=paper',
+    ctaGuestHref: '/register?next=%2Fdashboard%3Fentry%3Dpaper',
   },
 ];
 

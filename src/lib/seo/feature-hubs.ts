@@ -283,6 +283,134 @@ export const FEATURE_HUBS: SeoHub[] = [
     ctaHref: '/predictions',
     ctaGuestHref: '/register?next=%2Fpredictions',
   },
+  {
+    slug: 'paper-trading-account',
+    path: '/paper-trading-account',
+    keyword: 'virtual paper trading account',
+    title: 'Virtual $100k Paper Trading Account — Masters & Quant',
+    description:
+      'Agents61 virtual $100k paper account: master/quant strategies screen a pool, book fills at live marks, sync P&L. Research simulation — not a broker.',
+    h1: 'A virtual $100k paper account that masters and quant can actually book',
+    eyebrow: 'Product · Paper $100k',
+    intro:
+      'Most “paper trading” is a blank order ticket. Agents61 starts you at $100,000 virtual cash, lets timing masters screen a liquid universe, books equal-weight longs at live marks, then syncs the market back into equity and P&L. Still no buy button to a broker.',
+    bullets: [
+      'Starting cash: $100,000 virtual USD — paper only.',
+      'Master rules (O’Neil, Turtle, Seykota, Minervini, Livermore) screen equity or crypto pools.',
+      'Book signals into the account, then Sync market for latest marks.',
+      'Desk entry: /dashboard?entry=paper · Quant Lab can book the same book.',
+    ],
+    sections: [
+      {
+        heading: 'What the $100k account is for',
+        body: 'Rehearsal. You see how a rule would occupy cash, how marks move equity, and how a stop language looks in dollars — not a track record of customer accounts, not income, not a broker API.',
+      },
+      {
+        heading: 'How a strategy lands in the book',
+        body: 'Pick a timing master and a universe pool (liquid mega-cap, growth, ETFs, or crypto majors). The desk screens, attaches live marks, and books up to N concurrent longs with equal cash slots. Sync market revalues open lots.',
+      },
+      {
+        heading: 'How this differs from US quant paper books',
+        body: 'US quant (/research/us-quant) is a single-name contract/shares/wheel tape on daily bars. The $100k account is a multi-name portfolio book you can refill from Quant Lab or the Paper desk. Both refuse live orders.',
+      },
+      {
+        heading: 'What we will never ship here',
+        body: 'A wallet connect that places real orders, a “copy this P&L” claim, or a composite rating that pretends the paper curve is a salary.',
+      },
+    ],
+    faqs: [
+      {
+        question: 'Is this live trading?',
+        answer: 'No. Virtual cash and research marks only. No broker routing.',
+      },
+      {
+        question: 'Where do I open the account?',
+        answer: 'Register, then open /dashboard?entry=paper. Quant Lab can also book signals into the same book.',
+      },
+      {
+        question: 'Does Sync market use real-time quotes?',
+        answer:
+          'It pulls cached desk quotes and daily closes for research marks. Not a live terminal feed. See /quant-lab and /paper-trading-account.',
+      },
+      {
+        question: 'Can I reset the $100k?',
+        answer: 'Yes. Reset clears lots and restores virtual cash. Prior paper fills stay local as history until you clear the browser store.',
+      },
+    ],
+    related: [
+      { label: 'Quant Lab', href: '/quant-lab' },
+      { label: 'AI Quant Lab hub', href: '/ai-quant-lab' },
+      { label: 'US quant books', href: '/research/us-quant' },
+      { label: 'Learn: run the $100k desk', href: '/learn/run-paper-100k-desk' },
+    ],
+    ctaTitle: 'Register and open the $100k paper desk',
+    ctaBody:
+      'Create an account, run a master strategy into the virtual book, and sync marks. Research simulation — not a trade ticket.',
+    ctaHref: '/dashboard?entry=paper',
+    ctaGuestHref: '/register?next=%2Fdashboard%3Fentry%3Dpaper',
+  },
+  {
+    slug: 'ai-quant-lab',
+    path: '/ai-quant-lab',
+    keyword: 'AI quant lab paper backtest',
+    title: 'AI Quant Lab — Master Rules to Paper Backtests',
+    description:
+      'Agents61 Quant Lab: timing masters → strategy spec → Python paper backtest, trade-selection odds, full pool pipeline, and book into a $100k virtual account.',
+    h1: 'AI Quant Lab: master rules, paper backtests, then a $100k book',
+    eyebrow: 'Product · Quant Lab',
+    intro:
+      'Compile O’Neil, Turtle, Seykota, Minervini, or Livermore into a paper strategy. Single-ticker Python, or a full pool screen with multi-name signals. Thorp reviews Kelly. Book into the virtual $100k account when you want portfolio feedback — still not live trading.',
+    bullets: [
+      'Equity/ETF or crypto USD pairs (price/volume only — no fake P/E on tokens).',
+      'Trade-selection odds: next-trade win probability + confidence for paper picks.',
+      'Full pipeline: universe → screen → signals → paper portfolio path.',
+      'Book to Paper $100k and sync market marks on the desk.',
+    ],
+    sections: [
+      {
+        heading: 'Single ticker vs full pipeline',
+        body: 'Compile writes a self-contained yfinance-style backtest for one symbol. Full pipeline screens a liquid pool with master proxies, ranks names, and simulates a multi-name paper path. Use pipeline when you care about selection, not one chart.',
+      },
+      {
+        heading: 'Trade-selection odds are not a live signal',
+        body: 'The odds card shrinks historical win rate toward 50% by sample size and Thorp edge language. It ranks paper candidates. It does not place an order.',
+      },
+      {
+        heading: 'From Lab to the $100k account',
+        body: 'After a pipeline run, book buy/hold signals into the virtual account at live marks. Open /dashboard?entry=paper to sync equity. That loop is the SEO job for “paper trading with AI strategies” without pretending we are a broker.',
+      },
+    ],
+    faqs: [
+      {
+        question: 'Is Quant Lab live trading?',
+        answer: 'No. Paper research only. See /quant-lab.',
+      },
+      {
+        question: 'Which masters can compile?',
+        answer:
+          'Timing / exit masters on the Quant Lab roster (e.g. William O’Neil, Richard Dennis, Ed Seykota, Mark Minervini, Jesse Livermore). Seating locks still apply.',
+      },
+      {
+        question: 'Crypto in Quant Lab?',
+        answer: 'Yes — BTC-USD / ETH-USD style pairs with price/volume rules. No invented equity fundamentals.',
+      },
+      {
+        question: 'Where is the $100k book?',
+        answer: 'Product hub /paper-trading-account · desk /dashboard?entry=paper.',
+      },
+    ],
+    related: [
+      { label: 'Open Quant Lab', href: '/quant-lab' },
+      { label: 'Paper $100k hub', href: '/paper-trading-account' },
+      { label: 'Use case: book a strategy', href: '/use-cases/paper-book-a-master-strategy' },
+      { label: 'Ed Thorp seat', href: '/masters/ed-thorp' },
+    ],
+    ctaTitle: 'Register and open Quant Lab',
+    ctaBody:
+      'Create an account, compile a master rule, or run the pool pipeline into the $100k paper book. Not live trading.',
+    ctaHref: '/dashboard?entry=quant',
+    ctaGuestHref: '/register?next=%2Fdashboard%3Fentry%3Dquant',
+  },
 ];
 
 export function getFeatureHub(slug: string) {
