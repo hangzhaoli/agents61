@@ -10,6 +10,7 @@ import { GROUP_META, GROUP_ORDER, getMasterBySlug, MASTERS } from '@/lib/masters
 import DeskThread from '@/components/workspace/DeskThread';
 import WatchlistPanel from '@/components/workspace/WatchlistPanel';
 import QuantLabPanel from '@/components/quant/QuantLabPanel';
+import PaperAccountPanel from '@/components/paper/PaperAccountPanel';
 import LineupPane from '@/components/workspace/LineupPane';
 import CryptoDeskPane from '@/components/workspace/CryptoDeskPane';
 import UsQuantPane from '@/components/workspace/UsQuantPane';
@@ -170,6 +171,7 @@ export default function WorkspaceDesk({
           )}
           {entry === 'watchlist' && <WatchlistPanel plan={plan} />}
           {entry === 'quant' && <QuantLabPanel plan={plan} />}
+          {entry === 'paper' && <PaperAccountPanel plan={plan} />}
           {entry === 'private' && <PrivateDeskPane onConvene={() => switchEntry('analyze')} />}
 
           <div className="mt-14 pt-10 border-t border-slate-100">

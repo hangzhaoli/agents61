@@ -199,9 +199,17 @@ export default function QuantLabPanel({ plan }: { plan: PlanId }) {
             </p>
           </div>
         </div>
-        <span className="text-[10px] font-bold uppercase tracking-wider text-amber-700 bg-amber-50 border border-amber-200 px-2 py-1 rounded-lg">
-          Paper only
-        </span>
+        <div className="flex flex-wrap items-center gap-2">
+          <Link
+            href="/dashboard?entry=paper"
+            className="text-[10px] font-bold uppercase tracking-wider text-[#0052d9] bg-blue-50 border border-blue-200 px-2 py-1 rounded-lg hover:bg-blue-100"
+          >
+            $100k paper account
+          </Link>
+          <span className="text-[10px] font-bold uppercase tracking-wider text-amber-700 bg-amber-50 border border-amber-200 px-2 py-1 rounded-lg">
+            Paper only
+          </span>
+        </div>
       </div>
 
       <p className="text-xs text-slate-500 mb-4">{QUANT_LAB_DISCLAIMER}</p>

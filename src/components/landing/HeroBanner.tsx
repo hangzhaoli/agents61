@@ -6,28 +6,16 @@ import Link from 'next/link';
 import { ArrowRight, Search, Sparkles } from 'lucide-react';
 import { MASTERS, PIPELINE_STEPS } from '@/lib/masters';
 import MasterAvatar from '@/components/masters/MasterAvatar';
-import { readDeskSession } from '@/lib/demo-session';
-import { resolveCryptoSymbol } from '@/lib/crypto-universe';
+import { publicSymbolPath } from '@/lib/symbol-path';
 
 const EXAMPLES = ['AAPL', 'NVDA', 'MSFT', 'BRK-B', 'KO', 'QQQ'];
 const CRYPTO_EXAMPLES = ['BTC', 'ETH', 'SOL'];
-
-function pathForSymbol(raw: string): string {
-  const crypto = resolveCryptoSymbol(raw);
-  if (crypto) return `/crypto/${crypto.toLowerCase()}`;
-  return `/stocks/${encodeURIComponent(raw.trim().toLowerCase())}`;
-}
 
 function goToSymbol(
   router: ReturnType<typeof useRouter>,
   raw: string
 ) {
-  const dest = pathForSymbol(raw);
-  if (readDeskSession()) {
-    router.push(dest);
-    return;
-  }
-  router.push(`/register?next=${encodeURIComponent(dest)}`);
+  router.push(publicSymbolPath(raw));
 }
 
 export default function HeroBanner() {

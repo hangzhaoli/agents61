@@ -7,7 +7,6 @@ import { getMasterBySlug } from '@/lib/masters';
 import MasterAvatar from '@/components/masters/MasterAvatar';
 import { MasterChipRow } from '@/components/masters/MasterChip';
 import AuthGateLink from '@/components/auth/AuthGateLink';
-import { readDeskSession } from '@/lib/demo-session';
 import {
   DEMO_ASSEMBLY,
   DEMO_BRIEFS,
@@ -19,6 +18,7 @@ import {
   looksLikeTicker,
   type DemoStance,
 } from '@/lib/demo-report';
+import { publicSymbolPath } from '@/lib/symbol-path';
 
 const STANCE_STYLE = {
   constructive: 'bg-emerald-50 text-emerald-700',
@@ -137,12 +137,7 @@ export default function ReportDemo() {
     const text = draft.trim();
     if (!text) return;
     if (looksLikeTicker(text)) {
-      const dest = `/stocks/${encodeURIComponent(text.toLowerCase())}`;
-      if (readDeskSession()) {
-        router.push(dest);
-        return;
-      }
-      router.push(`/register?next=${encodeURIComponent(dest)}`);
+      router.push(publicSymbolPath(text));
       return;
     }
     play(text);
@@ -316,7 +311,7 @@ export default function ReportDemo() {
         </div>
 
         <p className="mt-3 text-xs text-slate-400">
-          Canned Observer replies on this page. A ticker in the box asks you to register, then runs a real desk.{' '}
+          Canned Observer replies on this page. A ticker in the box opens the public report — register only if you convene the live desk.{' '}
           <AuthGateLink href="/dashboard?entry=analyze" className="font-semibold text-[#0052d9] hover:underline">
             Open the desk →
           </AuthGateLink>

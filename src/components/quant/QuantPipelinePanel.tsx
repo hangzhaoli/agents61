@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Loader2, Layers } from 'lucide-react';
+import Link from 'next/link';
+import { Loader2, Layers, Wallet } from 'lucide-react';
 import {
   QUANT_POOLS,
   defaultPoolForAsset,
@@ -10,6 +11,13 @@ import {
 import type { QuantPipelineResult } from '@/lib/quant-lab/pipeline';
 import type { QuantMasterSlug } from '@/lib/quant-lab/types';
 import type { QuantAssetClass } from '@/lib/quant-lab/crypto-tickers';
+import {
+  applyStrategyIntents,
+  markAccount,
+  snapshot,
+  type StrategyBookIntent,
+} from '@/lib/paper-account/engine';
+import { readPaperAccount, writePaperAccount } from '@/lib/paper-account/store';
 
 export default function QuantPipelinePanel({
   masterSlug,
@@ -24,7 +32,9 @@ export default function QuantPipelinePanel({
   const [poolId, setPoolId] = useState<QuantPoolId>(() => defaultPoolForAsset(assetClass));
   const [maxPos, setMaxPos] = useState(4);
   const [busy, setBusy] = useState(false);
+  const [booking, setBooking] = useState(false);
   const [error, setError] = useState('');
+  const [bookNote, setBookNote] = useState('');
   const [result, setResult] = useState<QuantPipelineResult | null>(null);
 
   useEffect(() => {
@@ -71,6 +81,76 @@ export default function QuantPipelinePanel({
 
   const openPos = result?.positions.filter((p) => p.status === 'open') ?? [];
   const closedPos = result?.positions.filter((p) => p.status === 'closed') ?? [];
+
+  async function bookToAccount() {
+    if (!result) return;
+    setBooking(true);
+    setBookNote('');
+    setError('');
+    try {
+      const intents: StrategyBookIntent[] = [];
+      for (const sig of result.signals) {
+        if (sig.action === 'buy' || sig.action === 'hold') {
+          intents.push({
+            ticker: sig.ticker,
+            action: 'buy',
+            price: sig.price,
+            reason: `${result.masterLabel}: ${sig.reason}`,
+            masterSlug,
+            stopPrice: openPos.find((p) => p.ticker === sig.ticker)?.stopPrice,
+          });
+        }
+      }
+      if (intents.length === 0) {
+        for (const p of openPos) {
+          intents.push({
+            ticker: p.ticker,
+            action: 'buy',
+            price: p.lastPrice,
+            reason: `${result.masterLabel}: pipeline open`,
+            masterSlug,
+            stopPrice: p.stopPrice,
+          });
+        }
+      }
+      if (intents.length === 0) {
+        setError('No buy/hold signals to book');
+        return;
+      }
+      const symbols = intents.map((i) => i.ticker);
+      const qRes = await fetch('/api/paper-account/quotes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ symbols }),
+      });
+      const qData = (await qRes.json()) as { prices?: Record<string, number> };
+      const prices = qData.prices ?? {};
+      const priced = intents.map((i) => ({
+        ...i,
+        price: prices[i.ticker.toUpperCase()] ?? i.price,
+      }));
+      const base = readPaperAccount();
+      const { account: booked, applied, skipped } = applyStrategyIntents(base, priced, {
+        maxPositions: maxPos,
+        source: 'quant-pipeline',
+      });
+      const marked = markAccount(
+        booked,
+        Object.fromEntries(booked.positions.map((p) => [p.ticker, prices[p.ticker] ?? p.lastPrice]))
+      );
+      writePaperAccount(marked);
+      const s = snapshot(marked);
+      setBookNote(
+        `Booked ${applied} into $100k account · equity $${s.equity.toLocaleString()}${
+          skipped.length ? ` · skipped ${skipped.length}` : ''
+        }`
+      );
+    } catch {
+      setError('Could not book to paper account');
+    } finally {
+      setBooking(false);
+    }
+  }
 
   return (
     <div className="mt-6 rounded-xl border border-slate-200 bg-white p-4">
@@ -144,6 +224,29 @@ export default function QuantPipelinePanel({
 
       {result ? (
         <div className="mt-4 space-y-4">
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={bookToAccount}
+              disabled={booking || !unlocked}
+              className="btn-primary text-sm !py-2 !px-3"
+            >
+              {booking ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Wallet className="h-4 w-4" strokeWidth={2.5} />
+              )}
+              Book signals to $100k account
+            </button>
+            <Link
+              href="/dashboard?entry=paper"
+              className="btn-secondary text-sm !py-2 !px-3"
+            >
+              Open paper account →
+            </Link>
+          </div>
+          {bookNote ? <p className="text-sm text-slate-600">{bookNote}</p> : null}
+
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {[
               ['Return', `${result.summary.totalReturnPct}%`],

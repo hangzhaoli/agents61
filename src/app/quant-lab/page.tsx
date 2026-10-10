@@ -50,9 +50,14 @@ export default function QuantLabPage() {
           {QUANT_LAB_DISCLAIMER}
         </p>
 
-        <Link href="/dashboard?entry=quant" className="btn-primary">
-          Open Quant Lab on the desk
-        </Link>
+        <div className="flex flex-wrap gap-3">
+          <Link href="/dashboard?entry=quant" className="btn-primary">
+            Open Quant Lab on the desk
+          </Link>
+          <Link href="/dashboard?entry=paper" className="btn-secondary">
+            Virtual $100k paper account
+          </Link>
+        </div>
       </div>
       <Footer />
     </>

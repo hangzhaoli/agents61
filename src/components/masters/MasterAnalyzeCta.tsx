@@ -4,7 +4,7 @@ import { useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowRight, Search } from 'lucide-react';
 import type { PlanId } from '@/lib/tiers';
-import { readDeskSession } from '@/lib/demo-session';
+import { publicSymbolPath } from '@/lib/symbol-path';
 
 export default function MasterAnalyzeCta({
   name,
@@ -20,12 +20,8 @@ export default function MasterAnalyzeCta({
     e.preventDefault();
     const symbol = ticker.trim().toUpperCase();
     if (!symbol) return;
-    const dest = `/stocks/${encodeURIComponent(symbol.toLowerCase())}?plan=${plan}`;
-    if (readDeskSession()) {
-      router.push(dest);
-      return;
-    }
-    router.push(`/register?next=${encodeURIComponent(dest)}`);
+    const dest = `${publicSymbolPath(symbol)}?plan=${plan}`;
+    router.push(dest);
   }
 
   return (

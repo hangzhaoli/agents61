@@ -16,6 +16,7 @@ import {
   Rocket,
   Settings2,
   Users,
+  Wallet,
 } from 'lucide-react';
 import { initialsFrom, PROFILE_EVENT, readDeskProfile } from '@/lib/desk-profile';
 import { DESK_ENTRIES, parseWorkspaceEntry, type WorkspaceEntry } from '@/lib/desk-nav';
@@ -38,6 +39,7 @@ const ENTRY_ICONS = {
   'us-quant': Landmark,
   private: Rocket,
   quant: FlaskConical,
+  paper: Wallet,
   watchlist: Bell,
   lineup: Users,
 } as const;

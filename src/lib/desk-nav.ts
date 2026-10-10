@@ -12,7 +12,8 @@ export type WorkspaceEntry =
   | 'lineup'
   | 'watchlist'
   | 'private'
-  | 'quant';
+  | 'quant'
+  | 'paper';
 
 export const DESK_ENTRIES: {
   id: Exclude<WorkspaceEntry, 'clerk'>;
@@ -25,6 +26,7 @@ export const DESK_ENTRIES: {
   { id: 'us-quant', title: 'US quant', subtitle: 'Equity paper contracts' },
   { id: 'private', title: 'Private desk', subtitle: 'Anduril · Stripe · OpenAI' },
   { id: 'quant', title: 'Quant Lab', subtitle: 'Master → Python backtest' },
+  { id: 'paper', title: 'Paper $100k', subtitle: 'Strategy book · live marks' },
   { id: 'watchlist', title: 'Watchlist', subtitle: 'Alerts by plan tier' },
   { id: 'lineup', title: 'Lineup & screen', subtitle: 'Pick masters, then a market' },
 ];
@@ -38,7 +40,8 @@ export function parseWorkspaceEntry(raw: string | null): WorkspaceEntry {
     raw === 'lineup' ||
     raw === 'watchlist' ||
     raw === 'private' ||
-    raw === 'quant'
+    raw === 'quant' ||
+    raw === 'paper'
   ) {
     return raw;
   }
